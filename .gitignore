@@ -1,0 +1,62 @@
+# Git ignore
+
+# Scratch / temp
+scratch/**
+!scratch/AGENTS.md
+!scratch/README.md
+!scratch/.gitkeep
+
+# Local env / secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+credentials.json
+.*oauth_token*.json
+secrets/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+!.vscode/extensions.json
+.codex/
+.gemini/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+
+# Node / tooling caches
+node_modules/
+.cache/
+
+# Large / generated binaries in results (keep Markdown)
+results/**/*.pptx
+results/**/*.docx
+results/**/*.xlsx
+results/**/*.pdf
+results/**/*.zip
+
+# Reference full dumps / binaries (keep compact catalogs/*.json)
+references/**/*.pdf
+references/**/*.zip
+references/**/*.xlsx
+references/**/*.xml
+**/enterprise-attack*.json
+!**/catalogs/*.json
+**/*STIX*
+**/ATLAS-*.yaml
+
+# qmd local index: keep index.yml checked in; ignore sqlite databases, locks, and logs
+.qmd/*
+!.qmd/index.yml
+!.qmd/index.yaml
+

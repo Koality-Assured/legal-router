@@ -1,0 +1,13 @@
+{
+  "schema": "harness-spoke/v1",
+  "domain": "legal",
+  "name": "legal-router",
+  "org": "Koality-Assured",
+  "visibility": "public",
+  "core_repo": "Koality-Assured/ai-harness-core",
+  "remotes": {
+    "origin": "https://github.com/Koality-Assured/legal-router.git",
+    "harness-core": "https://github.com/Koality-Assured/ai-harness-core.git"
+  },
+  "note": "Spoke overlay. Do not propose this file back to ai-harness-core."
+}
