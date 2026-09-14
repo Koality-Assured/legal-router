@@ -8,6 +8,11 @@ Human index (not agent SoT):
 
 | Skill | Owner | Isolation |
 | --- | --- | --- |
+
+| [`citation-verification/`](./legal/citation-verification/) | legal-research-operator | read-only |
+| [`contract-clause-review/`](./legal/contract-clause-review/) | contract-lifecycle-operator | mutate |
+| [`open-source-license-scan/`](./legal/open-source-license-scan/) | ip-licensing-curator | read-only |
+| [`regulatory-crosswalk-audit/`](./legal/regulatory-crosswalk-audit/) | statutory-compliance-analyst | mutate |
 | [`google-drive-manage/`](./google/google-drive-manage/) | document-operator | mutate |
 | [`google-gmail-manage/`](./google/google-gmail-manage/) | document-operator | mutate |
 | [`google-workspace-metadata/`](./google/google-workspace-metadata/) | document-operator | read-only |

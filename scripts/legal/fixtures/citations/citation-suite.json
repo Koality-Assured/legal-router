@@ -1,0 +1,97 @@
+{
+  "advisory": "ADVISORY WORK PRODUCT - REQUIRES LICENSED ATTORNEY REVIEW",
+  "not_legal_advice": true,
+  "notes": "Synthetic citation suite. Valid items are well-known public citations used only as parser fixtures. Hallucinated items are planted fakes. Do not treat status as a court holding.",
+  "items": [
+    {
+      "id": "marbury",
+      "kind": "case",
+      "text": "Marbury v. Madison, 5 U.S. 137 (1803)",
+      "expected": "valid_fixture",
+      "notes": "Public-domain U.S. Supreme Court citation."
+    },
+    {
+      "id": "brown",
+      "kind": "case",
+      "text": "Brown v. Board of Education, 347 U.S. 483 (1954)",
+      "expected": "valid_fixture"
+    },
+    {
+      "id": "miranda",
+      "kind": "case",
+      "text": "Miranda v. Arizona, 384 U.S. 436 (1966)",
+      "expected": "valid_fixture"
+    },
+    {
+      "id": "foia",
+      "kind": "usc",
+      "text": "5 U.S.C. § 552",
+      "expected": "valid_fixture",
+      "notes": "Freedom of Information Act."
+    },
+    {
+      "id": "ftc-act",
+      "kind": "usc",
+      "text": "15 U.S.C. § 45",
+      "expected": "valid_fixture"
+    },
+    {
+      "id": "hipaa-security-tech",
+      "kind": "cfr",
+      "text": "45 C.F.R. § 164.312",
+      "expected": "valid_fixture"
+    },
+    {
+      "id": "eu-ai-act",
+      "kind": "eu_regulation",
+      "text": "Regulation (EU) 2024/1689",
+      "expected": "valid_fixture",
+      "notes": "EU AI Act. Pin CELEX 32024R1689 / 02024R1689-20260727 when citing the consolidated text."
+    },
+    {
+      "id": "gdpr",
+      "kind": "eu_regulation",
+      "text": "Regulation (EU) 2016/679",
+      "expected": "valid_fixture"
+    },
+    {
+      "id": "fake-reporter",
+      "kind": "case",
+      "text": "Acme Corp. v. Beta LLC, 12 Fake. Rep. 345 (2099)",
+      "expected": "hallucinated",
+      "notes": "Invented reporter and future year."
+    },
+    {
+      "id": "fake-f4d",
+      "kind": "case",
+      "text": "Varghese v. China Southern Airlines, 925 F.4d 1339 (11th Cir. 2019)",
+      "expected": "hallucinated",
+      "notes": "F.4d is not a real reporter (contrast F.4th). Planted hallucination."
+    },
+    {
+      "id": "halluc-2d",
+      "kind": "case",
+      "text": "Unicorn Holdings v. State, 77 Halluc. 2d 1 (W.D. Fake 2024)",
+      "expected": "hallucinated"
+    },
+    {
+      "id": "bogus-usc",
+      "kind": "usc",
+      "text": "99 U.S.C. § 99999",
+      "expected": "hallucinated",
+      "notes": "U.S. Code titles currently run through 54."
+    },
+    {
+      "id": "bogus-eu",
+      "kind": "eu_regulation",
+      "text": "Regulation (EU) 2099/9999",
+      "expected": "hallucinated"
+    },
+    {
+      "id": "not-a-cite",
+      "kind": "none",
+      "text": "See the attached spreadsheet for Q3 revenue.",
+      "expected": "unparsed"
+    }
+  ]
+}

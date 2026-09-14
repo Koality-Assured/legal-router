@@ -1,0 +1,22 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.7",
+  "version": 1,
+  "components": [
+    {
+      "type": "library",
+      "name": "permissive-lib",
+      "licenses": [{"license": {"id": "Apache-2.0"}}]
+    },
+    {
+      "type": "library",
+      "name": "weak-copyleft-lib",
+      "licenses": [{"license": {"id": "LGPL-2.1-only"}}]
+    },
+    {
+      "type": "library",
+      "name": "agpl-service",
+      "licenses": [{"license": {"id": "AGPL-3.0-only"}}]
+    }
+  ]
+}
