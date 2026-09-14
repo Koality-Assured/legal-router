@@ -3,8 +3,9 @@
 tags: [sync, harness, pull]
 routing_hints: [pull-harness-core, core-update, spoke, allowlist]
 
-Fetches the harness-core remote and copies allowlisted core paths onto a new
-branch. Never auto-merges. Never copies domain overlay paths.
+Copies allowlisted core paths onto a new branch. Never auto-merges.
+--dry-run does not git fetch; it plans against the existing
+harness-core/<ref> remote-tracking ref.
 """
 
 from __future__ import annotations
@@ -161,9 +162,17 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--no-fetch",
         action="store_true",
-        help="Do not git fetch; use the existing remote-tracking ref",
+        help="Do not git fetch; use the existing remote-tracking ref (implied by --dry-run)",
     )
-    parser.add_argument("--dry-run", action="store_true", help="Report updates; do not checkout")
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help=(
+            "Report updates; do not checkout and do not git fetch. "
+            "Uses the existing harness-core/<ref> remote-tracking ref. "
+            "Run `git fetch harness-core` first, or omit --dry-run to fetch."
+        ),
+    )
     parser.add_argument("--json", action="store_true", help="Print JSON summary")
     args = parser.parse_args(argv)
 
@@ -173,7 +182,7 @@ def main(argv: list[str] | None = None) -> int:
             spoke=spoke,
             ref=args.ref,
             dry_run=args.dry_run,
-            fetch=not args.no_fetch,
+            fetch=False if args.dry_run else (not args.no_fetch),
         )
     except (RuntimeError, ValueError) as exc:
         err = {"ok": False, "error": str(exc), "merged": False, "pushed": False}

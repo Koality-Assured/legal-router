@@ -56,6 +56,7 @@ These fail silently if omitted. The linked page has the recipe when one is neede
 | Google Workspace OAuth | Use ADC or Workload Identity Federation. Dedicated test folder IDs ([REDACTED_GOOGLE_DRIVE_TEST_FOLDER]) are scrubbed upon sync export. [`google/google-suite-patterns.md`](./google/google-suite-patterns.md). |
 | Noir | Agents MUST call `python scripts/results/run_noir_scan.py`. Never invoke raw `noir` or pass `--ai-provider` / `--ai-context` / `--ai-model`. [`noir/agent-scan.md`](./noir/agent-scan.md). |
 | User memory | Create `ai-tooling/memory/user/<git-identity>/` (lowercase GitHub login or other stable id). [`../ai-tooling/memory/user/AGENTS.md`](../ai-tooling/memory/user/AGENTS.md). |
+| Windows Smart App Control | Unsigned or untrusted binaries may fail to start. Run the read-only preflight; do not disable SAC. [`powershell/windows-execution-control.md`](./powershell/windows-execution-control.md). |
 | Cursor `.cursorignore` vs worktrees | `.cursorignore` blocks Agent Read/Write/Tab/@. Never list `scratch/worktrees/` there. Use `.gitignore` and `.cursorindexingignore` so extra checkouts stay out of embeddings. [Ignore file](https://cursor.com/docs/reference/ignore-file). |
 | Windows Cursor Shell sandbox | The Windows sandbox helper may only provide a network proxy, so Shell cannot enforce `workspace_readwrite`. Isolate CLI and worktree Shell then need host `all` permissions. Do not treat that as a reason to skip worktrees. |
 

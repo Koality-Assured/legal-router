@@ -49,14 +49,22 @@ class TestSubagentContextConfig(unittest.TestCase):
         cursorignore_path = self.repo_root / ".cursorignore"
         self.assertTrue(cursorignore_path.is_file(), ".cursorignore must exist")
         cursorignore_content = cursorignore_path.read_text(encoding="utf-8")
+        active_lines = [
+            ln.strip()
+            for ln in cursorignore_content.splitlines()
+            if ln.strip() and not ln.strip().startswith("#")
+        ]
         self.assertNotIn(
             "scratch/**",
-            cursorignore_content,
-            ".cursorignore must not block scratch/worktrees (Agent Read/Write)",
+            active_lines,
+            ".cursorignore must not deny scratch/** (that blocks isolate-work Read/Write)",
         )
+        self.assertIn("!scratch/worktrees/", active_lines)
+        self.assertIn("!scratch/worktrees/**", active_lines)
+        self.assertIn("scratch/scaffolded-repos/**", active_lines)
+        self.assertIn(".*oauth_token*.json", active_lines)
         self.assertIn(".cache/", cursorignore_content)
         self.assertIn(".env", cursorignore_content)
-        self.assertIn(".cursorindexingignore", cursorignore_content)
 
         indexing_ignore = self.repo_root / ".cursorindexingignore"
         self.assertTrue(indexing_ignore.is_file(), ".cursorindexingignore must exist")

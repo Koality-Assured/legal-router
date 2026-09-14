@@ -19,15 +19,20 @@ _SYNC = Path(__file__).resolve().parents[1] / "sync"
 if str(_SYNC) not in sys.path:
     sys.path.insert(0, str(_SYNC))
 
+from io import StringIO
+from unittest.mock import patch
+
 from _harness_core_protocol import (
     CORE_REMOTE_NAME,
     ORIGIN_REMOTE_NAME,
     classify_spoke_path,
+    copy_tree_filtered,
     default_visibility,
     detect_instance_leakage,
     domain_overlay_files,
     is_allowlisted_core_path,
     is_domain_marker,
+    may_copy_core_source_rel,
 )
 from _harness_template import (
     HARNESS_TEMPLATE_DROP_REFERENCE_FAMILIES,
@@ -39,7 +44,8 @@ from _harness_template import (
     is_harness_template_rel_kept,
     skill_is_kept,
 )
-from propose_core_update import DomainPathRefused, propose_core_update
+from propose_core_update import DomainPathRefused, SpokePrRefused, propose_core_update
+from pull_harness_core import main as pull_main
 from pull_harness_core import pull_harness_core
 from scaffold_harness import main as scaffold_main
 from scaffold_harness import scaffold_harness
@@ -212,6 +218,16 @@ class ScaffoldHarnessTests(unittest.TestCase):
             self.assertIn("ai-harness-core.git", remotes)
             self.assertEqual(detect_instance_leakage(target), [])
             self.assertFalse((target / "projects" / "secpanic").exists())
+            self.assertIn("initial-commit", payload["actions"])
+            self.assertTrue(payload["committed"])
+            self.assertFalse(payload["pushed"])
+            head = subprocess.run(
+                ["git", "rev-parse", "--verify", "HEAD"],
+                cwd=target,
+                capture_output=True,
+                text=True,
+            )
+            self.assertEqual(head.returncode, 0)
 
     def test_refuses_instance_source(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -233,23 +249,46 @@ class ScaffoldHarnessTests(unittest.TestCase):
             self.assertIn("fed-instance", str(ctx.exception).lower())
             self.assertFalse(target.exists())
 
+    def test_path_source_filters_non_kept_files(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            src = Path(tmp) / "src"
+            dest = Path(tmp) / "dest"
+            _mini_core(src)
+            (src / "NOTES.txt").write_text("not template\n", encoding="utf-8")
+            owasp = src / "references" / "owasp"
+            owasp.mkdir(parents=True)
+            (owasp / "asvs.md").write_text("# owasp\n", encoding="utf-8")
+            copied = copy_tree_filtered(src, dest, dry_run=False)
+            self.assertGreater(copied, 0)
+            self.assertTrue((dest / "AGENTS.md").exists())
+            self.assertFalse((dest / "NOTES.txt").exists())
+            self.assertFalse((dest / "references" / "owasp").exists())
+            self.assertFalse(may_copy_core_source_rel("references/owasp/asvs.md"))
+            self.assertFalse(may_copy_core_source_rel("NOTES.txt"))
+
     def test_cli_json_dry_run(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
-            code = scaffold_main(
-                [
-                    "--name",
-                    "legal-router",
-                    "--target",
-                    str(Path(tmp) / "legal-router"),
-                    "--domain",
-                    "legal",
-                    "--visibility",
-                    "public",
-                    "--dry-run",
-                    "--json",
-                ]
-            )
+            buf = StringIO()
+            with patch("sys.stdout", buf):
+                code = scaffold_main(
+                    [
+                        "--name",
+                        "legal-router",
+                        "--target",
+                        str(Path(tmp) / "legal-router"),
+                        "--domain",
+                        "legal",
+                        "--visibility",
+                        "public",
+                        "--dry-run",
+                        "--json",
+                    ]
+                )
             self.assertEqual(code, 0)
+            payload = json.loads(buf.getvalue())
+            self.assertTrue(payload["ok"])
+            self.assertTrue(payload["dry_run"])
+            self.assertFalse(payload["pushed"])
 
 
 class ProposeCoreUpdateTests(unittest.TestCase):
@@ -286,6 +325,29 @@ class ProposeCoreUpdateTests(unittest.TestCase):
             self.assertFalse(payload["pushed"])
             self.assertIn("AGENTS.md", payload["paths"])
 
+    def test_create_pr_always_refused(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            spoke = Path(tmp)
+            with self.assertRaises(SpokePrRefused) as ctx:
+                propose_core_update(
+                    spoke=spoke,
+                    paths=["AGENTS.md"],
+                    create_pr=True,
+                    dry_run=True,
+                )
+            self.assertIn("spoke", str(ctx.exception).lower())
+
+    def test_create_pr_refused_without_visibility_marker(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            spoke = Path(tmp)
+            with self.assertRaises(SpokePrRefused):
+                propose_core_update(
+                    spoke=spoke,
+                    paths=["AGENTS.md"],
+                    create_pr=True,
+                    dry_run=False,
+                )
+
     def test_private_spoke_refuses_create_pr(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             spoke = Path(tmp)
@@ -301,14 +363,32 @@ class ProposeCoreUpdateTests(unittest.TestCase):
                 ),
                 encoding="utf-8",
             )
-            with self.assertRaises(ValueError) as ctx:
+            with self.assertRaises(SpokePrRefused) as ctx:
                 propose_core_update(
                     spoke=spoke,
                     paths=["AGENTS.md"],
                     create_pr=True,
                     dry_run=True,
                 )
-            self.assertIn("private", str(ctx.exception).lower())
+            self.assertIn("spoke", str(ctx.exception).lower())
+
+    def test_create_issue_scans_full_dirty_tree(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            spoke = Path(tmp)
+            _init_repo(spoke)
+            (spoke / "AGENTS.md").write_text("# core\n", encoding="utf-8")
+            (spoke / "docs" / "standards").mkdir(parents=True)
+            (spoke / "docs" / "standards" / "legal-overlay.md").write_text(
+                "# domain\n", encoding="utf-8"
+            )
+            with self.assertRaises(DomainPathRefused) as ctx:
+                propose_core_update(
+                    spoke=spoke,
+                    paths=["AGENTS.md"],
+                    create_issue=True,
+                    dry_run=True,
+                )
+            self.assertIn("legal-overlay", str(ctx.exception))
 
 
 class PullHarnessCoreTests(unittest.TestCase):
@@ -360,6 +440,51 @@ class PullHarnessCoreTests(unittest.TestCase):
             ).stdout.strip()
             self.assertEqual(current, live["branch"])
             self.assertNotEqual(current, base)
+
+    def test_unborn_head_dry_run_lists_core_tree(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            core = Path(tmp) / "core"
+            spoke = Path(tmp) / "spoke"
+            _init_repo(core)
+            (core / "AGENTS.md").write_text("# core\n", encoding="utf-8")
+            (core / "docs" / "standards").mkdir(parents=True)
+            (core / "docs" / "standards" / "legal-overlay.md").write_text(
+                "# domain\n", encoding="utf-8"
+            )
+            _commit(core, "core")
+
+            spoke.mkdir()
+            _git(spoke, "init", "-b", "main")
+            _git(spoke, "remote", "add", CORE_REMOTE_NAME, str(core))
+            dry = pull_harness_core(spoke=spoke, ref="main", dry_run=True, fetch=True)
+            self.assertTrue(dry["ok"])
+            self.assertFalse(dry["merged"])
+            self.assertIn("AGENTS.md", dry["updates"])
+            self.assertIn("docs/standards/legal-overlay.md", dry["skipped_domain"])
+            self.assertTrue(any("no commits" in w for w in dry.get("warnings", [])))
+
+    def test_cli_dry_run_does_not_fetch(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            spoke = Path(tmp) / "spoke"
+            _init_repo(spoke)
+            (spoke / "AGENTS.md").write_text("# x\n", encoding="utf-8")
+            _commit(spoke, "init")
+            _git(
+                spoke,
+                "remote",
+                "add",
+                CORE_REMOTE_NAME,
+                "https://example.invalid/ai-harness-core.git",
+            )
+            buf = StringIO()
+            with patch("sys.stdout", buf):
+                code = pull_main(["--spoke", str(spoke), "--dry-run", "--json"])
+            self.assertEqual(code, 0)
+            payload = json.loads(buf.getvalue())
+            self.assertTrue(payload["ok"])
+            self.assertTrue(payload["dry_run"])
+            self.assertFalse(payload.get("fetched"))
+            self.assertFalse(payload["merged"])
 
 
 class OverlayStubTests(unittest.TestCase):
