@@ -39,8 +39,10 @@ from _harness_core_protocol import (  # noqa: E402
     default_visibility,
     detect_instance_leakage,
     domain_overlay_files,
+    ensure_initial_commit,
     git_init_if_needed,
     github_https_url,
+    instance_corpus_rels,
     run_git,
     validate_org,
     validate_repo_name,
@@ -129,6 +131,7 @@ def scaffold_harness(
         "overlay_files": sorted(overlays),
         "pushed": False,
         "merged": False,
+        "committed": False,
         "warnings": [],
         "actions": [],
         "leaks": [],
@@ -145,6 +148,7 @@ def scaffold_harness(
             "write-overlays",
             "git-init",
             "configure-remotes",
+            "initial-commit",
         ]
         return payload
 
@@ -166,11 +170,11 @@ def scaffold_harness(
             src_core = core_path.expanduser().resolve()  # type: ignore[union-attr]
             if not src_core.is_dir():
                 raise FileNotFoundError(f"--core-path {src_core} does not exist")
-            leaks = detect_instance_leakage(src_core)
+            leaks = instance_corpus_rels(src_core)
             if leaks:
                 raise ValueError(
-                    "refusing fed-instance source (no instance corpus): "
-                    + ", ".join(leaks)
+                    "refusing fed-instance source (non-template paths): "
+                    + ", ".join(leaks[:20])
                 )
             copy_tree_filtered(src_core, target, dry_run=False)
             payload["actions"].append("copy-core-path")
@@ -196,6 +200,11 @@ def scaffold_harness(
         payload["actions"].append("git-init")
         configure_remotes(target, origin_url=origin_url, core_url=core_url)
         payload["actions"].append("configure-remotes")
+        ensure_initial_commit(
+            target, f"chore: scaffold {name} from ai-harness-core"
+        )
+        payload["actions"].append("initial-commit")
+        payload["committed"] = True
         return payload
     finally:
         if staging is not None:

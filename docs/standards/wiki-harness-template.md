@@ -1,6 +1,6 @@
 ---
 doc_kind: requirement
-canonical_id: harness-template
+canonical_id: wiki-harness-template
 purpose: [decision, requirement]
 rank: high
 topics: [wiki, harness, agents]
@@ -11,36 +11,31 @@ rag_keywords:
     generic-template,
     router-structure,
     downstream-sync,
-    scaffold-harness,
-    pull-harness-core,
-    propose-core-update,
-    spoke,
   ]
 ---
 
-# Harness template versus fed instance
+# Wiki harness template versus fed instance
 
 ## Purpose
 
-This page records how this harness instance relates to the public generic template `ai-harness-core`. Structure here is the source; domain corpus stays in fed instances.
+This page records how this wiki relates to the public generic template `ai-harness-core`. Structure here is the source; domain corpus stays in fed instances.
 
 ## Fed instance versus generic template
 
-`ai-router` is a fed instance of the AI harness. It carries a security and tech corpus under `references/`, many pages under `docs/standards/`, and cloud-provider skills.
+`ai-router` is a fed instance of the wiki harness. It carries a security and tech corpus under `references/`, many pages under `docs/standards/`, and cloud-provider skills.
 
-`ai-harness-core` is the generic harness template. It uses the same folder layout and operating machinery, with domain areas empty or stubbed so another domain router can start from it.
+`ai-harness-core` is the generic wiki harness template. It uses the same folder layout and operating machinery, with domain areas empty or stubbed so another domain router can start from it.
 
 Start a new domain router from the template, then add that domain's corpus. The template must not receive this instance's framework dumps, organization security-ops pages, or cloud-vendor skills.
 
 ## What the template keeps
 
-Machinery belongs in `ai-harness-core`. Copy it, then sync later corrections from this harness:
+Machinery belongs in `ai-harness-core`. Copy it, then sync later corrections from this wiki:
 
 - Root and nested `AGENTS.md`
 - `routing/` (areas, skill-dispatch, isolation)
 - Cost layers: qmd, ast-grep, Headroom
 - Generic skills, agents, scripts, and `supporting/` notes that are not a vendor or domain corpus
-- Host ignore split: `.cursorignore` (agent access), `.cursorindexingignore` (indexing only), plus `CLAUDE.md` / `GEMINI.md` / Copilot instruction stubs
 - Harness operating pages such as this one and [`context-management.md`](./context-management.md)
 
 ## What the template must not copy
@@ -56,38 +51,9 @@ The template may keep empty or stub folders so the layout is recognizable, witho
 
 ## Sync source
 
-Structure corrections in this harness are the source that gets synced into `ai-harness-core` via `scripts/sync`. Domain pages remain in this instance and in other public slice repos; they do not go into the template.
+Structure corrections in this wiki are the source that gets synced into `ai-harness-core` via `scripts/sync`. Domain pages remain in this instance and in other public slice repos; they do not go into the template.
 
 This page states the boundary. The file map and redaction pipeline live with the repo-sync specialist.
-
-## Core and spoke protocol
-
-`ai-harness-core` is the generic core. A domain router (legal, UI/UX, financial, game-dev, or other) is a **spoke** scaffolded from that core. Material core fixes flow core to spoke. Generic machinery improvements flow spoke to core as issues or draft PRs. Domain corpus never returns to core.
-
-### Scaffold
-
-Use `python scripts/sync/scaffold_harness.py --name <repo> --target <dir> --org Koality-Assured --visibility public|private --domain legal|ui-ux|financial|game-dev|none --dry-run --json`.
-
-- Obtain the generic core by local template export (`--core-source export`) or clone of `Koality-Assured/ai-harness-core` (`--core-source clone`). `--core-source path` copies an existing core checkout and refuses a fed instance (OWASP dumps, identity standards, `projects/` slugs, memory dumps, AWS skill families).
-- Write domain overlay stubs only (`.harness/domain.json` and `docs/standards/<domain>-overlay.md`). Do not copy this instance's projects, research, or memory.
-- Remotes: `origin` is the domain repo; `harness-core` is `ai-harness-core`. After overlays and remotes, the scaffolder makes an initial commit so `pull_harness_core` has `HEAD`. It does not push.
-- Private visibility is first-class. Default follows the domain (game-dev private; legal/ui-ux/financial public) unless `--visibility` is set.
-
-`python scripts/harness_init.py` remains the embed-engine CLI. Do not replace it with the domain scaffolder.
-
-### Pull core updates
-
-`python scripts/sync/pull_harness_core.py --dry-run --json` does **not** git fetch. It plans against the existing `harness-core/<ref>` remote-tracking ref. Fetch first (`git fetch harness-core`) or omit `--dry-run` to fetch. Live pull copies **allowlisted core paths only** onto a new branch (`chore/pull-harness-core-<utc>`). Domain overlay files are skipped. The command never merges into the previous branch and never pushes.
-
-Allowlisted paths match the generic template keep rules (root `AGENTS.md`, routing machinery, `.harness/` except `domain.json`, generic skills/scripts/docs/supporting).
-
-### Propose core updates
-
-`python scripts/sync/propose_core_update.py --dry-run --json` plans a generic improvement back to `Koality-Assured/ai-harness-core`. It refuses domain overlay paths, vendor skill families, and other non-core files (full dirty tree, not only `--path`). Opt-in `--create-issue` opens a text-only issue. `--create-pr` from a spoke is refused: it would attach the spoke branch as the PR head. To open a PR, copy allowlisted files into an `ai-harness-core` clone. It never auto-merges.
-
-### What stays in the spoke
-
-Domain standards, reference families, cloud/workplace skills, and instance `projects/` / `research/` / `ai-tooling/memory/` stay in the spoke. They are not template export payload and must not be proposed back to core.
 
 ## Repository taxonomy & subfolder archetypes
 
@@ -97,8 +63,8 @@ The harness architecture divides the repository into 12 canonical top-level area
 | :--- | :--- | :--- | :--- | :--- |
 | **`projects/`** | Initiative specs, informal notes, and follow-up prompts | `projects/<slug>/`, `notes/`, `project-prompts/` | Create `<slug>/` for multi-step initiatives; create files in `notes/` on human request; create `.md` templates in `project-prompts/`. | Template keeps `AGENTS.md` and `README.md` for `notes/` and `project-prompts/`; instance slug folders are omitted. |
 | **`ai-tooling/`** | Skills, specialist agents, A2A protocol, and memory scaffolds | `skills/<family>/<skill>/`, `agents/<agent>/`, `a2a/agent-cards/`, `memory/{user,agent,model}/` | Create skill folders under family subfolders; create agent folders for standalone specialists; split memory checkpoints. | Template keeps generic skills, agents, A2A machinery, and memory folder scaffold. Domain/cloud skills and instance memory dumps omitted. |
-| **`docs/`** | Protected normative corpus of record, security MUST, and playbooks | `standards/`, `guidance/` | Only `standards/` and `guidance/` are permitted subfolders; root `docs/` is reserved for universal security MUST and anti-slop rules. | Template keeps universal security MUST, anti-slop, and portable harness standards (`context-management.md`, `harness-template.md`). Org security controls omitted. |
-| **`references/`** | External framework captures and machine-readable catalogs (advisory only) | `<framework-family>/` | Exactly one subfolder per external framework family (e.g. `conventional-commits/`, `markdown/`, `owasp/`, `nist-csf/`). | Template keeps universal tooling families (`conventional-commits/`, `markdown/`, `prompt-engineering/`, `valid-sources/`). Domain frameworks (OWASP, NIST, CWE, MITRE) stay in fed instances. |
+| **`docs/`** | Protected normative corpus of record, security MUST, and playbooks | `standards/`, `guidance/` | Only `standards/` and `guidance/` are permitted subfolders; root `docs/` is reserved for universal security MUST and anti-slop rules. | Template keeps universal security MUST, anti-slop, and portable harness standards (`context-management.md`, `wiki-harness-template.md`). Org security controls omitted. |
+| **`references/`** | External framework captures and machine-readable catalogs (advisory only) | `<framework-family>/` | Exactly one subfolder per external framework family (e.g. `conventional-commits/`, `markdown/`, `owasp/`, `nist-csf/`). | Template keeps universal tooling families (`conventional-commits/`, `markdown/`). Domain frameworks (OWASP, NIST, CWE, MITRE) stay in fed instances. |
 | **`supporting/`** | Workstation onboarding, tool patterns, CLI guides, and conventions | `<tool-or-capability>/` (e.g. `qmd/`, `ast-grep/`, `headroom/`, `github/`, `powershell/`, `mermaid/`) | Create a new tool subfolder when onboarding a core tool, CLI capability, or environment pattern. | Template keeps universal agent tooling patterns. Specific workplace/cloud platform integrations are fed per harness instance based on what it interacts with. |
 | **`scripts/`** | Tagged Python automation and validation utilities | `<purpose>/` (e.g. `_lib/`, `routing/`, `qmd/`, `cost-layers/`, `change-history/`, `sync/`, `repos/`, `tests/`, `docs/`, `github/`, `ai-tooling/`) | Group scripts by functional purpose; shared non-indexed helper modules sit in `_lib/`. | Template keeps core harness management scripts and tests. Domain/cloud provider scripts omitted. |
 | **`results/`** | Immutable deliverables, audit reports, generated diagrams, benchmarks | `<category>/<run-or-topic>/<YYYY-MM-DD>/` | Organize non-ephemeral deliverables by artifact category and date. | Template keeps empty area with `AGENTS.md` and `results-conventions.md`. Run artifacts omitted. |

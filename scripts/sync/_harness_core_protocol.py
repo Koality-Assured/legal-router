@@ -14,8 +14,10 @@ from typing import Callable, Iterable
 
 from _harness_template import (
     HARNESS_TEMPLATE_DOMAIN_MARKERS,
+    HARNESS_TEMPLATE_DROP_REFERENCE_FAMILIES,
     HARNESS_TEMPLATE_DROP_SKILL_FAMILIES,
     HARNESS_TEMPLATE_KEEP_DOCS_STANDARDS,
+    HARNESS_TEMPLATE_KEEP_REFERENCE_FAMILIES,
     is_harness_template_rel_kept,
 )
 
@@ -46,6 +48,28 @@ DOMAIN_DEFAULT_VISIBILITY: dict[str, str] = {
 
 REPO_NAME_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 ORG_RE = re.compile(r"^[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?$")
+
+COPY_SKIP_DIR_NAMES: frozenset[str] = frozenset({"__pycache__", ".git"})
+COPY_SKIP_FILE_NAMES: frozenset[str] = frozenset({".DS_Store", "Thumbs.db"})
+
+# Files a real ai-harness-core checkout has after template post-copy, but which
+# is_harness_template_rel_kept rejects (they are generated, not source-copied).
+CORE_CHECKOUT_EXTRA_RELS: frozenset[str] = frozenset(
+    {
+        "README.md",
+        "LICENSE",
+        ".editorconfig",
+        ".github/workflows/ci.yml",
+        "routing/skill-dispatch.md",
+        "routing/area-map.md",
+        "routing/agent-dispatch.md",
+        "routing/by-task.md",
+        "scripts/script-index.md",
+        "docs/standards/AGENTS.md",
+        "references/AGENTS.md",
+        "projects/project-prompts/README.md",
+    }
+)
 
 INSTANCE_LEAK_MARKERS: tuple[str, ...] = (
     "references/owasp",
@@ -118,6 +142,81 @@ def is_domain_marker(rel: str) -> bool:
         if len(parts) >= 3 and parts[2] not in HARNESS_TEMPLATE_KEEP_DOCS_STANDARDS:
             return True
     return False
+
+
+def is_ignorable_copy_rel(rel: str) -> bool:
+    """True for cache/junk paths that are neither copied nor a leak refusal."""
+    parts = [p for p in posix_rel(rel).split("/") if p]
+    if any(p in COPY_SKIP_DIR_NAMES for p in parts):
+        return True
+    if parts and parts[-1] in COPY_SKIP_FILE_NAMES:
+        return True
+    if parts and parts[-1].endswith((".pyc", ".pyo")):
+        return True
+    return False
+
+
+def may_copy_core_source_rel(rel: str) -> bool:
+    """True when a core-source file may be copied into a spoke."""
+    path = posix_rel(rel)
+    if not path or is_ignorable_copy_rel(path):
+        return False
+    parts = [p for p in path.split("/") if p]
+    if not parts or parts[0] == ".git" or ".git" in parts:
+        return False
+    if is_domain_marker(path):
+        return False
+    if is_harness_template_rel_kept(path):
+        return True
+    return path in CORE_CHECKOUT_EXTRA_RELS
+
+
+def is_instance_corpus_rel(rel: str) -> bool:
+    """True when a path is fed-instance corpus that must not be copied."""
+    path = posix_rel(rel)
+    if is_domain_marker(path):
+        return True
+    parts = [p for p in path.split("/") if p]
+    if not parts:
+        return False
+    if len(parts) >= 3 and parts[0] == "ai-tooling" and parts[1] == "skills":
+        if parts[2] in HARNESS_TEMPLATE_DROP_SKILL_FAMILIES:
+            return True
+    if len(parts) >= 2 and parts[0] == "references":
+        fam = parts[1]
+        if fam in HARNESS_TEMPLATE_DROP_REFERENCE_FAMILIES:
+            return True
+        if (
+            fam not in HARNESS_TEMPLATE_KEEP_REFERENCE_FAMILIES
+            and fam not in {"AGENTS.md", "reference-maintenance.md"}
+        ):
+            return True
+    if len(parts) >= 2 and parts[0] == "projects" and parts[1] not in {
+        "notes",
+        "project-prompts",
+        "AGENTS.md",
+    }:
+        return True
+    if len(parts) >= 4 and parts[0] == "ai-tooling" and parts[1] == "memory":
+        if parts[2] in {"user", "agent", "model"} and parts[3] not in {"AGENTS.md", ".gitkeep"}:
+            return True
+    return False
+
+
+def instance_corpus_rels(root: Path) -> list[str]:
+    """Return dest-relative instance corpus paths under root."""
+    hits = detect_instance_leakage(root)
+    seen = set(hits)
+    for path in root.rglob("*"):
+        if not path.is_file() or ".git" in path.parts:
+            continue
+        rel = posix_rel(path.relative_to(root).as_posix())
+        if is_ignorable_copy_rel(rel):
+            continue
+        if is_instance_corpus_rel(rel) and rel not in seen:
+            seen.add(rel)
+            hits.append(rel)
+    return hits
 
 
 def is_allowlisted_core_path(rel: str) -> bool:
@@ -329,23 +428,47 @@ def write_files(root: Path, files: dict[str, str], dry_run: bool) -> list[str]:
     return written
 
 
+def ensure_initial_commit(repo: Path, message: str) -> None:
+    """Create the first commit so pull_harness_core has HEAD. Never pushes."""
+    code, _, err = run_git(["git", "add", "-A"], cwd=repo)
+    if code != 0:
+        raise RuntimeError(err or "git add failed")
+    code, _, err = run_git(
+        [
+            "git",
+            "-c",
+            "user.email=harness-scaffold@example.com",
+            "-c",
+            "user.name=harness-scaffold",
+            "-c",
+            "commit.gpgsign=false",
+            "commit",
+            "-m",
+            message,
+        ],
+        cwd=repo,
+    )
+    if code != 0:
+        raise RuntimeError(err or "initial scaffold commit failed")
+
+
 def copy_tree_filtered(src: Path, dest: Path, dry_run: bool) -> int:
-    """Copy files from src to dest excluding .git."""
+    """Copy template-kept files from src to dest. Never copies .git or instance corpus."""
     count = 0
-    if dry_run:
-        for path in src.rglob("*"):
-            if path.is_file() and ".git" not in path.parts:
-                count += 1
-        return count
-    dest.mkdir(parents=True, exist_ok=True)
+    if not dry_run:
+        dest.mkdir(parents=True, exist_ok=True)
     for path in src.rglob("*"):
         if not path.is_file() or ".git" in path.parts:
             continue
-        rel = path.relative_to(src)
-        target = dest / rel
+        rel = posix_rel(path.relative_to(src).as_posix())
+        if not may_copy_core_source_rel(rel):
+            continue
+        count += 1
+        if dry_run:
+            continue
+        target = dest / Path(*rel.split("/"))
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes(path.read_bytes())
-        count += 1
     return count
 
 
