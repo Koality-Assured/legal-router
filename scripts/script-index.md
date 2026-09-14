@@ -2,13 +2,13 @@
 doc_kind: routing_map
 canonical_id: script-index
 topics: [scripts, routing]
-generated_at_utc: export
+generated_at_utc: 2026-09-14T16:02:31Z
 generator: scripts/routing/generate_script_index.py
 ---
 
 # Script index
 
-Generated from dest `scripts/` after harness-template export (kept trees only). Do not hand-edit — run `python scripts/routing/generate_script_index.py` from the dest checkout after feeding scripts.
+Generated from Python docstring `tags:` / `routing_hints:`. Do not hand-edit — run `python scripts/routing/generate_script_index.py`.
 
 | Script | Tags | Hints | Summary |
 | --- | --- | --- | --- |
@@ -33,6 +33,9 @@ Generated from dest `scripts/` after harness-template export (kept trees only). 
 | [`docs/validate_router_structure.py`](./docs/validate_router_structure.py) | `docs`, `routing` | router, structure, validation, results-layout | Validate router structure (areas, catalogs, frontmatter, dispatch, results layout). |
 | [`docs/validate_structure_fast.py`](./docs/validate_structure_fast.py) | `docs`, `validation`, `lint` | validate, structure, frontmatter, links, markdown | Fast structural validator for Markdown documents in ai-router. |
 | [`github/resolve_github_path.py`](./github/resolve_github_path.py) | `github` | blob, main, path, url | Resolve local repo paths to GitHub https blob/tree URLs on main. |
+| [`legal/contract_differ.py`](./legal/contract_differ.py) | `legal`, `contracts`, `diff` | redline, clause-extraction, msa, nvca | Diff and extract clauses from synthetic contract fixtures. |
+| [`legal/spdx_license_checker.py`](./legal/spdx_license_checker.py) | `legal`, `licensing`, `spdx`, `cyclonedx` | sbom, copyleft, gpl, agpl | Scan SPDX / CycloneDX SBOMs for copyleft heuristics. |
+| [`legal/verify_citations.py`](./legal/verify_citations.py) | `legal`, `citations`, `verification` | bluebook, courtlistener, hallucination, govinfo | Verify statutory and case citations against fixtures and optional registries. |
 | [`qmd/qmd_preflight.py`](./qmd/qmd_preflight.py) | `qmd` | preflight, index, onboarding, safety | Inspect reusable qmd state without creating or refreshing an index. |
 | [`qmd/refresh_qmd_index.py`](./qmd/refresh_qmd_index.py) | `qmd` | index, embed, session-end, completion-gate | Refresh an existing local qmd index after explicit user approval. |
 | [`qmd/setup_qmd_collections.py`](./qmd/setup_qmd_collections.py) | `qmd` | index, collections, embed, modular, areas | Set up missing qmd collections only after an explicit, inspected approval. |
@@ -55,6 +58,7 @@ Generated from dest `scripts/` after harness-template export (kept trees only). 
 | [`sync/sync_and_push_downstreams.py`](./sync/sync_and_push_downstreams.py) | `sync`, `git`, `export`, `downstream` | sync-and-push, update-downstreams, multi-repo-publish, downstream-repo-update | Automated synchronization, sanitation, commit, and push engine for public downstream repositories. |
 | [`sync/sync_public_repos.py`](./sync/sync_public_repos.py) | `sync`, `security`, `export` | sync, redaction, multi-repo, export, sanitize, wiki-template | Multi-repo synchronization and sanitization/redaction engine for public exports. |
 | [`tests/test_benchmarks.py`](./tests/test_benchmarks.py) | `tests`, `benchmarks`, `cost-layers`, `agents`, `retrieval`, `fleet` | tests, test-benchmarks, cost-estimator, fleet-benchmark, mrr | Unit tests for empirical benchmarking and cost estimation tooling. |
+| [`tests/test_contract_differ.py`](./tests/test_contract_differ.py) | `tests`, `legal`, `contracts` | contract-differ, round-trip, fixtures | Unit tests for synthetic contract differ. |
 | [`tests/test_harness_core_sync.py`](./tests/test_harness_core_sync.py) | `tests`, `sync`, `harness` | tests, scaffold-harness, pull-harness-core, propose-core-update | Tests for core-spoke harness protocol scripts. |
 | [`tests/test_hybrid_dispatch.py`](./tests/test_hybrid_dispatch.py) | `tests`, `routing`, `ai-tooling` | tests, hybrid-dispatch, bm25, ambiguity-gate, schema-v2 | Unit tests for 3-Tier Hybrid Dispatch Pipeline and Schema V2 Indexing. |
 | [`tests/test_local_webfetch.py`](./tests/test_local_webfetch.py) | `tests`, `research`, `webfetch`, `cost-layers` | tests, webfetch, distillation, sanitize | Unit tests for local_webfetch.py web distillation and prompt injection defense. |
@@ -62,6 +66,7 @@ Generated from dest `scripts/` after harness-template export (kept trees only). 
 | [`tests/test_pretty_docs_security.py`](./tests/test_pretty_docs_security.py) | `tests`, `security`, `github` | tests, href, github-paths | Stdlib unit tests for href allow-list and GitHub path helpers. |
 | [`tests/test_qmd_preflight.py`](./tests/test_qmd_preflight.py) | `tests`, `qmd` | qmd, preflight, onboarding | Unit tests for the non-mutating qmd lifecycle preflight. |
 | [`tests/test_skill_graph.py`](./tests/test_skill_graph.py) | `tests`, `routing`, `skills`, `dag` | tests, dag, topological-sort, dependencies, prerequisites | Unit tests for skill dependency DAG resolution, topological ordering, and Schema V2 conventions. |
+| [`tests/test_spdx_license_checker.py`](./tests/test_spdx_license_checker.py) | `tests`, `legal`, `licensing` | spdx, cyclonedx, copyleft | Unit tests for SPDX / CycloneDX license heuristics. |
 | [`tests/test_subagent_context_config.py`](./tests/test_subagent_context_config.py) | `tests`, `subagents`, `context`, `config` | tests, subagents, context-isolation, host-config | Unit tests for cross-host subagent context isolation and project-level settings. |
 | [`tests/test_validate_agent.py`](./tests/test_validate_agent.py) | `tests`, `ai-tooling`, `agents`, `schema-v2` | tests, validate-agent, agents | Unit tests for Schema V2 agent validation. |
 | [`tests/test_validate_context_budget.py`](./tests/test_validate_context_budget.py) | `tests`, `docs`, `validation`, `cost-layers` | tests, validate_context_budget, context-budget, tokens | Unit tests for validate_context_budget.py. |
@@ -69,6 +74,7 @@ Generated from dest `scripts/` after harness-template export (kept trees only). 
 | [`tests/test_validate_router_structure.py`](./tests/test_validate_router_structure.py) | `tests`, `docs`, `validation`, `results` | tests, validate_router_structure, results-layout | Unit tests for router structure validator results-layout check. |
 | [`tests/test_validate_skill.py`](./tests/test_validate_skill.py) | `tests`, `ai-tooling`, `skills`, `schema-v2` | tests, validate-skill, skills | Unit tests for Schema V2 skill validation. |
 | [`tests/test_validate_structure_fast.py`](./tests/test_validate_structure_fast.py) | `tests`, `docs`, `validation` | tests, validate_structure_fast, markdown | Unit tests for fast structural validator. |
+| [`tests/test_verify_citations.py`](./tests/test_verify_citations.py) | `tests`, `legal`, `citations` | verify-citations, hallucination, fixtures | Unit tests for legal citation verification. |
 
 ## By tag
 
@@ -79,13 +85,17 @@ Generated from dest `scripts/` after harness-template export (kept trees only). 
 - **benchmarks:** `benchmarks/benchmark_agent_fleet.py`, `benchmarks/benchmark_retrieval.py`, `benchmarks/benchmark_task_eval.py`, `benchmarks/benchmark_tool_efficiency.py`, `benchmarks/estimate_agent_costs.py`, `benchmarks/run_benchmark_suite.py`, `cost-layers/validate_cost_layers.py`, `cost-layers/validate_headroom_compression.py`, `qmd/validate_qmd_retrieval.py`, `research/benchlm_lookup.py`, `research/local_webfetch.py`, `tests/test_benchmarks.py`
 - **briefing:** `research/ai_vendor_briefing.py`
 - **change-history:** `change-history/append_change_history.py`, `change-history/ensure_change_history_quarter.py`
+- **citations:** `legal/verify_citations.py`, `tests/test_verify_citations.py`
 - **coding-agent:** `benchmarks/benchmark_task_eval.py`
 - **communities:** `research/community_analyzer.py`, `research/manage_social_registry.py`
 - **compression:** `benchmarks/benchmark_tool_efficiency.py`
 - **config:** `tests/test_subagent_context_config.py`
 - **context:** `tests/test_subagent_context_config.py`
+- **contracts:** `legal/contract_differ.py`, `tests/test_contract_differ.py`
 - **cost-layers:** `benchmarks/benchmark_tool_efficiency.py`, `benchmarks/estimate_agent_costs.py`, `benchmarks/run_benchmark_suite.py`, `cost-layers/validate_cost_layers.py`, `cost-layers/validate_headroom_compression.py`, `cost-layers/validate_prompt_caching.py`, `docs/validate_context_budget.py`, `qmd/validate_qmd_retrieval.py`, `research/local_webfetch.py`, `tests/test_benchmarks.py`, `tests/test_local_webfetch.py`, `tests/test_validate_context_budget.py`, `tests/test_validate_prompt_caching.py`
+- **cyclonedx:** `legal/spdx_license_checker.py`
 - **dag:** `routing/resolve_skill_graph.py`, `tests/test_skill_graph.py`
+- **diff:** `legal/contract_differ.py`
 - **distillation:** `research/local_webfetch.py`
 - **docs:** `docs/run_markdownlint.py`, `docs/validate_context_budget.py`, `docs/validate_router_structure.py`, `docs/validate_structure_fast.py`, `tests/test_validate_context_budget.py`, `tests/test_validate_router_structure.py`, `tests/test_validate_structure_fast.py`
 - **downstream:** `sync/sync_and_push_downstreams.py`
@@ -99,6 +109,8 @@ Generated from dest `scripts/` after harness-template export (kept trees only). 
 - **headroom:** `benchmarks/benchmark_tool_efficiency.py`, `cost-layers/extract_ast_facts.py`, `cost-layers/validate_ast_grep.py`, `cost-layers/validate_cost_layers.py`, `cost-layers/validate_headroom_compression.py`
 - **intelligence:** `research/ai_vendor_briefing.py`
 - **isolation:** `routing/spawn_worktree.py`
+- **legal:** `legal/contract_differ.py`, `legal/spdx_license_checker.py`, `legal/verify_citations.py`, `tests/test_contract_differ.py`, `tests/test_spdx_license_checker.py`, `tests/test_verify_citations.py`
+- **licensing:** `legal/spdx_license_checker.py`, `tests/test_spdx_license_checker.py`
 - **lint:** `docs/validate_structure_fast.py`
 - **maintenance:** `research/manage_social_registry.py`
 - **markdown:** `docs/run_markdownlint.py`
@@ -127,11 +139,13 @@ Generated from dest `scripts/` after harness-template export (kept trees only). 
 - **simulation:** `benchmarks/benchmark_agent_fleet.py`
 - **skills:** `routing/resolve_skill_graph.py`, `tests/test_skill_graph.py`, `tests/test_validate_skill.py`
 - **socials:** `research/community_analyzer.py`, `research/manage_social_registry.py`
+- **spdx:** `legal/spdx_license_checker.py`
 - **subagents:** `tests/test_subagent_context_config.py`
 - **sync:** `sync/propose_core_update.py`, `sync/pull_harness_core.py`, `sync/scaffold_harness.py`, `sync/sync_and_push_downstreams.py`, `sync/sync_public_repos.py`, `tests/test_harness_core_sync.py`
 - **tasks:** `benchmarks/benchmark_task_eval.py`
-- **tests:** `tests/test_benchmarks.py`, `tests/test_harness_core_sync.py`, `tests/test_hybrid_dispatch.py`, `tests/test_local_webfetch.py`, `tests/test_pacing.py`, `tests/test_pretty_docs_security.py`, `tests/test_qmd_preflight.py`, `tests/test_skill_graph.py`, `tests/test_subagent_context_config.py`, `tests/test_validate_agent.py`, `tests/test_validate_context_budget.py`, `tests/test_validate_prompt_caching.py`, `tests/test_validate_router_structure.py`, `tests/test_validate_skill.py`, `tests/test_validate_structure_fast.py`
+- **tests:** `tests/test_benchmarks.py`, `tests/test_contract_differ.py`, `tests/test_harness_core_sync.py`, `tests/test_hybrid_dispatch.py`, `tests/test_local_webfetch.py`, `tests/test_pacing.py`, `tests/test_pretty_docs_security.py`, `tests/test_qmd_preflight.py`, `tests/test_skill_graph.py`, `tests/test_spdx_license_checker.py`, `tests/test_subagent_context_config.py`, `tests/test_validate_agent.py`, `tests/test_validate_context_budget.py`, `tests/test_validate_prompt_caching.py`, `tests/test_validate_router_structure.py`, `tests/test_validate_skill.py`, `tests/test_validate_structure_fast.py`, `tests/test_verify_citations.py`
 - **tokens:** `benchmarks/benchmark_retrieval.py`, `benchmarks/benchmark_tool_efficiency.py`, `benchmarks/estimate_agent_costs.py`
 - **validation:** `docs/validate_context_budget.py`, `docs/validate_structure_fast.py`, `tests/test_validate_context_budget.py`, `tests/test_validate_router_structure.py`, `tests/test_validate_structure_fast.py`
+- **verification:** `legal/verify_citations.py`
 - **web:** `research/local_webfetch.py`
 - **webfetch:** `tests/test_local_webfetch.py`

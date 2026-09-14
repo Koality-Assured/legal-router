@@ -1,0 +1,39 @@
+{
+  "spdxVersion": "SPDX-2.3",
+  "dataLicense": "CC0-1.0",
+  "SPDXID": "SPDXRef-DOCUMENT",
+  "name": "synthetic-legal-router-app",
+  "documentNamespace": "https://example.invalid/spdx/synthetic-legal-router-app",
+  "packages": [
+    {
+      "name": "left-pad-fixture",
+      "SPDXID": "SPDXRef-Package-left-pad",
+      "licenseDeclared": "MIT"
+    },
+    {
+      "name": "copyleft-lib",
+      "SPDXID": "SPDXRef-Package-copyleft",
+      "licenseDeclared": "GPL-3.0-only"
+    },
+    {
+      "name": "combo-and",
+      "SPDXID": "SPDXRef-Package-combo",
+      "licenseDeclared": "MIT AND GPL-3.0-only"
+    },
+    {
+      "name": "bare-gnu",
+      "SPDXID": "SPDXRef-Package-bare-gnu",
+      "licenseDeclared": "GPL-3.0"
+    },
+    {
+      "name": "network-copyleft",
+      "SPDXID": "SPDXRef-Package-agpl",
+      "licenseDeclared": "AGPL-3.0-only"
+    },
+    {
+      "name": "closed-and-gpl",
+      "SPDXID": "SPDXRef-Package-closed",
+      "licenseDeclared": "LicenseRef-Proprietary AND GPL-3.0-only"
+    }
+  ]
+}

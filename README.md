@@ -8,6 +8,10 @@ Provide a clean, embeddable, framework-agnostic harness template and execution e
 
 ---
 
+## Layout
+
+Top-level areas: `actionable/`, `ai-tooling/`, `change-history/`, `docs/`, `projects/`, `references/`, `research/`, `results/`, `routing/`, `scratch/`, `scripts/`, `supporting/`.
+
 ## Operating Modes: How It Can Be Used
 
 The harness core is designed to support two primary operating models:

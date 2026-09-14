@@ -1,0 +1,25 @@
+{
+  "advisory": "ADVISORY WORK PRODUCT - REQUIRES LICENSED ATTORNEY REVIEW",
+  "not_legal_advice": true,
+  "instrument": "Regulation (EU) 2024/1689",
+  "celex_act": "32024R1689",
+  "celex_consolidated": "02024R1689-20260727",
+  "eli": "http://data.europa.eu/eli/reg/2024/1689/oj",
+  "pinned_on": "2026-09-09",
+  "notes": "Checklist against Annex III areas and Articles 6-7. Not an automated high-risk verdict. Article 7 allows the Commission to amend Annex III.",
+  "annex_iii_areas": [
+    {"id": "1", "label": "biometrics"},
+    {"id": "2", "label": "critical_infrastructure_safety_components"},
+    {"id": "3", "label": "education_vocational_training"},
+    {"id": "4", "label": "employment_workers_management"},
+    {"id": "5", "label": "essential_private_public_services"},
+    {"id": "6", "label": "law_enforcement"},
+    {"id": "7", "label": "migration_asylum_border_control"},
+    {"id": "8", "label": "administration_of_justice_and_democratic_processes"}
+  ],
+  "article_6_prompts": [
+    "Is the intended purpose listed in Annex III?",
+    "Does Article 6(3) exception analysis apply?",
+    "Is a judicial-authority legal-research use in Annex III point 8(a)?"
+  ]
+}
