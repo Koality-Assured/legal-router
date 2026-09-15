@@ -30,10 +30,6 @@ When work requires mutating the repository, run worktree isolation (`python scri
 | **Author / revise agent definitions** | `ai-tooling/agents/` | [`ai-tooling-ops`](../ai-tooling/agents/ai-tooling-ops/AGENT.md) | [`agent-builder`](../ai-tooling/skills/meta/agent-builder/SKILL.md) | `python scripts/ai-tooling/validate_agent.py` |
 | **Public downstream repo sync** | Public slice repos | [`repo-sync-ops`](../ai-tooling/agents/repo-sync-ops/AGENT.md) | [`sync-downstream-repos`](../ai-tooling/skills/meta/sync-downstream-repos/SKILL.md) | `python scripts/sync/sync_public_repos.py --dry-run` |
 | **Scratch & worktree hygiene** | `scratch/` | [`router-maintenance`](../ai-tooling/agents/router-maintenance/AGENT.md) | [`scratch-cleanup`](../ai-tooling/skills/meta/scratch-cleanup/SKILL.md) | `python scripts/routing/spawn_worktree.py list --json` |
-| **Contract clause review / redline** | `scripts/legal/` | [`contract-lifecycle-operator`](../ai-tooling/agents/contract-lifecycle-operator/AGENT.md) | [`contract-clause-review`](../ai-tooling/skills/legal/contract-clause-review/SKILL.md) | `python scripts/legal/contract_differ.py --dry-run` |
-| **Regulatory crosswalk (EU AI Act / GDPR)** | `supporting/legal/` | [`statutory-compliance-analyst`](../ai-tooling/agents/statutory-compliance-analyst/AGENT.md) | [`regulatory-crosswalk-audit`](../ai-tooling/skills/legal/regulatory-crosswalk-audit/SKILL.md) | Annex III checklist fixture |
-| **SBOM license / copyleft scan** | `scripts/legal/` | [`ip-licensing-curator`](../ai-tooling/agents/ip-licensing-curator/AGENT.md) | [`open-source-license-scan`](../ai-tooling/skills/legal/open-source-license-scan/SKILL.md) | `python scripts/legal/spdx_license_checker.py --dry-run` |
-| **Citation verification** | `scripts/legal/` | [`legal-research-operator`](../ai-tooling/agents/legal-research-operator/AGENT.md) | [`citation-verification`](../ai-tooling/skills/legal/citation-verification/SKILL.md) | `python scripts/legal/verify_citations.py --dry-run --json` |
 
 ---
 

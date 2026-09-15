@@ -23,7 +23,9 @@ from io import StringIO
 from unittest.mock import patch
 
 from _harness_core_protocol import (
+    CORE_CHECKOUT_EXTRA_RELS,
     CORE_REMOTE_NAME,
+    GAME_DEV_PUBLIC_REFUSED,
     ORIGIN_REMOTE_NAME,
     classify_spoke_path,
     copy_tree_filtered,
@@ -35,16 +37,24 @@ from _harness_core_protocol import (
     may_copy_core_source_rel,
 )
 from _harness_template import (
+    HARNESS_TEMPLATE_DEST_EXCLUDE_RELS,
     HARNESS_TEMPLATE_DROP_REFERENCE_FAMILIES,
     HARNESS_TEMPLATE_DROP_SKILL_FAMILIES,
     HARNESS_TEMPLATE_KEEP_REFERENCE_FAMILIES,
     HARNESS_TEMPLATE_SKILL_FAMILIES,
     SKILL_FAMILIES,
+    agent_is_kept,
     harness_template_prune_dest_leftovers,
     is_harness_template_rel_kept,
     skill_is_kept,
 )
-from propose_core_update import DomainPathRefused, SpokePrRefused, propose_core_update
+from propose_core_update import (
+    SPOKE_GENERATED_INDEXES,
+    DomainPathRefused,
+    SpokePrRefused,
+    classify_proposal_paths,
+    propose_core_update,
+)
 from pull_harness_core import main as pull_main
 from pull_harness_core import pull_harness_core
 from scaffold_harness import main as scaffold_main
@@ -122,6 +132,11 @@ class SkillFamilyCouplingTests(unittest.TestCase):
         self.assertFalse(skill_is_kept("google-workspace-admin"))
         self.assertFalse(is_harness_template_rel_kept("references/financial/sox.md"))
         self.assertFalse(is_harness_template_rel_kept("scripts/tests/test_windows_security.py"))
+        self.assertFalse(is_harness_template_rel_kept("scripts/tests/test_network_discovery.py"))
+        self.assertIn(
+            "scripts/tests/test_network_discovery.py",
+            HARNESS_TEMPLATE_DEST_EXCLUDE_RELS,
+        )
         self.assertTrue(
             {"financial", "windows-security", "cis-controls"}
             <= HARNESS_TEMPLATE_DROP_REFERENCE_FAMILIES
@@ -131,6 +146,48 @@ class SkillFamilyCouplingTests(unittest.TestCase):
                 HARNESS_TEMPLATE_KEEP_REFERENCE_FAMILIES
             )
         )
+
+    def test_unknown_overlay_agent_is_domain(self) -> None:
+        rel = "ai-tooling/agents/portfolio-strategy-operator/AGENT.md"
+        self.assertFalse(agent_is_kept("portfolio-strategy-operator"))
+        self.assertTrue(agent_is_kept("script-ops"))
+        self.assertTrue(is_domain_marker(rel))
+        self.assertFalse(is_allowlisted_core_path(rel))
+        self.assertEqual(classify_spoke_path(rel), "domain")
+        self.assertEqual(classify_spoke_path("ai-tooling/agents/script-ops/AGENT.md"), "core")
+        self.assertTrue(is_allowlisted_core_path("ai-tooling/agents/script-ops/AGENT.md"))
+
+    def test_domain_test_file_is_not_core(self) -> None:
+        rel = "scripts/tests/test_ui_ux.py"
+        self.assertTrue(is_domain_marker(rel))
+        self.assertFalse(is_allowlisted_core_path(rel))
+        self.assertEqual(classify_spoke_path(rel), "domain")
+        self.assertFalse(is_harness_template_rel_kept(rel))
+        self.assertTrue(is_harness_template_rel_kept("scripts/tests/test_harness_core_sync.py"))
+        self.assertTrue(is_harness_template_rel_kept("scripts/tests/test_subagent_context_config.py"))
+        self.assertEqual(classify_spoke_path("scripts/tests/test_subagent_context_config.py"), "core")
+
+    def test_game_product_paths_are_instance_leaks(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            marker = root / "projects" / "secpanic-idler"
+            marker.mkdir(parents=True)
+            (marker / "README.md").write_text("# stub overlay only\n", encoding="utf-8")
+            vendor = root / "vendor" / "Distastefu1" / "notes"
+            vendor.mkdir(parents=True)
+            (vendor / "note.md").write_text("# identity stub\n", encoding="utf-8")
+            hits = detect_instance_leakage(root)
+            joined = " ".join(hits).lower()
+            self.assertIn("secpanic-idler", joined)
+            self.assertIn("distastefu1", joined)
+            self.assertTrue(is_domain_marker("projects/secpanic-idler/README.md"))
+            self.assertFalse(is_harness_template_rel_kept("projects/secpanic-idler/README.md"))
+            self.assertFalse(is_harness_template_rel_kept("vendor/Distastefu1/notes/note.md"))
+            pruned = harness_template_prune_dest_leftovers(root)
+            self.assertFalse(marker.exists())
+            self.assertFalse((root / "vendor" / "Distastefu1").exists())
+            self.assertTrue(any("secpanic-idler" in item.lower() for item in pruned))
+            self.assertTrue(any("distastefu1" in item.lower() for item in pruned))
 
 
     def test_prune_drops_leftover_vendor_family(self) -> None:
@@ -146,6 +203,39 @@ class SkillFamilyCouplingTests(unittest.TestCase):
             self.assertFalse((dest / "ai-tooling" / "skills" / "aws").exists())
             self.assertTrue((dest / "ai-tooling" / "skills" / "meta" / "isolate-work").exists())
             self.assertTrue(any("aws" in item for item in pruned))
+
+    def test_prune_drops_orphan_network_discovery_test(self) -> None:
+        rel = "scripts/tests/test_network_discovery.py"
+        self.assertIn(rel, HARNESS_TEMPLATE_DEST_EXCLUDE_RELS)
+        with tempfile.TemporaryDirectory() as tmp:
+            dest = Path(tmp)
+            orphan = dest / rel
+            orphan.parent.mkdir(parents=True)
+            orphan.write_text(
+                "from scripts.network.discover_network import discover\n",
+                encoding="utf-8",
+            )
+            keeper = dest / "scripts" / "tests" / "test_harness_core_sync.py"
+            keeper.write_text("# keep\n", encoding="utf-8")
+            pruned = harness_template_prune_dest_leftovers(dest)
+            self.assertFalse(orphan.exists())
+            self.assertTrue(keeper.exists())
+            self.assertIn(rel, pruned)
+
+    def test_core_checkout_extra_rels_classified_as_core_and_allowlisted(self) -> None:
+        samples = (
+            ".github/workflows/ci.yml",
+            "README.md",
+            "routing/skill-dispatch.md",
+            "routing/area-map.md",
+            "scripts/script-index.md",
+        )
+        for rel in samples:
+            self.assertIn(rel, CORE_CHECKOUT_EXTRA_RELS)
+
+        for rel in CORE_CHECKOUT_EXTRA_RELS:
+            self.assertEqual(classify_spoke_path(rel), "core", f"{rel} should be classified as core")
+            self.assertTrue(is_allowlisted_core_path(rel), f"{rel} should be allowlisted core")
 
 
 
@@ -180,6 +270,29 @@ class ScaffoldHarnessTests(unittest.TestCase):
         self.assertEqual(payload["visibility"], "private")
         self.assertTrue(payload["remotes"][ORIGIN_REMOTE_NAME].endswith("game-dev-router.git"))
         self.assertIn("ai-harness-core.git", payload["remotes"][CORE_REMOTE_NAME])
+
+    def test_game_dev_public_visibility_is_refused(self) -> None:
+        with self.assertRaises(ValueError) as ctx:
+            scaffold_harness(
+                name="game-dev-router",
+                target=Path("unused"),
+                domain="game-dev",
+                visibility="public",
+                dry_run=True,
+            )
+        self.assertEqual(str(ctx.exception), GAME_DEV_PUBLIC_REFUSED)
+
+    def test_game_dev_public_break_glass_allows(self) -> None:
+        payload = scaffold_harness(
+            name="game-dev-router",
+            target=Path("unused"),
+            domain="game-dev",
+            visibility="public",
+            allow_public_game_dev=True,
+            dry_run=True,
+        )
+        self.assertEqual(payload["visibility"], "public")
+        self.assertTrue(payload["ok"])
 
     def test_live_path_source_writes_overlays_and_remotes(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -302,6 +415,46 @@ class ProposeCoreUpdateTests(unittest.TestCase):
                     dry_run=True,
                 )
 
+    def test_refuses_unknown_overlay_agent_paths(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            spoke = Path(tmp)
+            with self.assertRaises(DomainPathRefused) as ctx:
+                propose_core_update(
+                    spoke=spoke,
+                    paths=["ai-tooling/agents/portfolio-strategy-operator/AGENT.md"],
+                    dry_run=True,
+                )
+            self.assertIn("portfolio-strategy-operator", str(ctx.exception))
+            payload = propose_core_update(
+                spoke=spoke,
+                paths=["ai-tooling/agents/script-ops/AGENT.md"],
+                dry_run=True,
+            )
+            self.assertTrue(payload["ok"])
+            self.assertIn("ai-tooling/agents/script-ops/AGENT.md", payload["paths"])
+
+    def test_refuses_domain_test_paths(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            spoke = Path(tmp)
+            with self.assertRaises(DomainPathRefused) as ctx:
+                propose_core_update(
+                    spoke=spoke,
+                    paths=["scripts/tests/test_ui_ux.py"],
+                    dry_run=True,
+                )
+            self.assertIn("test_ui_ux.py", str(ctx.exception))
+
+    def test_refuses_game_product_leak_paths(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            spoke = Path(tmp)
+            with self.assertRaises(DomainPathRefused) as ctx:
+                propose_core_update(
+                    spoke=spoke,
+                    paths=["projects/secpanic-idler/README.md"],
+                    dry_run=True,
+                )
+            self.assertIn("secpanic-idler", str(ctx.exception))
+
     def test_refuses_vendor_skill_paths(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             spoke = Path(tmp)
@@ -389,6 +542,29 @@ class ProposeCoreUpdateTests(unittest.TestCase):
                     dry_run=True,
                 )
             self.assertIn("legal-overlay", str(ctx.exception))
+
+    def test_propose_core_update_refuses_spoke_generated_indexes(self) -> None:
+        expected = frozenset(
+            {
+                "routing/skill-dispatch.md",
+                "routing/area-map.md",
+                "routing/agent-dispatch.md",
+                "routing/by-task.md",
+                "scripts/script-index.md",
+            }
+        )
+        self.assertEqual(SPOKE_GENERATED_INDEXES, expected)
+
+        with tempfile.TemporaryDirectory() as tmp:
+            spoke = Path(tmp)
+            for rel in sorted(SPOKE_GENERATED_INDEXES):
+                core, refused = classify_proposal_paths([rel])
+                self.assertEqual(core, [])
+                self.assertEqual(refused, [rel])
+                with self.assertRaises(DomainPathRefused) as ctx:
+                    propose_core_update(spoke=spoke, paths=[rel], dry_run=True)
+                self.assertIn(rel, str(ctx.exception))
+
 
 
 class PullHarnessCoreTests(unittest.TestCase):
@@ -485,6 +661,98 @@ class PullHarnessCoreTests(unittest.TestCase):
             self.assertTrue(payload["dry_run"])
             self.assertFalse(payload.get("fetched"))
             self.assertFalse(payload["merged"])
+
+    def test_pull_handles_core_checkout_extra_rels_and_regenerates_indexes(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            core = Path(tmp) / "core"
+            spoke = Path(tmp) / "spoke"
+
+            _init_repo(core)
+            (core / "AGENTS.md").write_text("# core v1\n", encoding="utf-8")
+            (core / "README.md").write_text("# Core Readme v1\n", encoding="utf-8")
+            (core / ".github" / "workflows").mkdir(parents=True)
+            (core / ".github" / "workflows" / "ci.yml").write_text("name: CI v1\n", encoding="utf-8")
+            (core / "routing").mkdir(parents=True)
+            (core / "routing" / "skill-dispatch.md").write_text("# skills core v1\n", encoding="utf-8")
+            _commit(core, "core v1")
+
+            _init_repo(spoke)
+            (spoke / "AGENTS.md").write_text("# core v1\n", encoding="utf-8")
+            (spoke / "README.md").write_text("# Spoke Readme\n", encoding="utf-8")
+            (spoke / "scripts" / "routing").mkdir(parents=True)
+            (spoke / "scripts" / "routing" / "generate_routing_index.py").write_text(
+                "from pathlib import Path\n"
+                "Path('routing').mkdir(parents=True, exist_ok=True)\n"
+                "(Path('routing') / 'area-map.md').write_text('# area map spoke\\n', encoding='utf-8')\n"
+                "(Path('routing') / 'skill-dispatch.md').write_text('# skills spoke\\n', encoding='utf-8')\n"
+                "(Path('routing') / 'agent-dispatch.md').write_text('# agents spoke\\n', encoding='utf-8')\n",
+                encoding="utf-8",
+            )
+            (spoke / "scripts" / "routing" / "generate_script_index.py").write_text(
+                "from pathlib import Path\n"
+                "Path('scripts').mkdir(parents=True, exist_ok=True)\n"
+                "(Path('scripts') / 'script-index.md').write_text('# scripts spoke\\n', encoding='utf-8')\n",
+                encoding="utf-8",
+            )
+            _commit(spoke, "spoke v1")
+            _git(spoke, "remote", "add", CORE_REMOTE_NAME, str(core))
+            _git(spoke, "fetch", CORE_REMOTE_NAME)
+
+            # Update extra rels and add a domain marker in core
+            (core / "README.md").write_text("# Core Readme v2\n", encoding="utf-8")
+            (core / ".github" / "workflows" / "ci.yml").write_text("name: CI v2\n", encoding="utf-8")
+            (core / "routing" / "skill-dispatch.md").write_text("# skills core v2\n", encoding="utf-8")
+            (core / "docs" / "standards").mkdir(parents=True, exist_ok=True)
+            (core / "docs" / "standards" / "legal-overlay.md").write_text("# domain leak\n", encoding="utf-8")
+            _commit(core, "core v2")
+
+            # Dry-run verification
+            dry = pull_harness_core(spoke=spoke, ref="main", dry_run=True, fetch=True)
+            self.assertTrue(dry["ok"])
+            self.assertFalse(dry["merged"])
+            self.assertIn(".github/workflows/ci.yml", dry["updates"])
+            self.assertIn("README.md", dry["updates"])
+            self.assertIn("routing/skill-dispatch.md", dry["updates"])
+            self.assertNotIn(".github/workflows/ci.yml", dry["skipped_domain"])
+            self.assertNotIn("README.md", dry["skipped_domain"])
+            self.assertNotIn("routing/skill-dispatch.md", dry["skipped_domain"])
+            self.assertIn("docs/standards/legal-overlay.md", dry["skipped_domain"])
+            self.assertEqual(dry["regenerated_indexes"], [])
+
+            # Live pull verification
+            live = pull_harness_core(spoke=spoke, ref="main", dry_run=False, fetch=True)
+            self.assertTrue(live["ok"])
+            self.assertFalse(live["merged"])
+            self.assertIsNotNone(live["branch"])
+            self.assertIn(".github/workflows/ci.yml", live["updates"])
+            self.assertIn("README.md", live["updates"])
+            self.assertIn("routing/skill-dispatch.md", live["updates"])
+            self.assertEqual(
+                (spoke / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8"),
+                "name: CI v2\n",
+            )
+            self.assertEqual(
+                (spoke / "README.md").read_text(encoding="utf-8"),
+                "# Core Readme v2\n",
+            )
+            self.assertIn("routing/area-map.md", live["regenerated_indexes"])
+            self.assertIn("routing/skill-dispatch.md", live["regenerated_indexes"])
+            self.assertIn("routing/agent-dispatch.md", live["regenerated_indexes"])
+            self.assertIn("scripts/script-index.md", live["regenerated_indexes"])
+            # Index scripts ran after checkout, so spoke-specific generation took effect
+            self.assertEqual(
+                (spoke / "routing" / "skill-dispatch.md").read_text(encoding="utf-8"),
+                "# skills spoke\n",
+            )
+            self.assertEqual(
+                (spoke / "routing" / "area-map.md").read_text(encoding="utf-8"),
+                "# area map spoke\n",
+            )
+            self.assertEqual(
+                (spoke / "scripts" / "script-index.md").read_text(encoding="utf-8"),
+                "# scripts spoke\n",
+            )
+
 
 
 class OverlayStubTests(unittest.TestCase):
