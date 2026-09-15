@@ -2,7 +2,7 @@
 doc_kind: routing_map
 canonical_id: script-index
 topics: [scripts, routing]
-generated_at_utc: 2026-09-14T16:02:31Z
+generated_at_utc: 2026-09-15T13:26:14Z
 generator: scripts/routing/generate_script_index.py
 ---
 
