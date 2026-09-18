@@ -15,18 +15,6 @@ Human index (not agent SoT):
 | [`research-operator/`](./research-operator/) | Deep technical research, BenchLM, AI vendor tracking, community intelligence, web crawl | high |
 | [`security-tooling-operator/`](./security-tooling-operator/) | Defensive assessments, threat modeling, AD/Windows audit, network discovery, packet review | standard |
 
-
-### Legal domain specialists
-
-Distinct-domain spoke specialists (pairing criterion 5). Advisory output only.
-
-| Specialist | Role | Tier |
-| --- | --- | --- |
-| [`contract-lifecycle-operator/`](./contract-lifecycle-operator/) | Clause extraction, redlines, liability caps, SLA audits | high |
-| [`statutory-compliance-analyst/`](./statutory-compliance-analyst/) | Regulatory crosswalks and gap analysis | high |
-| [`ip-licensing-curator/`](./ip-licensing-curator/) | SPDX / CycloneDX copyleft heuristics | standard |
-| [`legal-research-operator/`](./legal-research-operator/) | Citation verification and advisory memos | high |
-
 ### Coordinator & true specialists
 
 | Specialist | Role | Tier |
