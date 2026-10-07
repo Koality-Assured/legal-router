@@ -45,7 +45,7 @@ High: planted fake reporters are a known failure mode. Unverified live cites sta
 - `python scripts/legal/verify_citations.py`
 - `scripts/legal/fixtures/citations/citation-suite.json`
 - CourtListener lookup (opt-in) and GovInfo for official US packages
-- Sibling corpus `../ai-router/references/us-law/` for official federal and state locators. A cite still needs a fetched official page or it stays unverified.
+- Sibling corpus `../ai-router/references/us-law/` from the legal-router repository root, for official federal and state locators. That path is not relative to this file. A cite still needs a fetched official page or it stays unverified.
 
 ## Isolation
 

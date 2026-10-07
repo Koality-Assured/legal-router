@@ -50,7 +50,7 @@ Specialist for citation verification and advisory legal-research memos.
 
 - Assigned `SKILL.md` (`citation-verification`)
 - [`docs/standards/legal-overlay.md`](../../../docs/standards/legal-overlay.md)
-- Sibling primary-law corpus: `../ai-router/references/us-law/` when this checkout sits next to `ai-router`. Do not copy those pages into this spoke.
+- Sibling primary-law corpus: `../ai-router/references/us-law/` from the legal-router repository root when this checkout sits next to `ai-router`. That path is not relative to this file. Do not copy those pages into this spoke.
 - [`supporting/legal/legal-citation-standards.md`](../../../supporting/legal/legal-citation-standards.md)
 - [`docs/agent-session-security.md`](../../../docs/agent-session-security.md)
 
