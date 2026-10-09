@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "koality-legal-router"
+version = "1.0.0"
+description = "Domain AI agent harness for legal research, contract analysis, regulatory compliance, US primary law navigation, and strict citation verification."
+authors = [{ name = "Koality-Assured", email = "engineering@koality-assured.com" }]
+license = { text = "MIT" }
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "pyyaml>=6.0",
+    "cryptography>=41.0",
+]
+
+[tool.setuptools]
+packages = []

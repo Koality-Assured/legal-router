@@ -1,0 +1,289 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%" role="img" aria-labelledby="logoTitle logoDesc">
+  <title id="logoTitle">Legal Router Logo</title>
+  <desc id="logoDesc">Scales of justice, judicial folio codex, fluted pillar, and cryptographic citation verification seal in burgundy, gold, and midnight navy.</desc>
+  <defs>
+    <!-- Background Canvas Gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#070A14"/>
+      <stop offset="45%" stop-color="#120A1A"/>
+      <stop offset="80%" stop-color="#1A0D1E"/>
+      <stop offset="100%" stop-color="#080C16"/>
+    </linearGradient>
+
+    <!-- Outer Frame Gradient (Wine to Gold) -->
+    <linearGradient id="frameGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9F1239"/>
+      <stop offset="25%" stop-color="#F59E0B"/>
+      <stop offset="50%" stop-color="#FBBF24"/>
+      <stop offset="75%" stop-color="#BE123C"/>
+      <stop offset="100%" stop-color="#D97706"/>
+    </linearGradient>
+
+    <!-- Inner Border Gradient -->
+    <linearGradient id="innerBorderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FBBF24" stop-opacity="0.6"/>
+      <stop offset="50%" stop-color="#9F1239" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#F59E0B" stop-opacity="0.6"/>
+    </linearGradient>
+
+    <!-- Rich Gold Gradients -->
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFBEB"/>
+      <stop offset="20%" stop-color="#FDE68A"/>
+      <stop offset="50%" stop-color="#F59E0B"/>
+      <stop offset="80%" stop-color="#D97706"/>
+      <stop offset="100%" stop-color="#92400E"/>
+    </linearGradient>
+
+    <linearGradient id="goldBeamGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#D97706"/>
+      <stop offset="25%" stop-color="#FDE68A"/>
+      <stop offset="50%" stop-color="#FBBF24"/>
+      <stop offset="75%" stop-color="#FDE68A"/>
+      <stop offset="100%" stop-color="#D97706"/>
+    </linearGradient>
+
+    <linearGradient id="panGradLeft" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FDE68A"/>
+      <stop offset="40%" stop-color="#F59E0B"/>
+      <stop offset="100%" stop-color="#78350F"/>
+    </linearGradient>
+
+    <linearGradient id="panGradRight" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FDE68A"/>
+      <stop offset="40%" stop-color="#F59E0B"/>
+      <stop offset="100%" stop-color="#78350F"/>
+    </linearGradient>
+
+    <!-- Royal Burgundy / Wine Gradients -->
+    <linearGradient id="wineGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#BE123C"/>
+      <stop offset="40%" stop-color="#9F1239"/>
+      <stop offset="70%" stop-color="#881337"/>
+      <stop offset="100%" stop-color="#4C0519"/>
+    </linearGradient>
+
+    <linearGradient id="wineGlowGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#BE123C" stop-opacity="0.7"/>
+      <stop offset="100%" stop-color="#881337" stop-opacity="0.2"/>
+    </linearGradient>
+
+    <!-- Judicial Pillar Silver/Slate Gradient -->
+    <linearGradient id="pillarGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#334155"/>
+      <stop offset="30%" stop-color="#94A3B8"/>
+      <stop offset="50%" stop-color="#F1F5F9"/>
+      <stop offset="70%" stop-color="#94A3B8"/>
+      <stop offset="100%" stop-color="#1E293B"/>
+    </linearGradient>
+
+    <!-- Codex Page Parchment Gradient -->
+    <linearGradient id="parchmentLeft" x1="100%" y1="0%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#E2E8F0"/>
+      <stop offset="20%" stop-color="#FFFBEB"/>
+      <stop offset="80%" stop-color="#FEF3C7"/>
+      <stop offset="100%" stop-color="#E4D5B7"/>
+    </linearGradient>
+
+    <linearGradient id="parchmentRight" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#E2E8F0"/>
+      <stop offset="20%" stop-color="#FFFBEB"/>
+      <stop offset="80%" stop-color="#FEF3C7"/>
+      <stop offset="100%" stop-color="#E4D5B7"/>
+    </linearGradient>
+
+    <!-- Ambient Glows -->
+    <radialGradient id="burgundyAmbient" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#9F1239" stop-opacity="0.32"/>
+      <stop offset="50%" stop-color="#881337" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#070A14" stop-opacity="0"/>
+    </radialGradient>
+
+    <radialGradient id="goldAmbient" cx="50%" cy="40%" r="45%">
+      <stop offset="0%" stop-color="#F59E0B" stop-opacity="0.25"/>
+      <stop offset="60%" stop-color="#F59E0B" stop-opacity="0.05"/>
+      <stop offset="100%" stop-color="#070A14" stop-opacity="0"/>
+    </radialGradient>
+
+    <radialGradient id="sealCoreGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFFBEB" stop-opacity="0.9"/>
+      <stop offset="35%" stop-color="#FBBF24" stop-opacity="0.6"/>
+      <stop offset="70%" stop-color="#9F1239" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#070A14" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Filter Effects -->
+    <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter id="dropShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#000000" flood-opacity="0.6"/>
+    </filter>
+  </defs>
+
+  <!-- Outer Rounded Container -->
+  <rect x="16" y="16" width="480" height="480" rx="88" fill="url(#bgGrad)" stroke="url(#frameGrad)" stroke-width="3.5" filter="url(#dropShadow)"/>
+
+  <!-- Inner Delicate Decorative Border -->
+  <rect x="28" y="28" width="456" height="456" rx="76" fill="none" stroke="url(#innerBorderGrad)" stroke-width="1.2" stroke-dasharray="6 4"/>
+
+  <!-- Geometric Watermark / Grid Lines -->
+  <g opacity="0.12" stroke="#F59E0B" stroke-width="1">
+    <circle cx="256" cy="256" r="180" fill="none"/>
+    <circle cx="256" cy="256" r="130" fill="none" stroke-dasharray="4 4"/>
+    <line x1="256" y1="40" x2="256" y2="472"/>
+    <line x1="40" y1="256" x2="472" y2="256"/>
+    <line x1="104" y1="104" x2="408" y2="408" stroke-dasharray="3 3"/>
+    <line x1="408" y1="104" x2="104" y2="408" stroke-dasharray="3 3"/>
+  </g>
+
+  <!-- Ambient Radiant Back-Glows -->
+  <circle cx="256" cy="256" r="210" fill="url(#burgundyAmbient)"/>
+  <circle cx="256" cy="200" r="160" fill="url(#goldAmbient)"/>
+
+  <!-- ==================== CODEX / OPEN TOME FOUNDATION ==================== -->
+  <g id="openCodex" filter="url(#dropShadow)">
+    <!-- Book Binding / Leather Cover Shadow (Wine / Crimson) -->
+    <path d="M 120 388 C 175 400 230 404 256 406 C 282 404 337 400 392 388 C 400 386 406 392 404 400 C 392 414 332 426 256 428 C 180 426 120 414 108 400 C 106 392 112 386 120 388 Z" fill="url(#wineGrad)"/>
+
+    <!-- Left Open Folio Pages -->
+    <path d="M 256 398 C 224 394 172 386 116 368 C 112 367 110 362 112 358 L 126 312 C 127 308 131 306 135 307 C 185 322 230 330 256 333 Z" fill="url(#parchmentLeft)"/>
+    <!-- Left Page Subtle Text Lines -->
+    <g opacity="0.45" stroke="#78350F" stroke-width="1.5" stroke-linecap="round">
+      <line x1="140" y1="324" x2="236" y2="340"/>
+      <line x1="136" y1="336" x2="240" y2="352"/>
+      <line x1="132" y1="348" x2="242" y2="364"/>
+      <line x1="128" y1="360" x2="238" y2="376"/>
+    </g>
+
+    <!-- Right Open Folio Pages -->
+    <path d="M 256 398 C 288 394 340 386 396 368 C 400 367 402 362 400 358 L 386 312 C 385 308 381 306 377 307 C 327 322 282 330 256 333 Z" fill="url(#parchmentRight)"/>
+    <!-- Right Page Subtle Text Lines -->
+    <g opacity="0.45" stroke="#78350F" stroke-width="1.5" stroke-linecap="round">
+      <line x1="276" y1="340" x2="372" y2="324"/>
+      <line x1="272" y1="352" x2="376" y2="336"/>
+      <line x1="270" y1="364" x2="380" y2="348"/>
+      <line x1="274" y1="376" x2="384" y2="360"/>
+    </g>
+
+    <!-- Folio Center Gutter Spine Accent -->
+    <line x1="256" y1="332" x2="256" y2="400" stroke="#F59E0B" stroke-width="2.5"/>
+  </g>
+
+  <!-- ==================== CENTRAL PILLAR OF JURISPRUDENCE ==================== -->
+  <g id="centralPillar" filter="url(#dropShadow)">
+    <!-- Base Plinth -->
+    <path d="M 226 348 L 286 348 L 282 336 L 230 336 Z" fill="url(#goldGrad)"/>
+    <rect x="232" y="330" width="48" height="6" rx="2" fill="url(#pillarGrad)"/>
+
+    <!-- Pillar Shaft (Classical Fluted Column) -->
+    <rect x="244" y="168" width="24" height="162" fill="url(#pillarGrad)"/>
+    <!-- Fluting Details -->
+    <line x1="248" y1="172" x2="248" y2="326" stroke="#FFFFFF" stroke-opacity="0.6" stroke-width="1.2"/>
+    <line x1="254" y1="172" x2="254" y2="326" stroke="#FFFFFF" stroke-opacity="0.9" stroke-width="1.5"/>
+    <line x1="260" y1="172" x2="260" y2="326" stroke="#475569" stroke-opacity="0.7" stroke-width="1.2"/>
+    <line x1="264" y1="172" x2="264" y2="326" stroke="#1E293B" stroke-opacity="0.7" stroke-width="1.2"/>
+
+    <!-- Column Capital / Ornate Head -->
+    <path d="M 234 168 L 278 168 L 272 156 L 240 156 Z" fill="url(#goldGrad)"/>
+    <rect x="238" y="152" width="36" height="4" rx="1" fill="#FEF3C7"/>
+  </g>
+
+  <!-- ==================== SCALES OF JUSTICE ==================== -->
+  <g id="scalesOfJustice" filter="url(#dropShadow)">
+    <!-- Top Finial / Apex Diamond -->
+    <path d="M 256 102 L 263 114 L 256 126 L 249 114 Z" fill="url(#goldGrad)" filter="url(#softGlow)"/>
+    <circle cx="256" cy="114" r="2.5" fill="#FFFFFF"/>
+
+    <!-- Central Fulcrum Mount -->
+    <path d="M 250 126 L 262 126 L 260 148 L 252 148 Z" fill="url(#goldGrad)"/>
+
+    <!-- Horizontal Balance Beam -->
+    <path d="M 126 156 C 172 142 222 138 256 138 C 290 138 340 142 386 156 C 392 158 396 164 394 170 C 392 174 386 176 380 174 C 340 162 292 158 256 158 C 220 158 172 162 132 174 C 126 176 120 174 118 170 C 116 164 120 158 126 156 Z" fill="url(#goldBeamGrad)"/>
+
+    <!-- Fulcrum Center Brooch / Star -->
+    <circle cx="256" cy="148" r="14" fill="url(#wineGrad)" stroke="url(#goldGrad)" stroke-width="2.5"/>
+    <circle cx="256" cy="148" r="6" fill="#FBBF24" filter="url(#softGlow)"/>
+    <circle cx="256" cy="148" r="2" fill="#FFFFFF"/>
+
+    <!-- Left Scale Assembly -->
+    <g id="leftScale">
+      <!-- Beam End Pivot -->
+      <circle cx="124" cy="166" r="5" fill="url(#goldGrad)"/>
+      <circle cx="124" cy="166" r="2" fill="#1E293B"/>
+
+      <!-- Suspension Cords / Triple Chains -->
+      <g stroke="url(#goldGrad)" stroke-width="1.2" opacity="0.85">
+        <line x1="124" y1="169" x2="88" y2="242"/>
+        <line x1="124" y1="169" x2="124" y2="246"/>
+        <line x1="124" y1="169" x2="160" y2="242"/>
+      </g>
+
+      <!-- Pan Top Rim Oval & Basin -->
+      <ellipse cx="124" cy="244" rx="38" ry="8" fill="url(#panGradLeft)" stroke="#FDE68A" stroke-width="1"/>
+      <path d="M 86 244 C 86 274 162 274 162 244 Z" fill="url(#panGradLeft)" stroke="#92400E" stroke-width="1"/>
+      <!-- Pan Glow / Contents -->
+      <ellipse cx="124" cy="245" rx="30" ry="5" fill="#FEF3C7" opacity="0.5"/>
+    </g>
+
+    <!-- Right Scale Assembly -->
+    <g id="rightScale">
+      <!-- Beam End Pivot -->
+      <circle cx="388" cy="166" r="5" fill="url(#goldGrad)"/>
+      <circle cx="388" cy="166" r="2" fill="#1E293B"/>
+
+      <!-- Suspension Cords / Triple Chains -->
+      <g stroke="url(#goldGrad)" stroke-width="1.2" opacity="0.85">
+        <line x1="388" y1="169" x2="352" y2="242"/>
+        <line x1="388" y1="169" x2="388" y2="246"/>
+        <line x1="388" y1="169" x2="424" y2="242"/>
+      </g>
+
+      <!-- Pan Top Rim Oval & Basin -->
+      <ellipse cx="388" cy="244" rx="38" ry="8" fill="url(#panGradRight)" stroke="#FDE68A" stroke-width="1"/>
+      <path d="M 350 244 C 350 274 426 274 426 244 Z" fill="url(#panGradRight)" stroke="#92400E" stroke-width="1"/>
+      <!-- Pan Glow / Contents -->
+      <ellipse cx="388" cy="245" rx="30" ry="5" fill="#FEF3C7" opacity="0.5"/>
+    </g>
+  </g>
+
+  <!-- ==================== CRYPTOGRAPHIC CITATION SEAL ==================== -->
+  <g id="verificationSeal" transform="translate(256, 240)" filter="url(#dropShadow)">
+    <!-- Ambient Halo -->
+    <circle cx="0" cy="0" r="48" fill="url(#sealCoreGlow)"/>
+
+    <!-- 8-Pointed Citation Star Badge -->
+    <g fill="url(#wineGrad)" stroke="url(#goldGrad)" stroke-width="2">
+      <path d="M 0 -36 L 9 -12 L 36 0 L 9 12 L 0 36 L -9 12 L -36 0 L -9 -12 Z"/>
+      <path d="M -25 -25 L 0 -10 L 25 -25 L 10 0 L 25 25 L 0 10 L -25 25 L -10 0 Z" opacity="0.85"/>
+    </g>
+
+    <!-- Outer Seal Ring -->
+    <circle cx="0" cy="0" r="24" fill="#0A0E1A" stroke="url(#goldGrad)" stroke-width="2.5"/>
+    <circle cx="0" cy="0" r="20" fill="url(#wineGrad)"/>
+
+    <!-- Legal Section Symbol (§) Inscribed in Gold -->
+    <text x="0" y="7" font-family="'Cinzel', 'Times New Roman', 'Georgia', serif" font-size="20" font-weight="bold" fill="url(#goldGrad)" text-anchor="middle" filter="url(#softGlow)">§</text>
+  </g>
+
+  <!-- ==================== LEGAL QUILL EMBLEM ==================== -->
+  <g id="authoringQuill" transform="rotate(-36 348 300)" filter="url(#dropShadow)">
+    <!-- Feather Shaft / Vane in Polished Pearl & Wine -->
+    <path d="M 348 200 C 356 220 364 254 354 286 C 350 276 346 272 342 276 C 336 282 338 296 332 306 C 324 300 326 290 322 284 C 316 278 310 286 304 274 C 314 246 332 216 348 200 Z" fill="url(#wineGlowGrad)" stroke="#FBBF24" stroke-width="1.2"/>
+    <!-- Quill Spine -->
+    <line x1="348" y1="200" x2="330" y2="310" stroke="#FDE68A" stroke-width="2"/>
+    <!-- Gold Nib at Tip -->
+    <path d="M 330 310 L 324 326 L 328 328 L 333 316 Z" fill="url(#goldGrad)"/>
+    <circle cx="327" cy="322" r="1" fill="#FFFFFF"/>
+  </g>
+
+  <!-- Base Inscription / Domain Tag -->
+  <g text-anchor="middle" font-family="'Cinzel', 'Trajan Pro', 'Georgia', serif">
+    <text x="256" y="454" font-size="13" font-weight="bold" letter-spacing="4" fill="url(#goldGrad)">LEX ET VERITAS</text>
+  </g>
+</svg>
