@@ -28,8 +28,10 @@ Human index (not agent SoT):
 | [`cloud-admin-provision/`](./admin/cloud-admin-provision/) | cloud-operator | mutate |
 | [`code-review-report/`](./reporting/code-review-report/) | document-operator | mutate |
 | [`contract-clause-review/`](./legal/contract-clause-review/) | contract-lifecycle-operator | mutate |
+| [`contract-redline-diff/`](./legal/contract-redline-diff/) | contract-lifecycle-operator | mutate |
 | [`corpus-draft/`](./reporting/corpus-draft/) | document-operator | mutate |
 | [`cost-layer-dry-run/`](./cost-layers/cost-layer-dry-run/) | harness-operator | mutate |
+| [`deal-risk-memo/`](./legal/deal-risk-memo/) | contract-lifecycle-operator | mutate |
 | [`deep-research/`](./meta/deep-research/) | research-operator | mutate |
 | [`doc-builder/`](./meta/doc-builder/) | document-operator | mutate |
 | [`downstream-repo-update/`](./meta/downstream-repo-update/) | harness-operator | mutate |
@@ -47,6 +49,7 @@ Human index (not agent SoT):
 | [`harness-review/`](./harness-review/) | harness-operator | mutate |
 | [`humanizer/`](./reporting/humanizer/) | document-operator | mutate |
 | [`isolate-work/`](./meta/isolate-work/) | router | mutate |
+| [`jurisdiction-hierarchy-map/`](./legal/jurisdiction-hierarchy-map/) | legal-research-operator | read-only |
 | [`markdownlint/`](./meta/markdownlint/) | document-operator | mutate |
 | [`readme-maintain/`](./meta/readme-maintain/) | document-operator | mutate |
 | [`memory-adjust/`](./memory/memory-adjust/) | harness-operator | mutate |
@@ -55,11 +58,12 @@ Human index (not agent SoT):
 | [`mermaid-diagram/`](./reporting/mermaid-diagram/) | document-operator | mutate |
 | [`model-memory-operate/`](./model-memory-operate/) | harness-operator | mutate |
 | [`open-source-license-scan/`](./legal/open-source-license-scan/) | ip-licensing-curator | read-only |
+| [`patent-claim-crosswalk/`](./legal/patent-claim-crosswalk/) | ip-licensing-curator | mutate |
+| [`privacy-policy-benchmark/`](./legal/privacy-policy-benchmark/) | statutory-compliance-analyst | mutate |
 | [`proposal-report/`](./reporting/proposal-report/) | document-operator | mutate |
 | [`public-llm-admin/`](./admin/public-llm-admin/) | cloud-operator | mutate |
 | [`qmd-efficiency/`](./meta/qmd-efficiency/) | harness-operator | mutate |
 | [`qmd-usage/`](./meta/qmd-usage/) | harness-operator | read-only |
-| [`readme-maintain/`](./meta/readme-maintain/) | document-operator | mutate |
 | [`reference-maintain/`](./meta/reference-maintain/) | document-operator | mutate |
 | [`regulatory-crosswalk-audit/`](./legal/regulatory-crosswalk-audit/) | statutory-compliance-analyst | mutate |
 | [`scratch-cleanup/`](./meta/scratch-cleanup/) | harness-operator | mutate |

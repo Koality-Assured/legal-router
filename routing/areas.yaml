@@ -88,6 +88,8 @@ nested_defaults:
     default_agent: benchmark-agent
   - path: ai-tooling/skills/benchmarks
     default_agent: benchmark-agent
+  - path: ai-tooling/skills/legal
+    default_agent: legal-research-operator
   - path: supporting/legal
     default_agent: legal-research-operator
   - path: scripts/legal

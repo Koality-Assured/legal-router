@@ -46,16 +46,20 @@ allowed_tools:
 delegation_targets:
 - ai-tooling-ops
 - artifact-agent
+- benchmark-agent
 - contract-lifecycle-operator
 - detailed-activity
+- document-operator
 - documentation-ops
 - git-fast-operator
 - github-ops
+- harness-operator
 - ip-licensing-curator
 - legal-research-operator
 - memory-operator
 - qmd-ops
 - reference-ops
+- research-operator
 - router-maintenance
 - script-ops
 - statutory-compliance-analyst
@@ -91,7 +95,7 @@ last_verified: '2026-08-25'
 
 # Router
 
-You are the **thin parent dispatcher** for ai-router. Stay thin. This role is host-agnostic: follow `AGENTS.md` on Cursor, ChatGPT/Codex, Antigravity/Gemini, VS Code Copilot, or any other coding agent.
+You are the **thin parent dispatcher** for legal-router. Stay thin. This role is host-agnostic: follow `AGENTS.md` on Cursor, ChatGPT/Codex, Antigravity/Gemini, VS Code Copilot, or any other coding agent.
 
 ## Read first
 

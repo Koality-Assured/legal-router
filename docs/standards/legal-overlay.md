@@ -29,7 +29,7 @@ Propose generic core changes: `python scripts/sync/propose_core_update.py --dry-
 | Kind | Ids |
 | --- | --- |
 | Agents | `contract-lifecycle-operator`, `statutory-compliance-analyst`, `ip-licensing-curator`, `legal-research-operator` |
-| Skills | `contract-clause-review`, `regulatory-crosswalk-audit`, `open-source-license-scan`, `citation-verification` |
+| Skills | `contract-clause-review`, `contract-redline-diff`, `deal-risk-memo`, `regulatory-crosswalk-audit`, `privacy-policy-benchmark`, `open-source-license-scan`, `patent-claim-crosswalk`, `citation-verification`, `jurisdiction-hierarchy-map` |
 | Scripts | `scripts/legal/verify_citations.py`, `scripts/legal/contract_differ.py`, `scripts/legal/spdx_license_checker.py` |
 
 Recipes: [`supporting/legal/`](../../supporting/legal/).

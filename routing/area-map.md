@@ -2,7 +2,7 @@
 doc_kind: routing_map
 canonical_id: area-map
 topics: [routing, write-back, structure]
-generated_at_utc: 2026-10-10T08:08:14Z
+generated_at_utc: 2026-10-10T08:12:27Z
 generator: scripts/routing/generate_routing_index.py
 ---
 
@@ -46,5 +46,6 @@ Match [`skill-dispatch.md`](./skill-dispatch.md) first. Use this table only when
 | `supporting/confluence/` | [`document-operator`](../ai-tooling/agents/document-operator/AGENT.md) |
 | `supporting/benchmarks/` | [`benchmark-agent`](../ai-tooling/agents/benchmark-agent/AGENT.md) |
 | `ai-tooling/skills/benchmarks/` | [`benchmark-agent`](../ai-tooling/agents/benchmark-agent/AGENT.md) |
+| `ai-tooling/skills/legal/` | [`legal-research-operator`](../ai-tooling/agents/legal-research-operator/AGENT.md) |
 | `supporting/legal/` | [`legal-research-operator`](../ai-tooling/agents/legal-research-operator/AGENT.md) |
 | `scripts/legal/` | [`legal-research-operator`](../ai-tooling/agents/legal-research-operator/AGENT.md) |

@@ -18,10 +18,10 @@ Human index (not agent SoT):
 
 | Specialist | Role | Tier |
 | --- | --- | --- |
-| [`contract-lifecycle-operator/`](./contract-lifecycle-operator/) | Commercial contract clause extraction, redlines, liability caps, and SLA audits | high |
-| [`ip-licensing-curator/`](./ip-licensing-curator/) | SPDX and CycloneDX SBOM license identification, copyleft heuristic flags | standard |
-| [`legal-research-operator/`](./legal-research-operator/) | Statutory retrieval, precedent citation verification, and advisory memo drafting | high |
-| [`statutory-compliance-analyst/`](./statutory-compliance-analyst/) | Regulatory crosswalks and gap analysis (EU AI Act, GDPR, HIPAA, FTC, SEC) | high |
+| [`contract-lifecycle-operator/`](./contract-lifecycle-operator/) | Commercial contract clause extraction, structured redlines, deal risk diligence, liability caps, and SLA audits | high |
+| [`ip-licensing-curator/`](./ip-licensing-curator/) | SPDX and CycloneDX SBOM license identification, copyleft heuristics, patent claim crosswalks, and IP licensing analysis | standard |
+| [`legal-research-operator/`](./legal-research-operator/) | Statutory retrieval, precedent citation verification, jurisdiction hierarchy mapping, and advisory memo drafting | high |
+| [`statutory-compliance-analyst/`](./statutory-compliance-analyst/) | Regulatory crosswalks, gap analysis, and privacy policy benchmarking (EU AI Act, GDPR, CCPA, HIPAA, FTC, SEC) | high |
 
 ### Coordinator & true specialists
 
