@@ -1,5 +1,8 @@
 # qmd
 
+> [!IMPORTANT]
+> **Human-Facing Documentation Only**: This README is maintained strictly for human developers and repository visitors. Autonomous AI agents MUST NOT ingest or utilize `README.md` files for operational instructions or context. All agent directives and navigation reside strictly in [`AGENTS.md`](../AGENTS.md) and [`routing/`](../../routing/).
+
 Human intro for [qmd](https://www.npmjs.com/package/@tobilu/qmd) — Markdown retrieval index used by this repo.
 
 **Agents:** query recipe and pitfalls live in [`query-pattern.md`](./query-pattern.md). Do not use this README as operating procedure — root [`../../AGENTS.md`](../../AGENTS.md) High README rule. Corpus writing: [`retrieval-conventions.md`](./retrieval-conventions.md).

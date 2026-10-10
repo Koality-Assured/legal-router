@@ -1,5 +1,8 @@
 # Benchmarking & Cost Methodology
 
+> [!IMPORTANT]
+> **Human-Facing Documentation Only**: This README is maintained strictly for human developers and repository visitors. Autonomous AI agents MUST NOT ingest or utilize `README.md` files for operational instructions or context. All agent directives and navigation reside strictly in [`AGENTS.md`](./AGENTS.md) and [`routing/`](../../routing/).
+
 Human overview of the repository's empirical benchmarking suite, cost estimation frameworks, and agent fleet simulation harnesses.
 
 **Agents:** Operational instructions live in [`AGENTS.md`](./AGENTS.md) and topic guidance in [`methodology.md`](./methodology.md). Do not use this README as agent context (root [`../../AGENTS.md`](../../AGENTS.md) High README rule).

@@ -1,5 +1,8 @@
 # Agent cards (Deprecated)
 
+> [!IMPORTANT]
+> **Human-Facing Documentation Only**: This README is maintained strictly for human developers and repository visitors. Autonomous AI agents MUST NOT ingest or utilize `README.md` files for operational instructions or context. All agent directives and navigation reside strictly in [`AGENTS.md`](../AGENTS.md) and [`routing/`](../../../routing/).
+
 > [!NOTE]
 > **Consolidation Notice (Schema V2 / LOW-02 / MED-03)**:
 > Standalone JSON files under `ai-tooling/a2a/agent-cards/*.json` have been deprecated and consolidated directly into canonical specialist definitions at [`../../agents/<id>/AGENT.md`](../../agents/).
