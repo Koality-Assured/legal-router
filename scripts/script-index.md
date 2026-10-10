@@ -2,7 +2,7 @@
 doc_kind: routing_map
 canonical_id: script-index
 topics: [scripts, routing]
-generated_at_utc: 2026-10-10T08:08:14Z
+generated_at_utc: 2026-10-10T08:18:21Z
 generator: scripts/routing/generate_script_index.py
 ---
 
@@ -39,8 +39,8 @@ Generated from Python docstring `tags:` / `routing_hints:`. Do not hand-edit —
 | [`docs/validate_router_structure.py`](./docs/validate_router_structure.py) | `docs`, `routing` | router, structure, validation, results-layout | Validate router structure (areas, catalogs, frontmatter, dispatch, results layout). |
 | [`docs/validate_structure_fast.py`](./docs/validate_structure_fast.py) | `docs`, `validation`, `lint` | validate, structure, frontmatter, links, markdown | Fast structural validator for Markdown documents in ai-router. |
 | [`github/resolve_github_path.py`](./github/resolve_github_path.py) | `github` | blob, main, path, url | Resolve local repo paths to GitHub https blob/tree URLs on main. |
-| [`legal/contract_differ.py`](./legal/contract_differ.py) | `legal`, `contracts`, `diff` | redline, clause-extraction, msa, nvca | Diff and extract clauses from synthetic contract fixtures. |
-| [`legal/spdx_license_checker.py`](./legal/spdx_license_checker.py) | `legal`, `licensing`, `spdx`, `cyclonedx` | sbom, copyleft, gpl, agpl | Scan SPDX / CycloneDX SBOMs for copyleft heuristics. |
+| [`legal/contract_differ.py`](./legal/contract_differ.py) | `legal`, `contracts`, `diff` | redline, clause-extraction, msa, nvca, playbook-deviations | Diff and extract clauses from synthetic contract fixtures and evaluate playbook deviations. |
+| [`legal/spdx_license_checker.py`](./legal/spdx_license_checker.py) | `legal`, `licensing`, `spdx`, `cyclonedx` | sbom, copyleft, gpl, agpl, compatibility-matrix | Scan SPDX / CycloneDX SBOMs and validate dependency license lists for copyleft heuristics. |
 | [`legal/verify_citations.py`](./legal/verify_citations.py) | `legal`, `citations`, `verification` | bluebook, courtlistener, hallucination, govinfo | Verify statutory and case citations against fixtures and optional registries. |
 | [`qmd/qmd_preflight.py`](./qmd/qmd_preflight.py) | `qmd` | preflight, index, onboarding, safety | Inspect reusable qmd state without creating or refreshing an index. |
 | [`qmd/refresh_qmd_index.py`](./qmd/refresh_qmd_index.py) | `qmd` | index, embed, session-end, completion-gate | Refresh an existing local qmd index after explicit user approval. |
@@ -69,6 +69,7 @@ Generated from Python docstring `tags:` / `routing_hints:`. Do not hand-edit —
 | [`tests/test_harness_core_sync.py`](./tests/test_harness_core_sync.py) | `tests`, `sync`, `harness` | tests, scaffold-harness, pull-harness-core, propose-core-update | Tests for core-spoke harness protocol scripts. |
 | [`tests/test_harness_registry.py`](./tests/test_harness_registry.py) | `tests`, `harness`, `registry`, `switcher`, `tui` | tests, harness-registry, switch, scan, list, register, deregister | Unit tests for HarnessRegistry, multi-harness discovery, and schema adaptation. |
 | [`tests/test_hybrid_dispatch.py`](./tests/test_hybrid_dispatch.py) | `tests`, `routing`, `ai-tooling` | tests, hybrid-dispatch, bm25, ambiguity-gate, schema-v2 | Unit tests for 3-Tier Hybrid Dispatch Pipeline and Schema V2 Indexing. |
+| [`tests/test_legal_scripts.py`](./tests/test_legal_scripts.py) | `tests`, `legal` | legal-scripts, citations, spdx, contract-diff | Comprehensive unit tests for the legal scripts automation suite. |
 | [`tests/test_local_webfetch.py`](./tests/test_local_webfetch.py) | `tests`, `research`, `webfetch`, `cost-layers` | tests, webfetch, distillation, sanitize | Unit tests for local_webfetch.py web distillation and prompt injection defense. |
 | [`tests/test_pacing.py`](./tests/test_pacing.py) | `tests`, `pacing`, `quota`, `routing` | tests, pacing, quota-management | Unit tests for adaptive quota management and pacing helper. |
 | [`tests/test_pretty_docs_security.py`](./tests/test_pretty_docs_security.py) | `tests`, `security`, `github` | tests, href, github-paths | Stdlib unit tests for href allow-list and GitHub path helpers. |
@@ -123,7 +124,7 @@ Generated from Python docstring `tags:` / `routing_hints:`. Do not hand-edit —
 - **interactive:** `cli/tui.py`
 - **isolation:** `cli/harness.py`, `routing/spawn_worktree.py`, `tests/test_harness_cli.py`
 - **keyring:** `cli/auth/keyring_vault.py`, `cli/harness.py`, `tests/test_harness_auth.py`
-- **legal:** `legal/contract_differ.py`, `legal/spdx_license_checker.py`, `legal/verify_citations.py`, `tests/test_contract_differ.py`, `tests/test_spdx_license_checker.py`, `tests/test_verify_citations.py`
+- **legal:** `legal/contract_differ.py`, `legal/spdx_license_checker.py`, `legal/verify_citations.py`, `tests/test_contract_differ.py`, `tests/test_legal_scripts.py`, `tests/test_spdx_license_checker.py`, `tests/test_verify_citations.py`
 - **licensing:** `legal/spdx_license_checker.py`, `tests/test_spdx_license_checker.py`
 - **lint:** `docs/validate_structure_fast.py`
 - **maintenance:** `research/manage_social_registry.py`
@@ -163,7 +164,7 @@ Generated from Python docstring `tags:` / `routing_hints:`. Do not hand-edit —
 - **switcher:** `cli/registry.py`, `cli/tui.py`, `tests/test_harness_registry.py`
 - **sync:** `sync/propose_core_update.py`, `sync/pull_harness_core.py`, `sync/scaffold_harness.py`, `sync/sync_public_repos.py`, `tests/test_harness_core_sync.py`
 - **tasks:** `benchmarks/benchmark_task_eval.py`
-- **tests:** `tests/test_benchmarks.py`, `tests/test_contract_differ.py`, `tests/test_harness_auth.py`, `tests/test_harness_cli.py`, `tests/test_harness_core_sync.py`, `tests/test_harness_registry.py`, `tests/test_hybrid_dispatch.py`, `tests/test_local_webfetch.py`, `tests/test_pacing.py`, `tests/test_pretty_docs_security.py`, `tests/test_qmd_preflight.py`, `tests/test_skill_graph.py`, `tests/test_spdx_license_checker.py`, `tests/test_subagent_context_config.py`, `tests/test_validate_agent.py`, `tests/test_validate_context_budget.py`, `tests/test_validate_prompt_caching.py`, `tests/test_validate_router_structure.py`, `tests/test_validate_skill.py`, `tests/test_validate_structure_fast.py`, `tests/test_verify_citations.py`
+- **tests:** `tests/test_benchmarks.py`, `tests/test_contract_differ.py`, `tests/test_harness_auth.py`, `tests/test_harness_cli.py`, `tests/test_harness_core_sync.py`, `tests/test_harness_registry.py`, `tests/test_hybrid_dispatch.py`, `tests/test_legal_scripts.py`, `tests/test_local_webfetch.py`, `tests/test_pacing.py`, `tests/test_pretty_docs_security.py`, `tests/test_qmd_preflight.py`, `tests/test_skill_graph.py`, `tests/test_spdx_license_checker.py`, `tests/test_subagent_context_config.py`, `tests/test_validate_agent.py`, `tests/test_validate_context_budget.py`, `tests/test_validate_prompt_caching.py`, `tests/test_validate_router_structure.py`, `tests/test_validate_skill.py`, `tests/test_validate_structure_fast.py`, `tests/test_verify_citations.py`
 - **tokens:** `benchmarks/benchmark_retrieval.py`, `benchmarks/benchmark_tool_efficiency.py`, `benchmarks/estimate_agent_costs.py`
 - **tui:** `cli/tui.py`, `tests/test_harness_registry.py`
 - **validation:** `docs/validate_context_budget.py`, `docs/validate_structure_fast.py`, `tests/test_validate_context_budget.py`, `tests/test_validate_router_structure.py`, `tests/test_validate_structure_fast.py`
