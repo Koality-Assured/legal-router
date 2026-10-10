@@ -156,6 +156,15 @@ KNOWN_INCOMPATIBILITIES: list[dict[str, Any]] = [
         "severity": "high",
         "reason": "EPL-1.0 patent and choice of forum provisions conflict with GPLv2 Section 6.",
     },
+    {
+        "pair": {"AGPL-3.0-only", "GPL-2.0-only"},
+        "severity": "critical",
+        "reason": (
+            "AGPL-3.0-only and GPL-2.0-only are mutually incompatible. GPLv2-only forbids adding "
+            "further restrictions (such as AGPL Section 13 remote network interaction requirements), "
+            "and GPLv2 cannot be upgraded to GPLv3/AGPLv3 without an 'or-later' clause."
+        ),
+    },
 ]
 
 
@@ -277,7 +286,8 @@ def evaluate_compatibility(license_ids: list[str]) -> dict[str, Any]:
             }
         )
         highest_severity = "critical"
-    elif has_proprietary and strong_copyleft_items:
+
+    if has_proprietary and strong_copyleft_items:
         conflicts.append(
             {
                 "licenses": ["proprietary", *strong_copyleft_items],
@@ -542,7 +552,7 @@ def scan_document(data: dict[str, Any], *, source: str) -> dict[str, Any]:
 
     return advisory_envelope(
         {
-            "ok": True,
+            "ok": compat["compatible"] if compat else True,
             "source": source,
             "format": fmt,
             "package_count": len(findings),
@@ -588,33 +598,44 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--dry-run", action="store_true", help="Scan bundled fixtures")
     args = parser.parse_args(argv)
 
-    if args.expression:
-        finding = analyze_expression(args.expression)
-        risk = assess_copyleft_risk(finding["license_ids"], context=args.context)
-        report = advisory_envelope(
-            {
-                "ok": True,
-                "findings": [finding],
-                "risk_assessment": risk,
-            }
-        )
-    elif args.dependencies:
-        dep_path = Path(args.dependencies)
-        if dep_path.is_file():
-            deps = json.loads(dep_path.read_text(encoding="utf-8-sig"))
+    try:
+        if args.expression:
+            finding = analyze_expression(args.expression)
+            risk = assess_copyleft_risk(finding["license_ids"], context=args.context)
+            compat = finding.get("compatibility")
+            ok = compat["compatible"] if compat else True
+            report = advisory_envelope(
+                {
+                    "ok": ok,
+                    "findings": [finding],
+                    "risk_assessment": risk,
+                }
+            )
+        elif args.dependencies:
+            dep_path = Path(args.dependencies)
+            if dep_path.is_file():
+                deps = json.loads(dep_path.read_text(encoding="utf-8-sig"))
+            else:
+                deps = json.loads(args.dependencies)
+            if not isinstance(deps, list):
+                print("error: dependencies must be a JSON array of strings or objects", file=sys.stderr)
+                return 2
+            report = validate_license_list(deps)
+        elif args.dry_run and not args.sbom:
+            reports = [scan_path(path) for path in sorted(FIXTURE_DIR.glob("*.json"))]
+            report = advisory_envelope(
+                {
+                    "ok": len(reports) > 0 and all("findings" in r for r in reports),
+                    "fixtures": reports,
+                }
+            )
+        elif args.sbom:
+            report = scan_path(args.sbom)
         else:
-            deps = json.loads(args.dependencies)
-        if not isinstance(deps, list):
-            print("error: dependencies must be a JSON array of strings or objects", file=sys.stderr)
+            print("error: pass --sbom, --expression, --dependencies, or --dry-run", file=sys.stderr)
             return 2
-        report = validate_license_list(deps)
-    elif args.dry_run and not args.sbom:
-        reports = [scan_path(path) for path in sorted(FIXTURE_DIR.glob("*.json"))]
-        report = advisory_envelope({"ok": all(r.get("ok") for r in reports), "fixtures": reports})
-    elif args.sbom:
-        report = scan_path(args.sbom)
-    else:
-        print("error: pass --sbom, --expression, --dependencies, or --dry-run", file=sys.stderr)
+    except (FileNotFoundError, PermissionError, json.JSONDecodeError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
         return 2
 
     print(json.dumps(report, indent=2))

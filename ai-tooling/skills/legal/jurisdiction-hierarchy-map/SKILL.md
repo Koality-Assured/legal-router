@@ -47,7 +47,7 @@ High: relying on non-binding persuasive authority or citing overturned circuit p
 - [`docs/standards/legal-overlay.md`](../../../../docs/standards/legal-overlay.md)
 - [`supporting/legal/legal-citation-standards.md`](../../../../supporting/legal/legal-citation-standards.md)
 - `python scripts/legal/verify_citations.py`
-- Sibling primary-law corpus: `../ai-router/references/us-law/` from the legal-router repository root
+- Standalone jurisdiction hierarchy and authority rules (Supreme Court -> Circuit Courts of Appeals -> District Courts; State Supreme Court on state law)
 - Official federal and state court structure guidelines (US Supreme Court, Circuit Courts of Appeals, District Courts, State Supreme Courts)
 
 ## Isolation

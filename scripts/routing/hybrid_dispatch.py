@@ -247,18 +247,83 @@ FAST_PATH_RULES: list[dict[str, Any]] = [
             r"\bc4\s+model\s+diagram\b",
         ],
     },
-    # Security & Assessment
+    # Legal Engineering Skills
     {
-        "skill": "noir-scan",
-        "owner_agent": "artifact-agent",
+        "skill": "contract-redline-diff",
+        "owner_agent": "contract-lifecycle-operator",
         "patterns": [
-            r"\b(?:run\s+)?noir\s+scan\b",
-            r"\bnoir-scan\b",
-            r"\bowasp\s+noir\b",
-            r"\bshadow\s+api\s+scan\b",
-            r"\brun_noir_scan\.py\b",
-            r"\bsecurity\s+scans?\b",
-            r"\bnoir\b",
+            r"\bcontract-redline-diff\b",
+            r"\bcontract\s+redline\b",
+            r"\bclause\s+redline\b",
+            r"\bdiff\s+contracts?\b",
+            r"\bcontract\s+diff(?:ing)?\b",
+        ],
+    },
+    {
+        "skill": "deal-risk-memo",
+        "owner_agent": "contract-lifecycle-operator",
+        "patterns": [
+            r"\bdeal-risk-memo\b",
+            r"\bdeal\s+risk\s+memo\b",
+            r"\bm&a\s+diligence\b",
+            r"\btransaction\s+risk\s+memo\b",
+            r"\blegal\s+deal\s+risk\b",
+        ],
+    },
+    {
+        "skill": "jurisdiction-hierarchy-map",
+        "owner_agent": "legal-research-operator",
+        "patterns": [
+            r"\bjurisdiction-hierarchy-map\b",
+            r"\bjurisdiction\s+hierarchy\b",
+            r"\bbinding\s+precedent\b",
+            r"\bcircuit\s+split\b",
+            r"\berie\s+doctrine\b",
+            r"\bchoice\s+of\s+law\s+map\b",
+        ],
+    },
+    {
+        "skill": "patent-claim-crosswalk",
+        "owner_agent": "ip-licensing-curator",
+        "patterns": [
+            r"\bpatent-claim-crosswalk\b",
+            r"\bpatent\s+claims?\b",
+            r"\bclaim\s+chart(?:ing)?\b",
+            r"\bfreedom-to-operate\b",
+            r"\bfto\s+crosswalk\b",
+        ],
+    },
+    {
+        "skill": "privacy-policy-benchmark",
+        "owner_agent": "statutory-compliance-analyst",
+        "patterns": [
+            r"\bprivacy-policy-benchmark\b",
+            r"\bprivacy\s+policy\s+benchmark\b",
+            r"\bgdpr\s+privacy\s+audit\b",
+            r"\bccpa\s+compliance\s+audit\b",
+        ],
+    },
+    {
+        "skill": "verify-citations",
+        "owner_agent": "legal-research-operator",
+        "patterns": [
+            r"\bverify-citations\b",
+            r"\bverify\s+citations?\b",
+            r"\bbluebook\s+(?:citations?|verification)\b",
+            r"\bverify_citations\.py\b",
+            r"\bcitation-verification\b",
+        ],
+    },
+    {
+        "skill": "spdx-license-scan",
+        "owner_agent": "ip-licensing-curator",
+        "patterns": [
+            r"\bspdx-license-scan\b",
+            r"\bspdx\s+license\s+scan\b",
+            r"\bcopyleft\s+heuristics?\b",
+            r"\blicense\s+compatibility\s+matrix\b",
+            r"\bspdx_license_checker\.py\b",
+            r"\bopen-source-license-scan\b",
         ],
     },
     {

@@ -63,7 +63,6 @@ Specialist for antagonistic review (ranked findings returned to the orchestrator
 - [`AGENTS.md`](../../../AGENTS.md) Critical only as linked — do not duplicate
 - [`results/AGENTS.md`](../../../results/AGENTS.md)
 - [`scratch/AGENTS.md`](../../../scratch/AGENTS.md)
-- [`docs/standards/research-and-empirical-validation.md`](../../../docs/standards/research-and-empirical-validation.md)
 - [`docs/anti-slop.md`](../../../docs/anti-slop.md)
 - Assigned `SKILL.md`
 - [`docs/agent-session-security.md`](../../../docs/agent-session-security.md)

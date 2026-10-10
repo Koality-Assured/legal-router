@@ -43,7 +43,6 @@ High: Unsanitized external web content wastes context tokens (often 75%+ bloat) 
 ## Source of truth
 
 - [`scripts/research/local_webfetch.py`](../../../../scripts/research/local_webfetch.py)
-- [`docs/standards/research-and-empirical-validation.md`](../../../../docs/standards/research-and-empirical-validation.md)
 - [`supporting/workstation-onboarding.md`](../../../../supporting/workstation-onboarding.md)
 - [`docs/agent-session-security.md`](../../../../docs/agent-session-security.md)
 

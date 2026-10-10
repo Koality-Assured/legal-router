@@ -205,6 +205,55 @@ class VerifyCitationsTests(unittest.TestCase):
                 code = verify_citations.main(["--live", "--text", "5 U.S.C. § 552"])
         self.assertEqual(code, 2)
 
+    def test_case_citation_missing_year_violation(self) -> None:
+        node = verify_citations.CaseCitationNode(
+            text="Roe v. Wade, 410 U.S. 113",
+            span=(0, 25),
+            name="Roe v. Wade",
+            volume="410",
+            reporter="U.S.",
+            page="113",
+            year=None,
+        )
+        violations = node.validate_bluebook()
+        self.assertIn("missing_year", violations)
+
+    def test_classify_parsed_type_guards(self) -> None:
+        known = set()
+        # Non-numeric usc title
+        self.assertEqual(
+            verify_citations.classify_parsed({"kind": "usc", "title": "non_numeric"}, known),
+            "hallucinated",
+        )
+        # Non-numeric cfr title
+        self.assertEqual(
+            verify_citations.classify_parsed({"kind": "cfr", "title": "non_numeric"}, known),
+            "hallucinated",
+        )
+        # Non-numeric federal register volume
+        self.assertEqual(
+            verify_citations.classify_parsed({"kind": "federal_register", "volume": "non_numeric"}, known),
+            "hallucinated",
+        )
+        # Non-numeric case year
+        self.assertEqual(
+            verify_citations.classify_parsed({"kind": "case", "year": "non_numeric"}, known),
+            "hallucinated",
+        )
+
+    def test_cli_file_not_found_handling(self) -> None:
+        stderr = io.StringIO()
+        with redirect_stderr(stderr):
+            code = verify_citations.main(["--file", "nonexistent_citations_file.txt"])
+        self.assertEqual(code, 2)
+        self.assertIn("error:", stderr.getvalue().lower())
+
+        stderr2 = io.StringIO()
+        with redirect_stderr(stderr2):
+            code2 = verify_citations.main(["--suite", "nonexistent_suite_file.json"])
+        self.assertEqual(code2, 2)
+        self.assertIn("error:", stderr2.getvalue().lower())
+
 
 class SpdxLicenseCheckerTests(unittest.TestCase):
     """Unit tests for SPDX license validation, compatibility matrix, and SBOM scanner."""
@@ -322,6 +371,46 @@ class SpdxLicenseCheckerTests(unittest.TestCase):
         with redirect_stderr(stderr):
             code = spdx_license_checker.main([])
         self.assertEqual(code, 2)
+
+    def test_concurrent_network_and_strong_copyleft_with_proprietary(self) -> None:
+        comp = spdx_license_checker.evaluate_compatibility(
+            ["proprietary", "AGPL-3.0-only", "GPL-3.0-only"]
+        )
+        self.assertFalse(comp["compatible"])
+        self.assertEqual(comp["highest_severity"], "critical")
+        # Both network copyleft and strong copyleft conflicts should be recorded
+        reasons = [c["reason"] for c in comp["conflicts"]]
+        self.assertTrue(any("network copyleft" in r for r in reasons))
+        self.assertTrue(any("strong copyleft" in r for r in reasons))
+
+    def test_agpl_gpl2_incompatibility(self) -> None:
+        comp = spdx_license_checker.evaluate_compatibility(["AGPL-3.0-only", "GPL-2.0-only"])
+        self.assertFalse(comp["compatible"])
+        self.assertEqual(comp["highest_severity"], "critical")
+        self.assertTrue(any("AGPL-3.0-only" in c["licenses"] and "GPL-2.0-only" in c["licenses"] for c in comp["conflicts"]))
+
+    def test_cli_error_handling_and_consistent_exit_codes(self) -> None:
+        # File not found on --sbom
+        stderr = io.StringIO()
+        with redirect_stderr(stderr):
+            code = spdx_license_checker.main(["--sbom", "nonexistent_sbom.json"])
+        self.assertEqual(code, 2)
+        self.assertIn("error:", stderr.getvalue().lower())
+
+        # Invalid json in dependencies string
+        stderr2 = io.StringIO()
+        with redirect_stderr(stderr2):
+            code2 = spdx_license_checker.main(["--dependencies", "not valid json{"])
+        self.assertEqual(code2, 2)
+        self.assertIn("error:", stderr2.getvalue().lower())
+
+        # Incompatible expression returns exit code 1
+        stdout = io.StringIO()
+        with redirect_stdout(stdout):
+            code3 = spdx_license_checker.main(["--expression", "GPL-2.0-only AND Apache-2.0", "--json"])
+        self.assertEqual(code3, 1)
+        data = json.loads(stdout.getvalue())
+        self.assertFalse(data["ok"])
 
 
 class ContractDifferTests(unittest.TestCase):
@@ -444,6 +533,19 @@ class ContractDifferTests(unittest.TestCase):
         with redirect_stderr(stderr):
             code = contract_differ.main([])
         self.assertEqual(code, 2)
+
+    def test_cli_file_not_found_handling(self) -> None:
+        stderr = io.StringIO()
+        with redirect_stderr(stderr):
+            code = contract_differ.main(["--extract", "nonexistent_contract.md"])
+        self.assertEqual(code, 2)
+        self.assertIn("error:", stderr.getvalue().lower())
+
+        stderr2 = io.StringIO()
+        with redirect_stderr(stderr2):
+            code2 = contract_differ.main(["--left", "missing1.md", "--right", "missing2.md"])
+        self.assertEqual(code2, 2)
+        self.assertIn("error:", stderr2.getvalue().lower())
 
 
 if __name__ == "__main__":

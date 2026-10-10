@@ -50,7 +50,6 @@ Specialist for harness lifecycle, control plane governance, cost layers (`qmd`, 
 - Assigned `SKILL.md`
 - [`ai-tooling/a2a/interaction-protocol.md`](../../a2a/interaction-protocol.md)
 - [`docs/agent-session-security.md`](../../../docs/agent-session-security.md)
-- [`docs/guidance/agent-skill-pairing-discipline.md`](../../../docs/guidance/agent-skill-pairing-discipline.md)
 
 ## Owns
 

@@ -43,7 +43,7 @@ Evaluate:
    - Verify single H1 headings, clean YAML frontmatter schemas, no Windows CRLF or tab artifacts, no dangling scratch files, zero leaked secrets/tokens.
 5. **Foundational value vs bloat & friction**: Unnecessary linters, redundant catalogs, bureaucratic rules, dual-maintenance schemas, over-engineering.
 6. **Goal alignment**: Determining whether choices actively lend to project goals (cost, speed, modularity) or create drag.
-7. **Empirical grounding & proof-of-work**: Unsubstantiated or feelings-based assertions, unbacked architectural claims, lack of test/dry-run validation, or reliance on non-authoritative sources per [`docs/standards/research-and-empirical-validation.md`](../../../../docs/standards/research-and-empirical-validation.md).
+7. **Empirical grounding & proof-of-work**: Unsubstantiated or feelings-based assertions, unbacked architectural claims, lack of test/dry-run validation, or reliance on non-authoritative sources per [`references/valid-sources/`](../../../../references/valid-sources/).
 
 ## When not to use
 

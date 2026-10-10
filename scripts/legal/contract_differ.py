@@ -610,48 +610,52 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--dry-run", action="store_true", help="Round-trip bundled fixtures and test playbook")
     args = parser.parse_args(argv)
 
-    if args.dry_run and not (args.extract or args.left or args.round_trip_path):
-        reports = []
-        ok = True
-        for path in sorted(FIXTURE_DIR.glob("*.md")):
-            report = round_trip(path.read_text(encoding="utf-8-sig"))
-            report["file"] = path.name
-            reports.append(report)
-            ok = ok and bool(report.get("ok"))
-        # Also run playbook diff on first fixture
-        first_fixture = next(FIXTURE_DIR.glob("*.md"), None)
-        playbook_report = None
-        if first_fixture:
-            playbook_report = diff_against_playbook(first_fixture.read_text(encoding="utf-8-sig"))
-        payload = advisory_envelope({"ok": ok, "fixtures": reports, "playbook_sample": playbook_report})
-        print(json.dumps(payload, indent=2))
-        return 0 if ok else 1
+    try:
+        if args.dry_run and not (args.extract or args.left or args.round_trip_path):
+            reports = []
+            ok = True
+            for path in sorted(FIXTURE_DIR.glob("*.md")):
+                report = round_trip(path.read_text(encoding="utf-8-sig"))
+                report["file"] = path.name
+                reports.append(report)
+                ok = ok and bool(report.get("ok"))
+            # Also run playbook diff on first fixture
+            first_fixture = next(FIXTURE_DIR.glob("*.md"), None)
+            playbook_report = None
+            if first_fixture:
+                playbook_report = diff_against_playbook(first_fixture.read_text(encoding="utf-8-sig"))
+            payload = advisory_envelope({"ok": ok, "fixtures": reports, "playbook_sample": playbook_report})
+            print(json.dumps(payload, indent=2))
+            return 0 if ok else 1
 
-    if args.round_trip_path:
-        report = round_trip(args.round_trip_path.read_text(encoding="utf-8-sig"))
-    elif args.playbook:
-        target_path = args.left or args.extract
-        if not target_path:
-            print("error: --playbook requires --left or --extract specifying the contract", file=sys.stderr)
+        if args.round_trip_path:
+            report = round_trip(args.round_trip_path.read_text(encoding="utf-8-sig"))
+        elif args.playbook:
+            target_path = args.left or args.extract
+            if not target_path:
+                print("error: --playbook requires --left or --extract specifying the contract", file=sys.stderr)
+                return 2
+            report = diff_against_playbook(target_path.read_text(encoding="utf-8-sig"))
+        elif args.left and args.right:
+            report = diff_contracts(
+                args.left.read_text(encoding="utf-8-sig"),
+                args.right.read_text(encoding="utf-8-sig"),
+                left_name=args.left.name,
+                right_name=args.right.name,
+            )
+        elif args.extract:
+            clauses = extract_clauses(args.extract.read_text(encoding="utf-8-sig"))
+            deviations = [
+                detect_clause_deviations(c["label"], c["body"])
+                for c in clauses
+                if c["label"] in {"limitation_of_liability", "indemnity"}
+            ]
+            report = advisory_envelope({"ok": True, "clauses": clauses, "deviations": deviations})
+        else:
+            print("error: pass --extract, --left/--right, --playbook, --round-trip, or --dry-run", file=sys.stderr)
             return 2
-        report = diff_against_playbook(target_path.read_text(encoding="utf-8-sig"))
-    elif args.left and args.right:
-        report = diff_contracts(
-            args.left.read_text(encoding="utf-8-sig"),
-            args.right.read_text(encoding="utf-8-sig"),
-            left_name=args.left.name,
-            right_name=args.right.name,
-        )
-    elif args.extract:
-        clauses = extract_clauses(args.extract.read_text(encoding="utf-8-sig"))
-        deviations = [
-            detect_clause_deviations(c["label"], c["body"])
-            for c in clauses
-            if c["label"] in {"limitation_of_liability", "indemnity"}
-        ]
-        report = advisory_envelope({"ok": True, "clauses": clauses, "deviations": deviations})
-    else:
-        print("error: pass --extract, --left/--right, --playbook, --round-trip, or --dry-run", file=sys.stderr)
+    except (FileNotFoundError, PermissionError, json.JSONDecodeError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
         return 2
 
     print(json.dumps(report, indent=2))

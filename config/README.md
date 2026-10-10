@@ -14,4 +14,4 @@ Repository configuration directory holding declarative manifests and settings fo
   - **2a:** Agent-to-Agent interaction default and maximum budgets, clean state requirements, and safety constraints.
   - **quota_profiles:** Execution and pacing profiles (unmetered, standard, metered_secondary) governing subagent concurrency, tier selection, and backoff behavior.
 
-**Agents:** Operational rules are enforced via [../AGENTS.md](../AGENTS.md) and [../routing/AGENTS.md](../routing/AGENTS.md). Pacing and quota details are documented in [../docs/guidance/quota-and-pacing.md](../docs/guidance/quota-and-pacing.md).
+**Agents:** Operational rules are enforced via [../AGENTS.md](../AGENTS.md) and [../routing/AGENTS.md](../routing/AGENTS.md).

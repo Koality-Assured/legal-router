@@ -204,8 +204,15 @@ class CaseCitationNode(CitationASTNode):
         if not str(self.attributes.get("page", "")).isdigit():
             violations.append("invalid_first_page")
         year = self.attributes.get("year")
-        if year is not None and (year < 1700 or year > 2026):
-            violations.append("invalid_year")
+        if year is None:
+            violations.append("missing_year")
+        else:
+            try:
+                y_val = int(year)
+                if y_val < 1700 or y_val > 2026:
+                    violations.append("invalid_year")
+            except (ValueError, TypeError):
+                violations.append("invalid_year")
         return violations
 
 
@@ -512,32 +519,56 @@ def classify_parsed(parsed: dict[str, Any], known_texts: set[str]) -> str:
         return "valid_fixture"
     kind = parsed.get("kind")
     if kind == "case":
-        year = parsed.get("year")
+        raw_year = parsed.get("year")
+        try:
+            year = int(raw_year) if raw_year is not None else None
+        except (ValueError, TypeError):
+            return "hallucinated"
         if year is not None and year > 2026:
             return "hallucinated"
         if _reporter_looks_fake(str(parsed.get("reporter", ""))):
             return "hallucinated"
         return "unverified"
     if kind == "usc":
-        title = int(parsed.get("title") or 0)
+        raw_title = parsed.get("title")
+        try:
+            title = int(raw_title) if raw_title is not None else 0
+        except (ValueError, TypeError):
+            return "hallucinated"
         if title <= 0 or title > 54:
             return "hallucinated"
         return "unverified"
     if kind == "cfr":
-        title = int(parsed.get("title") or 0)
+        raw_title = parsed.get("title")
+        try:
+            title = int(raw_title) if raw_title is not None else 0
+        except (ValueError, TypeError):
+            return "hallucinated"
         if title <= 0 or title > 50:
             return "hallucinated"
         return "unverified"
     if kind == "federal_register":
-        vol = int(parsed.get("volume") or 0)
-        year = parsed.get("year")
+        raw_vol = parsed.get("volume")
+        try:
+            vol = int(raw_vol) if raw_vol is not None else 0
+        except (ValueError, TypeError):
+            return "hallucinated"
+        raw_year = parsed.get("year")
+        try:
+            year = int(raw_year) if raw_year is not None else None
+        except (ValueError, TypeError):
+            return "hallucinated"
         if vol <= 0 or vol > 100:
             return "hallucinated"
         if year is not None and (year < 1936 or year > 2026):
             return "hallucinated"
         return "unverified"
     if kind == "eu_regulation":
-        year = int(parsed.get("year") or 0)
+        raw_year = parsed.get("year")
+        try:
+            year = int(raw_year) if raw_year is not None else 0
+        except (ValueError, TypeError):
+            return "hallucinated"
         if year < 1958 or year > 2026:
             return "hallucinated"
         return "unverified"
@@ -702,38 +733,42 @@ def main(argv: list[str] | None = None) -> int:
     )
     args = parser.parse_args(argv)
 
-    if args.live:
-        token = _token_from_env()
-        if not token:
-            print(
-                "error: --live requires COURTLISTENER_API_TOKEN in the environment",
-                file=sys.stderr,
-            )
-            return 2
-        source = args.text
-        if args.file:
-            source = args.file.read_text(encoding="utf-8-sig")
-        if not source:
-            print("error: --live requires --text or --file", file=sys.stderr)
-            return 2
-        report = live_lookup(source, token)
-    elif args.text or args.file:
-        source = args.text or ""
-        if args.file:
-            source = args.file.read_text(encoding="utf-8-sig")
-        report = verify_text(source, suite=load_suite(args.suite) if args.suite else None)
-        if args.ast:
-            ast_nodes = parse_citations_ast(source)
-            report["ast_nodes"] = [
-                {
-                    "class": node.__class__.__name__,
-                    "node": node.to_dict(),
-                    "bluebook_violations": node.validate_bluebook(),
-                }
-                for node in ast_nodes
-            ]
-    else:
-        report = verify_suite(args.suite)
+    try:
+        if args.live:
+            token = _token_from_env()
+            if not token:
+                print(
+                    "error: --live requires COURTLISTENER_API_TOKEN in the environment",
+                    file=sys.stderr,
+                )
+                return 2
+            source = args.text
+            if args.file:
+                source = args.file.read_text(encoding="utf-8-sig")
+            if not source:
+                print("error: --live requires --text or --file", file=sys.stderr)
+                return 2
+            report = live_lookup(source, token)
+        elif args.text or args.file:
+            source = args.text or ""
+            if args.file:
+                source = args.file.read_text(encoding="utf-8-sig")
+            report = verify_text(source, suite=load_suite(args.suite) if args.suite else None)
+            if args.ast:
+                ast_nodes = parse_citations_ast(source)
+                report["ast_nodes"] = [
+                    {
+                        "class": node.__class__.__name__,
+                        "node": node.to_dict(),
+                        "bluebook_violations": node.validate_bluebook(),
+                    }
+                    for node in ast_nodes
+                ]
+        else:
+            report = verify_suite(args.suite)
+    except (FileNotFoundError, PermissionError, json.JSONDecodeError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 2
 
     if args.json or args.dry_run:
         print(json.dumps(report, indent=2))

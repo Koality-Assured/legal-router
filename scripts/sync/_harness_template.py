@@ -104,7 +104,6 @@ HARNESS_TEMPLATE_KEEP_SKILLS: frozenset[str] = frozenset(
         "antagonistic-review",
         "anti-slop",
         "architecture-diagram",
-        "as-code-builder",
         "ast-grep",
         "code-review-report",
         "corpus-draft",
@@ -137,7 +136,6 @@ HARNESS_TEMPLATE_KEEP_SKILLS: frozenset[str] = frozenset(
         "script-builder",
         "skill-builder",
         "skill-dry-run",
-        "sync-downstream-repos",
         "task-eval-benchmark",
         "tool-efficiency-benchmark",
         "router-structure",
@@ -187,7 +185,6 @@ HARNESS_TEMPLATE_KEEP_AGENTS: frozenset[str] = frozenset(
     {
         "ai-tooling-ops",
         "artifact-agent",
-        "as-code-agent",
         "benchmark-agent",
         "detailed-activity",
         "document-operator",
@@ -198,12 +195,10 @@ HARNESS_TEMPLATE_KEEP_AGENTS: frozenset[str] = frozenset(
         "memory-operator",
         "qmd-ops",
         "reference-ops",
-        "repo-sync-ops",
         "research-operator",
         "router",
         "router-maintenance",
         "script-ops",
-        "security-tooling-operator",
     }
 )
 WIKI_TEMPLATE_KEEP_AGENTS = HARNESS_TEMPLATE_KEEP_AGENTS

@@ -56,13 +56,19 @@ class TestTier1FastPath(unittest.TestCase):
             ("isolate the worktree", "isolate-work", "router"),
             ("qmd search docs", "qmd-usage", "qmd-ops"),
             ("qmd commands and retrieval", "qmd-usage", "qmd-ops"),
-            ("run noir scan on api", "noir-scan", "artifact-agent"),
+            ("verify citations in brief", "verify-citations", "legal-research-operator"),
             ("render mermaid diagram", "mermaid-diagram", "artifact-agent"),
             ("ast-grep precision retrieval", "ast-grep", "router-maintenance"),
             ("headroom context compression", "headroom", "router-maintenance"),
             ("markdownlint fix md001", "markdownlint", "documentation-ops"),
             ("deep research into cloud models", "deep-research", "detailed-activity"),
             ("create memory checkpoint", "memory-create", "ai-tooling-ops"),
+            ("contract redline of msa", "contract-redline-diff", "contract-lifecycle-operator"),
+            ("generate deal risk memo", "deal-risk-memo", "contract-lifecycle-operator"),
+            ("jurisdiction hierarchy mapping", "jurisdiction-hierarchy-map", "legal-research-operator"),
+            ("patent claim crosswalk", "patent-claim-crosswalk", "ip-licensing-curator"),
+            ("privacy policy benchmark", "privacy-policy-benchmark", "statutory-compliance-analyst"),
+            ("spdx license scan of sbom", "spdx-license-scan", "ip-licensing-curator"),
         ]
         for query, expected_skill, expected_owner in test_cases:
             res = self.tier1.evaluate(query)
@@ -99,11 +105,11 @@ class TestTier1FastPath(unittest.TestCase):
         self.assertIn("antagonistic-review", res.conflicting_skills)
 
         # Another multi-intent query
-        query2 = "Run noir scan and create mermaid diagram"
+        query2 = "Verify citations and create mermaid diagram"
         res2 = self.tier1.evaluate(query2)
         self.assertFalse(res2.matched)
         self.assertEqual(res2.reason, "multi_intent_conflict")
-        self.assertIn("noir-scan", res2.conflicting_skills)
+        self.assertIn("verify-citations", res2.conflicting_skills)
         self.assertIn("mermaid-diagram", res2.conflicting_skills)
 
 
