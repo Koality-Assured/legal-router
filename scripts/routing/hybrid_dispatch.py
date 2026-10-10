@@ -385,16 +385,6 @@ FAST_PATH_RULES: list[dict[str, Any]] = [
             r"\bvalidate\s+skill\b",
         ],
     },
-    {
-        "skill": "as-code-builder",
-        "owner_agent": "as-code-agent",
-        "patterns": [
-            r"\bas-code-builder\b",
-            r"\bdraft\s+(?:terraform|pulumi|ansible|kyverno|rego)\b",
-            r"\biac\s+artifact\b",
-            r"\bpolicy-as-code\b",
-        ],
-    },
     # Research & Deliverables
     {
         "skill": "deep-research",

@@ -13,14 +13,21 @@ Human index (not agent SoT):
 | [`harness-operator/`](./harness-operator/) | Harness lifecycle, control plane, cost layers, skill/agent builder, repository maintenance | standard |
 | [`document-operator/`](./document-operator/) | Technical writing, diagrams, reports, Confluence/Slack/Google collab, anti-slop | standard |
 | [`research-operator/`](./research-operator/) | Deep technical research, BenchLM, AI vendor tracking, community intelligence, web crawl | high |
-| [`security-tooling-operator/`](./security-tooling-operator/) | Defensive assessments, threat modeling, AD/Windows audit, network discovery, packet review | standard |
+
+### Legal domain specialists
+
+| Specialist | Role | Tier |
+| --- | --- | --- |
+| [`contract-lifecycle-operator/`](./contract-lifecycle-operator/) | Commercial contract clause extraction, redlines, liability caps, and SLA audits | high |
+| [`ip-licensing-curator/`](./ip-licensing-curator/) | SPDX and CycloneDX SBOM license identification, copyleft heuristic flags | standard |
+| [`legal-research-operator/`](./legal-research-operator/) | Statutory retrieval, precedent citation verification, and advisory memo drafting | high |
+| [`statutory-compliance-analyst/`](./statutory-compliance-analyst/) | Regulatory crosswalks and gap analysis (EU AI Act, GDPR, HIPAA, FTC, SEC) | high |
 
 ### Coordinator & true specialists
 
 | Specialist | Role | Tier |
 | --- | --- | --- |
 | [`router/`](./router/) | Parent coordinator: classify, isolate, spawn | standard |
-| [`as-code-agent/`](./as-code-agent/) | Dedicated Terraform/OpenTofu/IaC authoring & plan validation | high |
 | [`detailed-activity/`](./detailed-activity/) | Dedicated adversarial / antagonistic review and challenge audits | high |
 | [`benchmark-agent/`](./benchmark-agent/) | Empirical benchmarking: cost estimation, fleet dry runs, retrieval, tool efficiency | standard |
 | [`github-ops/`](./github-ops/) | GitHub PR workflow, branch discipline, issue management | standard |
@@ -38,6 +45,5 @@ Human index (not agent SoT):
 | [`script-ops/`](./script-ops/) | `harness-operator` | standard |
 | [`artifact-agent/`](./artifact-agent/) | `document-operator` | standard |
 | [`reference-ops/`](./reference-ops/) | `document-operator` | standard |
-| [`repo-sync-ops/`](./repo-sync-ops/) | `harness-operator` | standard |
 
 A2A specifications & schemas: canonical in `AGENT.md` (Schema V2); see also [`../a2a/agent-cards/README.md`](../a2a/agent-cards/README.md).

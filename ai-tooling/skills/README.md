@@ -17,7 +17,6 @@ Human index (not agent SoT):
 | [`antagonistic-review/`](./meta/antagonistic-review/) | detailed-activity | read-only |
 | [`anti-slop/`](./reporting/anti-slop/) | document-operator | mutate |
 | [`architecture-diagram/`](./reporting/architecture-diagram/) | document-operator | mutate |
-| [`as-code-builder/`](./reporting/as-code-builder/) | as-code-agent | mutate |
 | [`ast-grep/`](./cost-layers/ast-grep/) | harness-operator | read-only |
 | [`aws-logs/`](./aws/aws-logs/) | cloud-operator | mutate |
 | [`aws-read/`](./aws/aws-read/) | cloud-operator | mutate |
@@ -25,8 +24,10 @@ Human index (not agent SoT):
 | [`azure-logs/`](./azure/azure-logs/) | cloud-operator | mutate |
 | [`azure-read/`](./azure/azure-read/) | cloud-operator | mutate |
 | [`azure-write/`](./azure/azure-write/) | cloud-operator | mutate |
+| [`citation-verification/`](./legal/citation-verification/) | legal-research-operator | read-only |
 | [`cloud-admin-provision/`](./admin/cloud-admin-provision/) | cloud-operator | mutate |
 | [`code-review-report/`](./reporting/code-review-report/) | document-operator | mutate |
+| [`contract-clause-review/`](./legal/contract-clause-review/) | contract-lifecycle-operator | mutate |
 | [`corpus-draft/`](./reporting/corpus-draft/) | document-operator | mutate |
 | [`cost-layer-dry-run/`](./cost-layers/cost-layer-dry-run/) | harness-operator | mutate |
 | [`deep-research/`](./meta/deep-research/) | research-operator | mutate |
@@ -53,12 +54,14 @@ Human index (not agent SoT):
 | [`memory-create/`](./memory/memory-create/) | harness-operator | mutate |
 | [`mermaid-diagram/`](./reporting/mermaid-diagram/) | document-operator | mutate |
 | [`model-memory-operate/`](./model-memory-operate/) | harness-operator | mutate |
-| [`noir-scan/`](./reporting/noir-scan/) | security-tooling-operator | mutate |
+| [`open-source-license-scan/`](./legal/open-source-license-scan/) | ip-licensing-curator | read-only |
 | [`proposal-report/`](./reporting/proposal-report/) | document-operator | mutate |
 | [`public-llm-admin/`](./admin/public-llm-admin/) | cloud-operator | mutate |
 | [`qmd-efficiency/`](./meta/qmd-efficiency/) | harness-operator | mutate |
 | [`qmd-usage/`](./meta/qmd-usage/) | harness-operator | read-only |
+| [`readme-maintain/`](./meta/readme-maintain/) | document-operator | mutate |
 | [`reference-maintain/`](./meta/reference-maintain/) | document-operator | mutate |
+| [`regulatory-crosswalk-audit/`](./legal/regulatory-crosswalk-audit/) | statutory-compliance-analyst | mutate |
 | [`scratch-cleanup/`](./meta/scratch-cleanup/) | harness-operator | mutate |
 | [`script-builder/`](./meta/script-builder/) | harness-operator | mutate |
 | [`skill-builder/`](./meta/skill-builder/) | harness-operator | mutate |
@@ -73,9 +76,7 @@ Human index (not agent SoT):
 | [`community-pattern-analysis/`](./community/community-pattern-analysis/) | research-operator | mutate |
 | [`breaking-tech-news/`](./community/breaking-tech-news/) | research-operator | mutate |
 | [`community-registry-maintain/`](./community/community-registry-maintain/) | research-operator | mutate |
-| [`sync-downstream-repos/`](./meta/sync-downstream-repos/) | harness-operator | mutate |
 | [`tabler-dashboard/`](./reporting/tabler-dashboard/) | document-operator | mutate |
-| [`threat-model/`](./reporting/threat-model/) | security-tooling-operator | mutate |
 | [`router-structure/`](./meta/router-structure/) | document-operator | read-only |
 | [`slack-message/`](./slack/slack-message/) | document-operator | mutate |
 | [`slack-webhook/`](./slack/slack-webhook/) | document-operator | mutate |
@@ -91,8 +92,4 @@ Human index (not agent SoT):
 | [`retrieval-benchmark/`](./benchmarks/retrieval-benchmark/) | benchmark-agent | mutate |
 | [`tool-efficiency-benchmark/`](./benchmarks/tool-efficiency-benchmark/) | benchmark-agent | mutate |
 | [`task-eval-benchmark/`](./benchmarks/task-eval-benchmark/) | benchmark-agent | mutate |
-| [`terraform-plan-validate/`](./iac/terraform-plan-validate/) | as-code-agent | read-only |
-| [`terraform-module-builder/`](./iac/terraform-module-builder/) | as-code-agent | mutate |
-| [`iac-security-audit/`](./iac/iac-security-audit/) | as-code-agent | read-only |
 | [`web-crawling/`](./discovery/web-crawling/) | research-operator | read-only |
-| [`ad-windows-security-audit/`](./security/ad-windows-security-audit/) | security-tooling-operator | read-only |

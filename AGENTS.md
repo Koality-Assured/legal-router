@@ -111,7 +111,7 @@ Before create/edit for **new** work: `spawn_worktree.py check` → `add` → han
 
 ### Skill-agent pairing priority and operator discipline
 
-When introducing, registering, or decomposing new skills or agent tasks, agents MUST prioritize mapping to existing broad-sweeping Operators (`harness-operator`, `document-operator`, `research-operator`, `cloud-operator`, `security-tooling-operator`) or established true specialists before minting new micro-agents.
+When introducing, registering, or decomposing new skills or agent tasks, agents MUST prioritize mapping to existing broad-sweeping Operators (`harness-operator`, `document-operator`, `research-operator`, `cloud-operator`, `legal-research-operator`) or established true specialists before minting new micro-agents.
 - **Operator-first pairing**: New capabilities MUST be incorporated into the most logically relevant operator or expanded via existing skill parameters.
 - **Pairing maintenance priority**: Maintaining cohesive skill-to-agent pairings and keeping routing catalogs synchronized over time is a mandatory architectural priority.
 - **True specialist threshold**: Dedicated specialists MUST only be introduced for truly disjoint domains that cannot fit cleanly into an existing operator archetype (e.g. specialized game simulation, distinct art synthesis, or independent adversarial auditors). Full SoT: [`docs/guidance/agent-skill-pairing-discipline.md`](./docs/guidance/agent-skill-pairing-discipline.md).

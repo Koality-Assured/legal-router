@@ -23,7 +23,7 @@ General architecture diagrams for a named system or change. Prefer Mermaid; same
 
 ## When not to use
 
-Threat-model package (`threat-model`). Single small mermaid-only ask that already fits `mermaid-diagram`. As-code module graphs that belong under `as-code-builder`.
+Single small mermaid-only ask that already fits `mermaid-diagram`.
 
 ## Criticality
 

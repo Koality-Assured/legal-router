@@ -86,14 +86,8 @@ nested_defaults:
     default_agent: document-operator
   - path: supporting/benchmarks
     default_agent: benchmark-agent
-  - path: supporting/terraform
-    default_agent: as-code-agent
-  - path: references/iac
-    default_agent: as-code-agent
   - path: ai-tooling/skills/benchmarks
     default_agent: benchmark-agent
-  - path: ai-tooling/skills/iac
-    default_agent: as-code-agent
   - path: supporting/legal
     default_agent: legal-research-operator
   - path: scripts/legal

@@ -46,17 +46,19 @@ allowed_tools:
 delegation_targets:
 - ai-tooling-ops
 - artifact-agent
-- as-code-agent
+- contract-lifecycle-operator
 - detailed-activity
 - documentation-ops
 - git-fast-operator
 - github-ops
+- ip-licensing-curator
+- legal-research-operator
 - memory-operator
 - qmd-ops
 - reference-ops
-- repo-sync-ops
 - router-maintenance
 - script-ops
+- statutory-compliance-analyst
 prohibitions:
 - execute catalogued skill bodies in-parent except isolate-work CLI
 - load specialist SKILL.md in-parent except isolate-work CLI

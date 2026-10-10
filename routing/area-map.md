@@ -2,7 +2,7 @@
 doc_kind: routing_map
 canonical_id: area-map
 topics: [routing, write-back, structure]
-generated_at_utc: 2026-09-22T16:03:00Z
+generated_at_utc: 2026-10-10T08:08:14Z
 generator: scripts/routing/generate_routing_index.py
 ---
 
@@ -45,9 +45,6 @@ Match [`skill-dispatch.md`](./skill-dispatch.md) first. Use this table only when
 | `supporting/google/` | [`document-operator`](../ai-tooling/agents/document-operator/AGENT.md) |
 | `supporting/confluence/` | [`document-operator`](../ai-tooling/agents/document-operator/AGENT.md) |
 | `supporting/benchmarks/` | [`benchmark-agent`](../ai-tooling/agents/benchmark-agent/AGENT.md) |
-| `supporting/terraform/` | [`as-code-agent`](../ai-tooling/agents/as-code-agent/AGENT.md) |
-| `references/iac/` | [`as-code-agent`](../ai-tooling/agents/as-code-agent/AGENT.md) |
 | `ai-tooling/skills/benchmarks/` | [`benchmark-agent`](../ai-tooling/agents/benchmark-agent/AGENT.md) |
-| `ai-tooling/skills/iac/` | [`as-code-agent`](../ai-tooling/agents/as-code-agent/AGENT.md) |
 | `supporting/legal/` | [`legal-research-operator`](../ai-tooling/agents/legal-research-operator/AGENT.md) |
 | `scripts/legal/` | [`legal-research-operator`](../ai-tooling/agents/legal-research-operator/AGENT.md) |
