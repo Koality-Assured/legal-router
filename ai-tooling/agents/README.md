@@ -23,6 +23,7 @@ Human index (not agent SoT):
 | --- | --- | --- |
 | [`contract-lifecycle-operator/`](./contract-lifecycle-operator/) | Commercial contract clause extraction, structured redlines, deal risk diligence, liability caps, and SLA audits | high |
 | [`ip-licensing-curator/`](./ip-licensing-curator/) | SPDX and CycloneDX SBOM license identification, copyleft heuristics, patent claim crosswalks, and IP licensing analysis | standard |
+| [`legal-ethics-reviewer/`](./legal-ethics-reviewer/) | Strictly read-only independent reviewer for legal ethics, UPL safeguards, citation authenticity, and contract deviation | high |
 | [`legal-research-operator/`](./legal-research-operator/) | Statutory retrieval, precedent citation verification, jurisdiction hierarchy mapping, and advisory memo drafting | high |
 | [`statutory-compliance-analyst/`](./statutory-compliance-analyst/) | Regulatory crosswalks, gap analysis, and privacy policy benchmarking (EU AI Act, GDPR, CCPA, HIPAA, FTC, SEC) | high |
 
