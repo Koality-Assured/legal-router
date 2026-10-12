@@ -1,0 +1,81 @@
+{
+  "postal": "in",
+  "name": "Indiana",
+  "kind": "state",
+  "captured_at_utc": "2026-10-07T18:00:00Z",
+  "court_of_last_resort": "Indiana Supreme Court",
+  "sources": [
+    {
+      "role": "constitution",
+      "authority": "official-primary",
+      "title": "Constitution (as amended 2024)",
+      "url": "https://iga.in.gov/laws/constitution",
+      "http_status": null,
+      "check_note": "GET 200. Static body is a 691-byte application shell. Article headings are not stored."
+    },
+    {
+      "role": "statutes",
+      "authority": "official-primary",
+      "title": "2026 Indiana Code",
+      "url": "https://iga.in.gov/laws/current/ic/titles/",
+      "http_status": null,
+      "check_note": "GET 200. Static body is a 691-byte shell. No title list is in the body, and none is stored."
+    },
+    {
+      "role": "session laws",
+      "authority": "official-primary",
+      "title": "Acts",
+      "url": "https://iga.in.gov/laws/acts",
+      "http_status": null,
+      "check_note": "GET 200. Static body is a 691-byte application shell."
+    },
+    {
+      "role": "administrative code",
+      "authority": "official-primary",
+      "title": "Indiana Register",
+      "url": "https://iar.iga.in.gov/code",
+      "http_status": null,
+      "check_note": "GET 200. Static body is a short shell titled Indiana Register. No title list is stored."
+    },
+    {
+      "role": "court of last resort",
+      "authority": "official-primary",
+      "title": "Indiana Supreme Court",
+      "url": "https://www.in.gov/courts/supreme/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200. Title: Indiana Supreme Court: Home."
+    },
+    {
+      "role": "intermediate appellate",
+      "authority": "official-primary",
+      "title": "Court of Appeals of Indiana",
+      "url": "https://www.in.gov/courts/appeals/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200. Title: Court of Appeals of Indiana: Home."
+    },
+    {
+      "role": "dockets",
+      "authority": "official-primary",
+      "title": "Indiana Courts Case Search - MyCase",
+      "url": "https://public.courts.in.gov/mycase",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    },
+    {
+      "role": "court rules",
+      "authority": "official-primary",
+      "title": "Indiana Rules of Trial Procedure",
+      "url": "https://rules.incourts.gov/Content/trial/default.htm",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200. The site root is a script shell."
+    },
+    {
+      "role": "attorney general opinions",
+      "authority": "official-primary",
+      "title": "Attorney General Advisory",
+      "url": "https://www.in.gov/attorneygeneral/about-the-office/advisory/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200. Page says the Advisory Division publishes official opinions."
+    }
+  ]
+}

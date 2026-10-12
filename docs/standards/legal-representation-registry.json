@@ -1,0 +1,97 @@
+{
+  "schema_version": "1.0",
+  "standards_source": "legal-representations.md",
+  "purpose": "Machine-readable route, alias, and check-profile index for the legal representation matrix.",
+  "check_profiles": {
+    "statutory_compliance": "GovInfo package verification, public law citations, enactment and effective dates",
+    "case_citation": "Bluebook reporter formatting, CourtListener cluster verification, pin cite accuracy",
+    "contract_clause": "Risk tiering, liability cap multiple, indemnification scope, governing law clause",
+    "redline_diff": "Added and deleted clause tracking, materiality scoring, tracked changes XML integrity",
+    "license_compliance": "SPDX 3.0.1 identifier syntax, reciprocal copyleft contamination check, dual-license compatibility",
+    "privacy_crosswalk": "GDPR/CCPA article mapping, data subject right workflows, cross-border transfer bases",
+    "patent_claim": "Independent and dependent claim hierarchy, preamble parsing, prior art crosswalk",
+    "legal_memo": "IRAC/CREAC structural flow, citation authenticity, mandatory advisory stamp"
+  },
+  "representations": [
+    {
+      "id": "commercial_contract",
+      "standard_heading": "Commercial contracts and agreements",
+      "aliases": ["contract", "agreement", "commercial_agreement", "msa", "saas_contract", "dpa"],
+      "adjacent_routes": ["contract_redline", "legal_memo"],
+      "default_check_profiles": ["contract_clause"],
+      "asset_types": [
+        {"id": "saas_agreement", "aliases": ["cloud_contract"], "check_profiles": ["contract_clause"]},
+        {"id": "nda", "aliases": ["confidentiality_agreement"], "check_profiles": ["contract_clause"]},
+        {"id": "data_processing_agreement", "aliases": ["dpa"], "check_profiles": ["contract_clause", "privacy_crosswalk"]},
+        {"id": "master_services_agreement", "aliases": ["msa"], "check_profiles": ["contract_clause"]}
+      ]
+    },
+    {
+      "id": "statutory_citation",
+      "standard_heading": "Statutory and regulatory provisions",
+      "aliases": ["statute", "regulation", "statutory_provision", "usc", "cfr"],
+      "adjacent_routes": ["regulatory_crosswalk", "legal_memo"],
+      "default_check_profiles": ["statutory_compliance"],
+      "asset_types": [
+        {"id": "united_states_code", "aliases": ["usc"], "check_profiles": ["statutory_compliance"]},
+        {"id": "code_of_federal_regulations", "aliases": ["cfr"], "check_profiles": ["statutory_compliance"]},
+        {"id": "state_statute", "aliases": ["state_code"], "check_profiles": ["statutory_compliance"]}
+      ]
+    },
+    {
+      "id": "case_precedent",
+      "standard_heading": "Judicial opinions and case precedent",
+      "aliases": ["case_law", "precedent", "judicial_opinion", "court_opinion"],
+      "adjacent_routes": ["legal_memo", "statutory_citation"],
+      "default_check_profiles": ["case_citation"],
+      "asset_types": [
+        {"id": "federal_case", "aliases": ["scotus", "appellate_case"], "check_profiles": ["case_citation"]},
+        {"id": "state_case", "aliases": ["state_opinion"], "check_profiles": ["case_citation"]}
+      ]
+    },
+    {
+      "id": "spdx_license",
+      "standard_heading": "Open-source and software licenses",
+      "aliases": ["spdx", "license", "sbom_license", "copyleft"],
+      "adjacent_routes": ["commercial_contract", "legal_memo"],
+      "default_check_profiles": ["license_compliance"],
+      "asset_types": [
+        {"id": "spdx_expression", "aliases": ["spdx_id"], "check_profiles": ["license_compliance"]},
+        {"id": "cyclonedx_license", "aliases": ["sbom_bom"], "check_profiles": ["license_compliance"]}
+      ]
+    },
+    {
+      "id": "regulatory_crosswalk",
+      "standard_heading": "Regulatory crosswalk matrices",
+      "aliases": ["crosswalk", "compliance_matrix", "gap_analysis"],
+      "adjacent_routes": ["statutory_citation", "legal_memo"],
+      "default_check_profiles": ["privacy_crosswalk", "statutory_compliance"],
+      "asset_types": [
+        {"id": "eu_ai_act_crosswalk", "aliases": ["annex_iii"], "check_profiles": ["statutory_compliance"]},
+        {"id": "privacy_matrix", "aliases": ["gdpr_ccpa_matrix"], "check_profiles": ["privacy_crosswalk"]}
+      ]
+    },
+    {
+      "id": "contract_redline",
+      "standard_heading": "Contract redlines and diffs",
+      "aliases": ["redline", "contract_diff", "track_changes"],
+      "adjacent_routes": ["commercial_contract", "legal_memo"],
+      "default_check_profiles": ["redline_diff", "contract_clause"],
+      "asset_types": [
+        {"id": "markdown_diff", "aliases": ["md_redline"], "check_profiles": ["redline_diff"]},
+        {"id": "docx_redline", "aliases": ["tracked_changes"], "check_profiles": ["redline_diff"]}
+      ]
+    },
+    {
+      "id": "legal_memo",
+      "standard_heading": "Legal analysis memos",
+      "aliases": ["memo", "deal_risk_memo", "advisory_memo"],
+      "adjacent_routes": ["commercial_contract", "statutory_citation", "case_precedent"],
+      "default_check_profiles": ["legal_memo", "case_citation"],
+      "asset_types": [
+        {"id": "risk_memo", "aliases": ["deal_memo"], "check_profiles": ["legal_memo"]},
+        {"id": "formal_advisory_memo", "aliases": ["research_memo"], "check_profiles": ["legal_memo", "statutory_compliance"]}
+      ]
+    }
+  ]
+}

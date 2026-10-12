@@ -1,0 +1,98 @@
+{
+  "postal": "tx",
+  "name": "Texas",
+  "kind": "state",
+  "captured_at_utc": "2026-10-07T18:00:00Z",
+  "court_of_last_resort": "Supreme Court of Texas",
+  "criminal_court_of_last_resort": "Court of Criminal Appeals of Texas",
+  "sources": [
+    {
+      "role": "constitution",
+      "authority": "official-primary",
+      "title": "Texas Constitution and Statutes",
+      "url": "https://statutes.capitol.texas.gov/",
+      "http_status": 200,
+      "check_note": "HEAD 200, GET 200. Menu includes Texas Constitution and the code list."
+    },
+    {
+      "role": "statutes",
+      "authority": "official-primary",
+      "title": "Texas Constitution and Statutes",
+      "url": "https://statutes.capitol.texas.gov/",
+      "http_status": 200,
+      "check_note": "Same host as the constitution. 32 top-level menu entries captured."
+    },
+    {
+      "role": "session laws",
+      "authority": "official-primary",
+      "title": "General and Special Laws of Texas",
+      "url": "https://lrl.texas.gov/collections/sessionlaws.cfm",
+      "http_status": 200,
+      "check_note": "HEAD 200, GET 200. Linked from the Legislative Reference Library home page."
+    },
+    {
+      "role": "administrative code",
+      "authority": "official-primary",
+      "title": "Texas Administrative Code welcome",
+      "url": "https://www.sos.texas.gov/tac/index.shtml",
+      "http_status": 200,
+      "check_note": "HEAD 200, GET 200. States there are 17 titles. sos.state.tx.us returned the same page at HTTP 200."
+    },
+    {
+      "role": "administrative code",
+      "authority": "official-primary",
+      "title": "Texas Administrative Code viewer",
+      "url": "https://texas-sos.appianportalsgov.com/rules-and-meetings?interface=VIEW_TAC",
+      "http_status": 200,
+      "check_note": "HEAD 200, GET 200. Linked from the Secretary of State TAC welcome page."
+    },
+    {
+      "role": "court opinions",
+      "authority": "official-primary",
+      "title": "Supreme Court of Texas",
+      "url": "https://www.txcourts.gov/supreme/",
+      "http_status": 200,
+      "check_note": "HEAD 200, GET 200. Separate court from the Court of Criminal Appeals on the same site."
+    },
+    {
+      "role": "court opinions",
+      "authority": "official-primary",
+      "title": "Court of Criminal Appeals",
+      "url": "https://www.txcourts.gov/cca/",
+      "http_status": 200,
+      "check_note": "HEAD 200, GET 200. Page states it is Texas's highest court for criminal cases. Navigation lists 15 courts of appeals."
+    },
+    {
+      "role": "intermediate appellate",
+      "authority": "official-primary",
+      "title": "Texas Judicial Branch court navigation",
+      "url": "https://www.txcourts.gov/cca/",
+      "http_status": 200,
+      "check_note": "Same GET as the CCA page. Lists 1st through 15th Courts of Appeals."
+    },
+    {
+      "role": "dockets",
+      "authority": "official-primary",
+      "title": "TAMES case search",
+      "url": "https://search.txcourts.gov/",
+      "http_status": 200,
+      "check_note": "HEAD 200, GET 200. Final URL https://search.txcourts.gov/CaseSearch.aspx?coa=cossup."
+    },
+    {
+      "role": "court rules",
+      "authority": "official-primary",
+      "title": "Texas court rules and standards",
+      "url": "https://www.txcourts.gov/rules-forms/rules-standards/",
+      "http_status": 200,
+      "check_note": "HEAD 200, GET 200."
+    },
+    {
+      "role": "attorney general",
+      "authority": "official-primary",
+      "title": "Texas Attorney General opinions",
+      "url": "https://www.texasattorneygeneral.gov/opinions",
+      "http_status": 200,
+      "check_note": "HEAD 200, GET 200."
+    }
+  ]
+}

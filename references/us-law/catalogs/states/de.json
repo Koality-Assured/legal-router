@@ -1,0 +1,81 @@
+{
+  "postal": "de",
+  "name": "Delaware",
+  "kind": "state",
+  "captured_at_utc": "2026-10-07T18:00:00Z",
+  "court_of_last_resort": "Delaware Supreme Court",
+  "sources": [
+    {
+      "role": "constitution",
+      "authority": "official-primary",
+      "title": "The Delaware Constitution of 1897 as amended",
+      "url": "https://delcode.delaware.gov/constitution/index.html",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200."
+    },
+    {
+      "role": "statutes",
+      "authority": "official-primary",
+      "title": "Delaware Code Online",
+      "url": "https://delcode.delaware.gov/",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200. Legislature site; authenticated PDFs cited on the page."
+    },
+    {
+      "role": "session laws",
+      "authority": "official-primary",
+      "title": "Session Laws - Delaware General Assembly",
+      "url": "https://legis.delaware.gov/SessionLaws",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200."
+    },
+    {
+      "role": "administrative code",
+      "authority": "official-primary",
+      "title": "Delaware Administrative Code",
+      "url": "https://regulations.delaware.gov/AdminCode",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200."
+    },
+    {
+      "role": "court of last resort opinions",
+      "authority": "official-primary",
+      "title": "Opinions and Orders - Delaware Courts",
+      "url": "https://courts.delaware.gov/opinions/index.aspx",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200. Supreme Court description page also returned 200 at https://courts.delaware.gov/supreme/."
+    },
+    {
+      "role": "dockets",
+      "authority": "official-primary",
+      "title": "Civil Case Search - Delaware Courts",
+      "url": "https://courts.delaware.gov/docket.aspx",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200. Page describes CourtConnect civil case access."
+    },
+    {
+      "role": "court rules",
+      "authority": "official-primary",
+      "title": "Rules of the Delaware State Courts",
+      "url": "https://courts.delaware.gov/rules/",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200."
+    },
+    {
+      "role": "attorney general opinions",
+      "authority": "official-primary",
+      "title": "Opinions - Delaware Department of Justice",
+      "url": "https://attorneygeneral.delaware.gov/opinions/",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200."
+    },
+    {
+      "role": "local government",
+      "authority": "official-primary",
+      "title": "Delaware's Town Charters",
+      "url": "https://charters.delaware.gov/",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200. Municipal charters, not county ordinance codes."
+    }
+  ]
+}

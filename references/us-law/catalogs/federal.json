@@ -1,0 +1,687 @@
+{
+  "jurisdiction": "US",
+  "kind": "federal",
+  "captured_at_utc": "2026-10-07T18:00:00Z",
+  "sources": [
+    {
+      "role": "constitution",
+      "authority": "official-primary",
+      "title": "Constitution of the United States, National Archives",
+      "url": "https://www.archives.gov/founding-docs/constitution",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "constitution",
+      "authority": "official-primary",
+      "title": "Constitution transcript, National Archives",
+      "url": "https://www.archives.gov/founding-docs/constitution-transcript",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "constitution",
+      "authority": "official-primary",
+      "title": "Constitution Annotated host",
+      "url": "https://constitution.congress.gov/",
+      "http_status": null,
+      "check_note": "HEAD and GET returned 403 Forbidden."
+    },
+    {
+      "role": "statutes",
+      "authority": "official-primary",
+      "title": "United States Code help, GovInfo",
+      "url": "https://www.govinfo.gov/help/uscode",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "statutes",
+      "authority": "official-primary",
+      "title": "United States Code collection, GovInfo",
+      "url": "https://www.govinfo.gov/app/collection/uscode",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "statutes",
+      "authority": "official-primary",
+      "title": "United States Code 2023 title browse, GovInfo",
+      "url": "https://www.govinfo.gov/wssearch/rb/uscode/2023?fetchChildrenOnly=1",
+      "http_status": 200,
+      "check_note": "HEAD 200, then GET 200. Body is the 2023 title-list JSON."
+    },
+    {
+      "role": "statutes",
+      "authority": "official-primary",
+      "title": "Office of the Law Revision Counsel",
+      "url": "https://uscode.house.gov/",
+      "http_status": null,
+      "check_note": "HTTP 200 was a House.gov maintenance page, not the United States Code."
+    },
+    {
+      "role": "statutes",
+      "authority": "official-primary",
+      "title": "Office of the Law Revision Counsel title browse",
+      "url": "https://uscode.house.gov/browse.xhtml",
+      "http_status": null,
+      "check_note": "HTTP 200 was a House.gov maintenance page, not the title list."
+    },
+    {
+      "role": "statutes",
+      "authority": "official-primary",
+      "title": "GovInfo USC bulk-data path",
+      "url": "https://www.govinfo.gov/bulkdata/USCODE",
+      "http_status": null,
+      "check_note": "HEAD and GET returned 404 Not Found."
+    },
+    {
+      "role": "statutes",
+      "authority": "unofficial",
+      "title": "U.S. Code table of contents, Cornell LII",
+      "url": "https://www.law.cornell.edu/uscode/text",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "regulations",
+      "authority": "official-primary",
+      "title": "Code of Federal Regulations help, GovInfo",
+      "url": "https://www.govinfo.gov/help/cfr",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "regulations",
+      "authority": "official-primary",
+      "title": "Code of Federal Regulations collection, GovInfo",
+      "url": "https://www.govinfo.gov/app/collection/cfr",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "regulations",
+      "authority": "official-mirror",
+      "title": "Electronic Code of Federal Regulations",
+      "url": "https://www.ecfr.gov/",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "regulations",
+      "authority": "official-mirror",
+      "title": "eCFR titles page",
+      "url": "https://www.ecfr.gov/titles",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "regulations",
+      "authority": "official-mirror",
+      "title": "eCFR title list API",
+      "url": "https://www.ecfr.gov/api/versioner/v1/titles",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "regulations",
+      "authority": "official-mirror",
+      "title": "What the eCFR is, Office of the Federal Register",
+      "url": "https://www.ecfr.gov/reader-aids/understanding-the-ecfr/what-is-the-ecfr",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "regulations",
+      "authority": "official-primary",
+      "title": "CFR page, National Archives",
+      "url": "https://www.archives.gov/federal-register/cfr",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "register",
+      "authority": "official-primary",
+      "title": "Federal Register help, GovInfo",
+      "url": "https://www.govinfo.gov/help/fr",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "register",
+      "authority": "official-primary",
+      "title": "Federal Register collection, GovInfo",
+      "url": "https://www.govinfo.gov/app/collection/fr",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "register",
+      "authority": "official-mirror",
+      "title": "Federal Register XML site",
+      "url": "https://www.federalregister.gov/",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "register",
+      "authority": "official-mirror",
+      "title": "Understanding the Federal Register",
+      "url": "https://www.federalregister.gov/reader-aids/understanding-the-federal-register",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "presidential-documents",
+      "authority": "official-mirror",
+      "title": "Presidential documents, FederalRegister.gov",
+      "url": "https://www.federalregister.gov/presidential-documents",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "presidential-documents",
+      "authority": "official-mirror",
+      "title": "Executive orders, FederalRegister.gov",
+      "url": "https://www.federalregister.gov/presidential-documents/executive-orders",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "presidential-documents",
+      "authority": "official-mirror",
+      "title": "Proclamations, FederalRegister.gov",
+      "url": "https://www.federalregister.gov/presidential-documents/proclamations",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "presidential-documents",
+      "authority": "official-primary",
+      "title": "Executive order FAQ, National Archives",
+      "url": "https://www.archives.gov/federal-register/executive-orders/about.html",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "presidential-documents",
+      "authority": "official-primary",
+      "title": "Office of the Federal Register FAQ, National Archives",
+      "url": "https://www.archives.gov/federal-register/faqs",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "presidential-documents",
+      "authority": "official-primary",
+      "title": "Federal Register tutorial, National Archives",
+      "url": "https://www.archives.gov/federal-register/tutorial/text",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "presidential-documents",
+      "authority": "official-primary",
+      "title": "Compilation of Presidential Documents help, GovInfo",
+      "url": "https://www.govinfo.gov/help/cpd",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "presidential-documents",
+      "authority": "official-primary",
+      "title": "Compilation of Presidential Documents collection, GovInfo",
+      "url": "https://www.govinfo.gov/app/collection/cpd",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "presidential-documents",
+      "authority": "official-primary",
+      "title": "Presidential actions, White House",
+      "url": "https://www.whitehouse.gov/presidential-actions/",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "judiciary",
+      "authority": "official-primary",
+      "title": "Supreme Court opinions index",
+      "url": "https://www.supremecourt.gov/opinions/opinions.aspx",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "judiciary",
+      "authority": "official-primary",
+      "title": "Slip opinions, October Term 2025",
+      "url": "https://www.supremecourt.gov/opinions/slipopinion/25",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "judiciary",
+      "authority": "official-primary",
+      "title": "Slip opinions, October Term 2026",
+      "url": "https://www.supremecourt.gov/opinions/slipopinion/26",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "judiciary",
+      "authority": "official-primary",
+      "title": "Opinion table definitions",
+      "url": "https://www.supremecourt.gov/opinions/definitions.aspx",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "judiciary",
+      "authority": "official-primary",
+      "title": "United States Reports, Supreme Court",
+      "url": "https://www.supremecourt.gov/opinions/USReports.aspx",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "judiciary",
+      "authority": "official-primary",
+      "title": "Orders of the Court index",
+      "url": "https://www.supremecourt.gov/orders/ordersofthecourt.aspx",
+      "http_status": 200,
+      "check_note": "Resolved to https://www.supremecourt.gov/orders/ordersofthecourt/26."
+    },
+    {
+      "role": "judiciary",
+      "authority": "official-primary",
+      "title": "Orders of the Court, October Term 2025",
+      "url": "https://www.supremecourt.gov/orders/ordersofthecourt/25",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "judiciary",
+      "authority": "official-primary",
+      "title": "Orders of the Court, October Term 2026",
+      "url": "https://www.supremecourt.gov/orders/ordersofthecourt/26",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "judiciary",
+      "authority": "official-primary",
+      "title": "United States Reports collection, GovInfo",
+      "url": "https://www.govinfo.gov/app/collection/usreports",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "courts",
+      "authority": "official-primary",
+      "title": "Court role and structure",
+      "url": "https://www.uscourts.gov/about-federal-courts/court-role-and-structure",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "courts",
+      "authority": "official-primary",
+      "title": "About the U.S. courts of appeals",
+      "url": "https://www.uscourts.gov/about-federal-courts/court-role-and-structure/about-us-courts-appeals",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "courts",
+      "authority": "official-primary",
+      "title": "About U.S. district courts",
+      "url": "https://www.uscourts.gov/about-federal-courts/court-role-and-structure/about-us-district-courts",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "courts",
+      "authority": "official-primary",
+      "title": "About U.S. bankruptcy courts",
+      "url": "https://www.uscourts.gov/about-federal-courts/court-role-and-structure/about-us-bankruptcy-courts",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "courts",
+      "authority": "official-primary",
+      "title": "U.S. Court of Appeals for the Federal Circuit",
+      "url": "https://www.cafc.uscourts.gov/",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "courts",
+      "authority": "official-primary",
+      "title": "U.S. Court of Federal Claims",
+      "url": "https://www.uscfc.uscourts.gov/",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "courts",
+      "authority": "official-primary",
+      "title": "U.S. Court of International Trade",
+      "url": "https://www.cit.uscourts.gov/",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "courts",
+      "authority": "official-primary",
+      "title": "U.S. Court of Appeals for the Armed Forces",
+      "url": "https://www.armfor.uscourts.gov/",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "courts",
+      "authority": "official-primary",
+      "title": "Court website links",
+      "url": "https://www.uscourts.gov/about-federal-courts/federal-courts-public/court-website-links",
+      "http_status": 200,
+      "check_note": "HEAD 200 with a browser User-Agent."
+    },
+    {
+      "role": "courts",
+      "authority": "official-primary",
+      "title": "Court locator",
+      "url": "https://www.uscourts.gov/court-locator",
+      "http_status": null,
+      "check_note": "HEAD and GET returned 403 Forbidden."
+    },
+    {
+      "role": "rules",
+      "authority": "official-primary",
+      "title": "Current rules of practice and procedure",
+      "url": "https://www.uscourts.gov/forms-rules/current-rules-practice-procedure",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "rules",
+      "authority": "official-primary",
+      "title": "Federal Rules of Civil Procedure",
+      "url": "https://www.uscourts.gov/forms-rules/current-rules-practice-procedure/federal-rules-civil-procedure",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "rules",
+      "authority": "official-primary",
+      "title": "Federal Rules of Criminal Procedure",
+      "url": "https://www.uscourts.gov/forms-rules/current-rules-practice-procedure/federal-rules-criminal-procedure",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "rules",
+      "authority": "official-primary",
+      "title": "Federal Rules of Evidence",
+      "url": "https://www.uscourts.gov/forms-rules/current-rules-practice-procedure/federal-rules-evidence",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "rules",
+      "authority": "official-primary",
+      "title": "Federal Rules of Appellate Procedure",
+      "url": "https://www.uscourts.gov/forms-rules/current-rules-practice-procedure/federal-rules-appellate-procedure",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "rules",
+      "authority": "official-primary",
+      "title": "Federal Rules of Bankruptcy Procedure",
+      "url": "https://www.uscourts.gov/forms-rules/current-rules-practice-procedure/federal-rules-bankruptcy-procedure",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "sentencing",
+      "authority": "official-primary",
+      "title": "United States Sentencing Commission guidelines",
+      "url": "https://www.ussc.gov/guidelines",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "dockets",
+      "authority": "official-primary",
+      "title": "PACER",
+      "url": "https://pacer.uscourts.gov/",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "dockets",
+      "authority": "official-primary",
+      "title": "PACER pricing",
+      "url": "https://pacer.uscourts.gov/pacer-pricing-how-fees-work",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "dockets",
+      "authority": "official-primary",
+      "title": "Find a case (PACER), uscourts.gov",
+      "url": "https://www.uscourts.gov/court-records/find-a-case-pacer",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "congress",
+      "authority": "official-primary",
+      "title": "Congress.gov",
+      "url": "https://www.congress.gov/",
+      "http_status": null,
+      "check_note": "HEAD and GET returned 403 Forbidden."
+    },
+    {
+      "role": "congress",
+      "authority": "official-primary",
+      "title": "Public and private laws help, GovInfo",
+      "url": "https://www.govinfo.gov/help/plaw",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "congress",
+      "authority": "official-primary",
+      "title": "Public and private laws collection, GovInfo",
+      "url": "https://www.govinfo.gov/app/collection/plaw",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "congress",
+      "authority": "official-primary",
+      "title": "Statutes at Large help, GovInfo",
+      "url": "https://www.govinfo.gov/help/statute",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "congress",
+      "authority": "official-primary",
+      "title": "Statutes at Large collection, GovInfo",
+      "url": "https://www.govinfo.gov/app/collection/statute",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "congress",
+      "authority": "official-primary",
+      "title": "Office of Legal Counsel",
+      "url": "https://www.justice.gov/olc",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "congress",
+      "authority": "official-primary",
+      "title": "Office of Legal Counsel opinions",
+      "url": "https://www.justice.gov/olc/opinions",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "territories",
+      "authority": "official-primary",
+      "title": "Oficina de Servicios Legislativos de Puerto Rico",
+      "url": "https://www.oslpr.org/",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "territories",
+      "authority": "official-primary",
+      "title": "Leyes aprobadas, SUTRA",
+      "url": "https://sutra.oslpr.org/prontuarios/leyes-aprobadas",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "territories",
+      "authority": "official-primary",
+      "title": "Senado de Puerto Rico",
+      "url": "https://senado.pr.gov/",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "territories",
+      "authority": "official-primary",
+      "title": "Camara de Representantes de Puerto Rico",
+      "url": "https://www.camara.pr.gov/",
+      "http_status": null,
+      "check_note": "Connection failed on HEAD and GET."
+    },
+    {
+      "role": "territories",
+      "authority": "official-primary",
+      "title": "Poder Judicial de Puerto Rico",
+      "url": "https://poderjudicial.pr/",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "territories",
+      "authority": "official-primary",
+      "title": "Guam Legislature",
+      "url": "https://guamlegislature.gov/",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "territories",
+      "authority": "official-primary",
+      "title": "Guam Compiler of Laws",
+      "url": "https://col.guamcourts.gov/",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "territories",
+      "authority": "official-primary",
+      "title": "Judiciary of Guam",
+      "url": "https://www.guamcourts.gov/",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "territories",
+      "authority": "official-primary",
+      "title": "Guam courts legacy host",
+      "url": "https://guamcourts.org/",
+      "http_status": null,
+      "check_note": "Connection failed on HEAD and GET."
+    },
+    {
+      "role": "territories",
+      "authority": "official-primary",
+      "title": "Guam Supreme Court legacy host",
+      "url": "https://www.guamsupremecourt.com/",
+      "http_status": null,
+      "check_note": "Connection failed on HEAD and GET."
+    },
+    {
+      "role": "territories",
+      "authority": "official-primary",
+      "title": "Legislature of the Virgin Islands",
+      "url": "https://legvi.org/",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "territories",
+      "authority": "official-primary",
+      "title": "Judiciary of the Virgin Islands",
+      "url": "https://www.vicourts.org/",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "territories",
+      "authority": "official-primary",
+      "title": "Legislature of American Samoa",
+      "url": "https://www.asfono.gov/",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "territories",
+      "authority": "official-primary",
+      "title": "American Samoa government Fono page",
+      "url": "https://www.americansamoa.gov/fono",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "territories",
+      "authority": "official-primary",
+      "title": "Secretary of American Samoa",
+      "url": "https://www.osas.as/",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "territories",
+      "authority": "unofficial",
+      "title": "American Samoa Bar Association code annotated",
+      "url": "https://asbar.org/legal-resources/code-annotated/",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "territories",
+      "authority": "official-primary",
+      "title": "Northern Marianas Commonwealth Legislature",
+      "url": "https://cnmileg.net/",
+      "http_status": 200,
+      "check_note": ""
+    },
+    {
+      "role": "territories",
+      "authority": "official-primary",
+      "title": "CNMI legislature alternate host",
+      "url": "https://www.cnmileg.gov.mp/",
+      "http_status": null,
+      "check_note": "TLS handshake failed on HEAD and GET."
+    },
+    {
+      "role": "territories",
+      "authority": "official-primary",
+      "title": "CNMI Law Revision Commission",
+      "url": "https://cnmilaw.gov/",
+      "http_status": 200,
+      "check_note": ""
+    }
+  ]
+}

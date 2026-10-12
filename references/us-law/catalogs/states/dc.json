@@ -1,0 +1,81 @@
+{
+  "postal": "dc",
+  "name": "District of Columbia",
+  "kind": "federal-district",
+  "captured_at_utc": "2026-10-07T18:00:00Z",
+  "court_of_last_resort": "District of Columbia Court of Appeals",
+  "sources": [
+    {
+      "role": "constitution",
+      "authority": "official-primary",
+      "title": "Chapter 2. District of Columbia Home Rule.",
+      "url": "https://code.dccouncil.gov/us/dc/council/code/titles/1/chapters/2",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200. Home Rule chapter in the D.C. Code, used here as the organic charter."
+    },
+    {
+      "role": "statutes",
+      "authority": "official-primary",
+      "title": "Code of the District of Columbia",
+      "url": "https://code.dccouncil.gov/us/dc/council/code/",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200. Current through September 26, 2026; last codified D.C. Law 26-187."
+    },
+    {
+      "role": "session laws",
+      "authority": "official-primary",
+      "title": "Legislation and Laws - Council of the District of Columbia",
+      "url": "https://dccouncil.gov/legislation/",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200. http://dccouncil.us/legislation/ redirected here."
+    },
+    {
+      "role": "administrative code",
+      "authority": "official-primary",
+      "title": "DCRegs - District of Columbia Municipal Regulations and Register",
+      "url": "https://www.dcregs.dc.gov/",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200. Office of Documents and Administrative Issuances."
+    },
+    {
+      "role": "court of last resort opinions",
+      "authority": "official-primary",
+      "title": "Opinions and Memorandum of Judgments - DC Court of Appeals",
+      "url": "https://www.dccourts.gov/court-of-appeals/opinions-and-memorandum-of-judgments",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200. This court is not the Supreme Court of the United States."
+    },
+    {
+      "role": "dockets",
+      "authority": "official-primary",
+      "title": "Superior Court Case Search",
+      "url": "https://www.dccourts.gov/superior-court/superior-court-case-search",
+      "http_status": 200,
+      "check_note": "GET 200. https://www.dccourts.gov/eaccess redirected to this page."
+    },
+    {
+      "role": "dockets",
+      "authority": "official-primary",
+      "title": "Court of Appeals Case Search and E-Filing",
+      "url": "https://www.dccourts.gov/court-of-appeals/court-of-appeals-case-search-and-efiling",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200."
+    },
+    {
+      "role": "court rules",
+      "authority": "official-primary",
+      "title": "Rules of the DC Court of Appeals",
+      "url": "https://www.dccourts.gov/court-of-appeals/court-of-appeals-resources/rules-of-the-dc-court-of-appeals",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200."
+    },
+    {
+      "role": "attorney general opinions",
+      "authority": "official-primary",
+      "title": "Opinions of the Attorney General",
+      "url": "https://oag.dc.gov/about-oag/our-structure-divisions/legal-counsel-division/opinions-attorney-general",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200."
+    }
+  ]
+}

@@ -1,0 +1,89 @@
+{
+  "postal": "sd",
+  "name": "South Dakota",
+  "kind": "state",
+  "captured_at_utc": "2026-10-07T18:00:00Z",
+  "court_of_last_resort": "South Dakota Supreme Court",
+  "sources": [
+    {
+      "role": "constitution",
+      "authority": "official-primary",
+      "title": "South Dakota Constitution",
+      "url": "https://sdlegislature.gov/Constitution",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200; request https://sdlegislature.gov/Statutes/Constitution landed here"
+    },
+    {
+      "role": "statutes",
+      "authority": "official-primary",
+      "title": "South Dakota Codified Laws",
+      "url": "https://sdlegislature.gov/Statutes",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200; HTML application shell"
+    },
+    {
+      "role": "session-laws",
+      "authority": "official-primary",
+      "title": "South Dakota session laws",
+      "url": "https://sdlegislature.gov/Statutes/Session_Laws/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200; HTML application shell"
+    },
+    {
+      "role": "administrative-code",
+      "authority": "official-primary",
+      "title": "Administrative Rules of South Dakota",
+      "url": "https://sdlegislature.gov/Rules/Administrative",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200; HTML application shell"
+    },
+    {
+      "role": "court-of-last-resort",
+      "authority": "official-primary",
+      "title": "South Dakota Supreme Court",
+      "url": "https://ujs.sd.gov/supreme-court/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200"
+    },
+    {
+      "role": "dockets",
+      "authority": "official-primary",
+      "title": "South Dakota court records search",
+      "url": "https://ujs.sd.gov/cases-and-records/court-records-search/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200"
+    },
+    {
+      "role": "court-rules",
+      "authority": "official-primary",
+      "title": "South Dakota Supreme Court published rules",
+      "url": "https://ujs.sd.gov/supreme-court/published-rules/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200"
+    },
+    {
+      "role": "attorney-general-opinions",
+      "authority": "official-primary",
+      "title": "Official opinions of the South Dakota Attorney General",
+      "url": "https://atg.sd.gov/OurOffice/OfficialOpinions/default.aspx",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200"
+    },
+    {
+      "role": "court-structure",
+      "authority": "official-primary",
+      "title": "Court structure",
+      "url": "https://ujs.sd.gov/self-help/understanding-the-courts/court-structure/",
+      "http_status": 200,
+      "check_note": "HEAD/GET 200; aligned from source table"
+    },
+    {
+      "role": "appellate-opinions",
+      "authority": "official-primary",
+      "title": "Supreme Court opinions",
+      "url": "https://ujs.sd.gov/supreme-court/opinions/",
+      "http_status": 200,
+      "check_note": "HEAD/GET 200; aligned from source table"
+    }
+  ]
+}

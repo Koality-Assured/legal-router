@@ -1,0 +1,81 @@
+{
+  "postal": "va",
+  "name": "Virginia",
+  "kind": "state",
+  "captured_at_utc": "2026-10-07T18:00:00Z",
+  "court_of_last_resort": "Supreme Court of Virginia",
+  "sources": [
+    {
+      "role": "constitution",
+      "authority": "official-primary",
+      "title": "Constitution of Virginia",
+      "url": "https://law.lis.virginia.gov/constitution/",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200."
+    },
+    {
+      "role": "statutes",
+      "authority": "official-primary",
+      "title": "Code of Virginia",
+      "url": "https://law.lis.virginia.gov/vacode/",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200."
+    },
+    {
+      "role": "session laws",
+      "authority": "official-primary",
+      "title": "2026 Uncodified Acts",
+      "url": "https://law.lis.virginia.gov/uncodifiedacts/",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200."
+    },
+    {
+      "role": "administrative code",
+      "authority": "official-primary",
+      "title": "Virginia Administrative Code",
+      "url": "https://law.lis.virginia.gov/admincode/",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200."
+    },
+    {
+      "role": "intermediate appellate court",
+      "authority": "official-primary",
+      "title": "Court of Appeals of Virginia",
+      "url": "https://www.vacourts.gov/courts/cav/home",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200."
+    },
+    {
+      "role": "dockets",
+      "authority": "official-primary",
+      "title": "Virginia OCIS landing",
+      "url": "https://eapps.courts.state.va.us/ocis/landing",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200. Response was short and had no HTML title in this check."
+    },
+    {
+      "role": "court rules",
+      "authority": "official-primary",
+      "title": "Rules of Supreme Court of Virginia",
+      "url": "https://courts.state.va.us/courts/scv/rules",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200."
+    },
+    {
+      "role": "attorney general opinions",
+      "authority": "official-primary",
+      "title": "Official Opinions",
+      "url": "https://www.oag.state.va.us/annual-reports-opinions/official-opinions",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200."
+    },
+    {
+      "role": "local government",
+      "authority": "official-primary",
+      "title": "Virginia Charters",
+      "url": "https://law.lis.virginia.gov/charters/",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200. Municipal and city charters, not county ordinance codes."
+    }
+  ]
+}

@@ -1,0 +1,97 @@
+{
+  "postal": "ca",
+  "name": "California",
+  "kind": "state",
+  "captured_at_utc": "2026-10-07T18:00:00Z",
+  "court_of_last_resort": "Supreme Court of California",
+  "sources": [
+    {
+      "role": "constitution",
+      "authority": "official-primary",
+      "title": "California Constitution on the Legislative Counsel code search",
+      "url": "https://leginfo.legislature.ca.gov/faces/codes.xhtml",
+      "http_status": 403,
+      "check_note": "HEAD 403; GET 403. No code names are stored. No unofficial host substituted."
+    },
+    {
+      "role": "statutes",
+      "authority": "official-primary",
+      "title": "California Law code search",
+      "url": "https://leginfo.legislature.ca.gov/faces/codes.xhtml",
+      "http_status": 403,
+      "check_note": "HEAD 403; GET 403. No code names are stored."
+    },
+    {
+      "role": "session laws",
+      "authority": "official-primary",
+      "title": "Legislative Counsel bill search",
+      "url": "https://leginfo.legislature.ca.gov/faces/billSearchClient.xhtml",
+      "http_status": 403,
+      "check_note": "HEAD 403; GET 403. No replacement session-law host substituted."
+    },
+    {
+      "role": "administrative code",
+      "authority": "official-primary",
+      "title": "California Code of Regulations",
+      "url": "https://oal.ca.gov/publications/ccr/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200. OAL states it contracts with Barclays for the free online official CCR."
+    },
+    {
+      "role": "administrative code",
+      "authority": "official-mirror",
+      "title": "California Code of Regulations online compilation",
+      "url": "https://govt.westlaw.com/calregs/Index",
+      "http_status": 403,
+      "check_note": "HEAD 403; GET 403. Host named on the OAL page as the contracted official CCR. Not an independent research site."
+    },
+    {
+      "role": "court of last resort",
+      "authority": "official-primary",
+      "title": "Supreme Court of California",
+      "url": "https://courts.ca.gov/courts/supreme-court",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200. https://supreme.courts.ca.gov/ also returned GET 200."
+    },
+    {
+      "role": "intermediate appellate courts",
+      "authority": "official-primary",
+      "title": "Courts of Appeal",
+      "url": "https://courts.ca.gov/courts/courts-appeal",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    },
+    {
+      "role": "court opinions",
+      "authority": "official-primary",
+      "title": "Judicial Branch opinions",
+      "url": "https://courts.ca.gov/opinions",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200. Separate from appellatecases.courtinfo.ca.gov, which returned 403."
+    },
+    {
+      "role": "dockets",
+      "authority": "official-primary",
+      "title": "Appellate case information",
+      "url": "https://appellatecases.courtinfo.ca.gov/",
+      "http_status": 403,
+      "check_note": "HEAD 403; GET 403. Trial-court docket URLs were not added."
+    },
+    {
+      "role": "court rules",
+      "authority": "official-primary",
+      "title": "California Rules of Court",
+      "url": "https://www.courts.ca.gov/cms/rules/index.cfm",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    },
+    {
+      "role": "attorney general opinions",
+      "authority": "official-primary",
+      "title": "Legal opinions of the Attorney General",
+      "url": "https://oag.ca.gov/opinions",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    }
+  ]
+}

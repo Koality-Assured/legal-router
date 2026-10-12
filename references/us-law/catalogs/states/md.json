@@ -1,0 +1,81 @@
+{
+  "postal": "md",
+  "name": "Maryland",
+  "kind": "state",
+  "captured_at_utc": "2026-10-07T18:00:00Z",
+  "court_of_last_resort": "Supreme Court of Maryland",
+  "sources": [
+    {
+      "role": "constitution",
+      "authority": "official-primary",
+      "title": "Maryland Constitution - Maryland State Archives",
+      "url": "https://msa.maryland.gov/msa/mdmanual/43const/html/const.html",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200."
+    },
+    {
+      "role": "statutes",
+      "authority": "official-primary",
+      "title": "Laws - Statutes - Maryland General Assembly",
+      "url": "https://mgaleg.maryland.gov/mgawebsite/laws/statutes",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200. Article list is in the page select options."
+    },
+    {
+      "role": "session laws",
+      "authority": "official-primary",
+      "title": "Bills Enacted (Chapters)",
+      "url": "https://mgaleg.maryland.gov/mgawebsite/Legislation/Report?ID=chapters",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200. Enacted-chapter report."
+    },
+    {
+      "role": "administrative code",
+      "authority": "official-primary",
+      "title": "Code of Maryland Regulations",
+      "url": "https://regs.maryland.gov/",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200. Page says COMAR contains agency regulations and is updated every two weeks."
+    },
+    {
+      "role": "court of last resort opinions",
+      "authority": "official-primary",
+      "title": "Maryland Appellate Court Opinions",
+      "url": "https://www.mdcourts.gov/opinions/opinions",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200. Supreme Court of Maryland page https://www.mdcourts.gov/scm also returned 200."
+    },
+    {
+      "role": "intermediate appellate court",
+      "authority": "official-primary",
+      "title": "Appellate Court of Maryland",
+      "url": "https://www.mdcourts.gov/acm",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200."
+    },
+    {
+      "role": "court rules",
+      "authority": "official-primary",
+      "title": "Maryland Rules",
+      "url": "https://www.mdcourts.gov/rules",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200. Page title is generic; the URL is the rules path and links rules changes and meetings."
+    },
+    {
+      "role": "attorney general opinions",
+      "authority": "official-primary",
+      "title": "Search Opinions of the Attorney General",
+      "url": "https://oag.maryland.gov/resources-info/Pages/search-opinions.aspx",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200."
+    },
+    {
+      "role": "local government",
+      "authority": "official-primary",
+      "title": "Laws - Municipalities",
+      "url": "https://mgaleg.maryland.gov/mgawebsite/Laws/Municipalities",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200."
+    }
+  ]
+}

@@ -1,0 +1,124 @@
+{
+  "schema_version": "1.0",
+  "cases": [
+    {
+      "case_id": "saas-dpa-review-001",
+      "title": "Enterprise Cloud SaaS Agreement and DPA Review",
+      "request": {
+        "schema_version": "1.0",
+        "request_id": "req-saas-001",
+        "version": "1.0",
+        "operation": "review",
+        "matter": {
+          "title": "Vendor Cloud Services Review",
+          "matter_type": "commercial_contract",
+          "confidentiality_tier": "internal_confidential",
+          "client_matter_id": "SYNTH-MATTER-401"
+        },
+        "jurisdiction": {
+          "primary_jurisdiction": "US-DE",
+          "governing_law": "Delaware",
+          "forum": "State or Federal Courts in Delaware"
+        },
+        "intent": {
+          "primary_objective": "Negotiate 12-month mutual liability cap and GDPR Art 28 DPA terms",
+          "legal_basis": "Commercial vendor engagement",
+          "risk_tolerance": "moderate",
+          "preserve_clauses": ["indemnification_intellectual_property", "governing_law"]
+        },
+        "representations": [
+          {
+            "id": "saas-agreement-extract",
+            "route": "commercial_contract",
+            "asset": {"type": "saas_agreement"},
+            "role": "primary",
+            "delivery": {
+              "intended_use": "internal_risk_memo",
+              "format": "markdown"
+            }
+          },
+          {
+            "id": "dpa-crosswalk",
+            "route": "commercial_contract",
+            "asset": {"type": "data_processing_agreement"},
+            "role": "supporting",
+            "delivery": {
+              "intended_use": "compliance_crosswalk",
+              "format": "markdown"
+            }
+          }
+        ],
+        "constraints": [
+          {
+            "text": "Aggregate liability capped at 12 months fees paid",
+            "source": "client",
+            "status": "required",
+            "hardness": "hard"
+          },
+          {
+            "text": "Standard Contractual Clauses (SCCs) module 2 included for EU transfers",
+            "source": "standard",
+            "status": "required",
+            "hardness": "hard"
+          },
+          {
+            "text": "Audit rights with 30 days prior written notice",
+            "source": "client",
+            "status": "preferred",
+            "hardness": "soft"
+          }
+        ],
+        "references": [
+          {"id": "gdpr_art_28", "description": "Regulation (EU) 2016/679 Article 28 processor obligations"}
+        ],
+        "privilege_and_safeguards": {
+          "supervising_attorney_required": true,
+          "upl_disclaimer_required": true,
+          "zero_data_retention_endpoint": true,
+          "client_matter_scrubbed": true
+        },
+        "audience_delivery": {
+          "recipient_role": "supervising_commercial_counsel",
+          "delivery_format": "markdown",
+          "filing_prohibited": true
+        },
+        "provenance": {
+          "model_tier": "high",
+          "citation_verifier_run": true,
+          "timestamp_utc": "2026-10-12T14:00:00Z"
+        },
+        "open_questions": [],
+        "review_handoff": {
+          "owner": "contract-lifecycle-operator",
+          "reviewer": "legal-ethics-reviewer",
+          "acceptance_tests": [
+            "verify_liability_cap_calculation",
+            "verify_scc_transfer_clauses",
+            "verify_advisory_stamp"
+          ],
+          "advisory_stamp_verified": true
+        }
+      },
+      "deliverables": [
+        {
+          "representation_id": "saas-agreement-extract",
+          "route": "commercial_contract",
+          "asset_type": "saas_agreement",
+          "role": "primary",
+          "status": "complete",
+          "advisory_stamp": "ADVISORY WORK PRODUCT - FOR PRELIMINARY RESEARCH PURPOSES ONLY - REQUIRES INDEPENDENT LICENSED ATTORNEY REVIEW - NOT LEGAL ADVICE - NOT AUTHORIZED FOR FILING OR CLIENT DELIVERY WITHOUT SUPERVISING ATTORNEY SIGN-OFF",
+          "citations_verified": true
+        },
+        {
+          "representation_id": "dpa-crosswalk",
+          "route": "commercial_contract",
+          "asset_type": "data_processing_agreement",
+          "role": "supporting",
+          "status": "complete",
+          "advisory_stamp": "ADVISORY WORK PRODUCT - FOR PRELIMINARY RESEARCH PURPOSES ONLY - REQUIRES INDEPENDENT LICENSED ATTORNEY REVIEW - NOT LEGAL ADVICE - NOT AUTHORIZED FOR FILING OR CLIENT DELIVERY WITHOUT SUPERVISING ATTORNEY SIGN-OFF",
+          "citations_verified": true
+        }
+      ]
+    }
+  ]
+}

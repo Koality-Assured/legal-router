@@ -1,0 +1,19 @@
+{
+  "postal": "ri",
+  "name": "Rhode Island",
+  "kind": "state",
+  "captured_at_utc": "2026-10-07T18:00:00Z",
+  "court_of_last_resort": "Rhode Island Supreme Court",
+  "sources": [
+    {"role": "constitution", "authority": "official-primary", "title": "Constitution of the State of Rhode Island", "url": "https://www.rilegislature.gov/RIConstitution/Constitution/ConstFull.aspx", "http_status": 200, "check_note": "HEAD"},
+    {"role": "constitution", "authority": "official-primary", "title": "Constitution article index", "url": "https://www.rilegislature.gov/RIConstitution/Pages/default.aspx", "http_status": 200, "check_note": "HEAD"},
+    {"role": "statutes", "authority": "unofficial", "title": "General Laws title index; page says the web text is provisional", "url": "https://webserver.rilegislature.gov/statutes/Statutes.html", "http_status": 200, "check_note": "HEAD"},
+    {"role": "session-laws", "authority": "official-primary", "title": "Public laws, acts, and resolves", "url": "https://rilegislature.gov/pages/legislation.aspx", "http_status": 200, "check_note": "HEAD"},
+    {"role": "administrative-code", "authority": "official-primary", "title": "Rhode Island rules and regulations, by organization", "url": "https://rules.sos.ri.gov/organizations", "http_status": 200, "check_note": "HEAD"},
+    {"role": "court-of-last-resort", "authority": "official-primary", "title": "Rhode Island Supreme Court", "url": "https://www.courts.ri.gov/Courts/SupremeCourt/Pages/default.aspx", "http_status": 200, "check_note": "HEAD"},
+    {"role": "opinions", "authority": "official-primary", "title": "Supreme Court opinions search", "url": "https://www.courts.ri.gov/Search/Pages/supreme-court-opinions.aspx", "http_status": 200, "check_note": "HEAD"},
+    {"role": "dockets", "authority": "official-primary", "title": "Judiciary public portal", "url": "https://publicportal.courts.ri.gov/PublicPortal/", "http_status": 403, "check_note": "HEAD and GET 403"},
+    {"role": "court-rules", "authority": "official-primary", "title": "Court rules, General Laws, and ordinances", "url": "https://www.courts.ri.gov/Legal-Resources/Pages/court-rules.aspx", "http_status": 200, "check_note": "HEAD"},
+    {"role": "attorney-general-opinions", "authority": "official-primary", "title": "Attorney General site", "url": "https://riag.ri.gov/", "http_status": 403, "check_note": "HEAD and GET 403"}
+  ]
+}

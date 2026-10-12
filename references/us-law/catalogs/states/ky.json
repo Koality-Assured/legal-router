@@ -1,0 +1,89 @@
+{
+  "postal": "ky",
+  "name": "Kentucky",
+  "kind": "state",
+  "captured_at_utc": "2026-10-07T18:00:00Z",
+  "court_of_last_resort": "Supreme Court of Kentucky",
+  "sources": [
+    {
+      "role": "constitution",
+      "authority": "official-primary",
+      "title": "Constitution of Kentucky",
+      "url": "https://apps.legislature.ky.gov/law/constitution",
+      "http_status": 200,
+      "check_note": "HEAD 200, GET 200. Page says amendments through November 5, 2024."
+    },
+    {
+      "role": "statutes",
+      "authority": "official-primary",
+      "title": "Kentucky Revised Statutes title index",
+      "url": "https://apps.legislature.ky.gov/law/statutes/index.aspx",
+      "http_status": 200,
+      "check_note": "HEAD 200, GET 200. 44 titles. Page says enactments through the 2026 Regular Session."
+    },
+    {
+      "role": "statutes",
+      "authority": "unofficial",
+      "title": "Kentucky Revised Statutes notice",
+      "url": "https://legislature.ky.gov/Law/Statutes/Pages/Default.aspx",
+      "http_status": 200,
+      "check_note": "HEAD 200, GET 200. Says the public web files are not the certified text."
+    },
+    {
+      "role": "session laws",
+      "authority": "official-primary",
+      "title": "Acts of the Kentucky General Assembly",
+      "url": "https://legislature.ky.gov/Law/Pages/KyActs.aspx",
+      "http_status": 200,
+      "check_note": "HEAD 200, GET 200. Linked from the KAR navigation."
+    },
+    {
+      "role": "administrative code",
+      "authority": "official-primary",
+      "title": "Kentucky Administrative Regulations titles",
+      "url": "https://apps.legislature.ky.gov/law/kar/titles/",
+      "http_status": 200,
+      "check_note": "HEAD 200, GET 200. titles.htm redirects here. 136 titles, over the 120-line cap, not copied."
+    },
+    {
+      "role": "court opinions",
+      "authority": "official-primary",
+      "title": "Supreme Court of Kentucky",
+      "url": "https://www.kycourts.gov/Courts/Supreme-Court/Pages/default.aspx",
+      "http_status": 200,
+      "check_note": "HEAD 200, GET 200. Roster and location. Does not itself say court of last resort."
+    },
+    {
+      "role": "intermediate appellate",
+      "authority": "official-primary",
+      "title": "Kentucky Court of Appeals",
+      "url": "https://www.kycourts.gov/Courts/Court-of-Appeals/Pages/default.aspx",
+      "http_status": 200,
+      "check_note": "HEAD 200, GET 200. Listed separately from the Supreme Court."
+    },
+    {
+      "role": "dockets",
+      "authority": "official-primary",
+      "title": "KCOJ docket",
+      "url": "https://kcoj.kycourts.net/dockets/",
+      "http_status": 200,
+      "check_note": "HEAD 200, GET 200. Linked from the Court of Justice home page."
+    },
+    {
+      "role": "court rules",
+      "authority": "official-primary",
+      "title": "Kentucky local rules of practice",
+      "url": "https://www.kycourts.gov/Courts/Pages/Rules-of-Practice.aspx",
+      "http_status": 200,
+      "check_note": "HEAD 200, GET 200. Local rules. Statewide rules on the Supreme Court page are labeled Westlaw and were not adopted as official-primary."
+    },
+    {
+      "role": "attorney general",
+      "authority": "official-primary",
+      "title": "Opinions of the Kentucky Attorney General",
+      "url": "https://www.ag.ky.gov/Resources/Opinions/Pages/default.aspx",
+      "http_status": 200,
+      "check_note": "HEAD 200, GET 200."
+    }
+  ]
+}

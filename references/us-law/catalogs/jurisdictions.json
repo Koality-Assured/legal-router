@@ -1,0 +1,518 @@
+{
+  "captured_at_utc": "2026-10-07T18:00:00Z",
+  "federal_page_dir": "references/us-law/federal",
+  "federal_verified_sources": 75,
+  "federal_source_rows": 85,
+  "jurisdictions": [
+    {
+      "postal": "ak",
+      "name": "Alaska",
+      "kind": "state",
+      "court_of_last_resort": "Alaska Supreme Court",
+      "criminal_court_of_last_resort": null,
+      "page": "references/us-law/states/ak.md",
+      "verified_sources": 12,
+      "source_rows": 12
+    },
+    {
+      "postal": "al",
+      "name": "Alabama",
+      "kind": "state",
+      "court_of_last_resort": "Supreme Court of Alabama",
+      "criminal_court_of_last_resort": null,
+      "page": "references/us-law/states/al.md",
+      "verified_sources": 10,
+      "source_rows": 11
+    },
+    {
+      "postal": "ar",
+      "name": "Arkansas",
+      "kind": "state",
+      "court_of_last_resort": "Arkansas Supreme Court",
+      "criminal_court_of_last_resort": null,
+      "page": "references/us-law/states/ar.md",
+      "verified_sources": 11,
+      "source_rows": 11
+    },
+    {
+      "postal": "az",
+      "name": "Arizona",
+      "kind": "state",
+      "court_of_last_resort": "Arizona Supreme Court",
+      "criminal_court_of_last_resort": null,
+      "page": "references/us-law/states/az.md",
+      "verified_sources": 10,
+      "source_rows": 11
+    },
+    {
+      "postal": "ca",
+      "name": "California",
+      "kind": "state",
+      "court_of_last_resort": "Supreme Court of California",
+      "criminal_court_of_last_resort": null,
+      "page": "references/us-law/states/ca.md",
+      "verified_sources": 6,
+      "source_rows": 11
+    },
+    {
+      "postal": "co",
+      "name": "Colorado",
+      "kind": "state",
+      "court_of_last_resort": "Colorado Supreme Court",
+      "criminal_court_of_last_resort": null,
+      "page": "references/us-law/states/co.md",
+      "verified_sources": 11,
+      "source_rows": 11
+    },
+    {
+      "postal": "ct",
+      "name": "Connecticut",
+      "kind": "state",
+      "court_of_last_resort": "Connecticut Supreme Court",
+      "criminal_court_of_last_resort": null,
+      "page": "references/us-law/states/ct.md",
+      "verified_sources": 10,
+      "source_rows": 12
+    },
+    {
+      "postal": "dc",
+      "name": "District of Columbia",
+      "kind": "federal-district",
+      "court_of_last_resort": "District of Columbia Court of Appeals",
+      "criminal_court_of_last_resort": null,
+      "page": "references/us-law/states/dc.md",
+      "verified_sources": 9,
+      "source_rows": 9
+    },
+    {
+      "postal": "de",
+      "name": "Delaware",
+      "kind": "state",
+      "court_of_last_resort": "Delaware Supreme Court",
+      "criminal_court_of_last_resort": null,
+      "page": "references/us-law/states/de.md",
+      "verified_sources": 9,
+      "source_rows": 9
+    },
+    {
+      "postal": "fl",
+      "name": "Florida",
+      "kind": "state",
+      "court_of_last_resort": "Supreme Court of Florida",
+      "criminal_court_of_last_resort": null,
+      "page": "references/us-law/states/fl.md",
+      "verified_sources": 11,
+      "source_rows": 11
+    },
+    {
+      "postal": "ga",
+      "name": "Georgia",
+      "kind": "state",
+      "court_of_last_resort": "Supreme Court of Georgia",
+      "criminal_court_of_last_resort": null,
+      "page": "references/us-law/states/ga.md",
+      "verified_sources": 12,
+      "source_rows": 12
+    },
+    {
+      "postal": "hi",
+      "name": "Hawaii",
+      "kind": "state",
+      "court_of_last_resort": "Supreme Court of Hawaii",
+      "criminal_court_of_last_resort": null,
+      "page": "references/us-law/states/hi.md",
+      "verified_sources": 7,
+      "source_rows": 10
+    },
+    {
+      "postal": "ia",
+      "name": "Iowa",
+      "kind": "state",
+      "court_of_last_resort": "Iowa Supreme Court",
+      "criminal_court_of_last_resort": null,
+      "page": "references/us-law/states/ia.md",
+      "verified_sources": 9,
+      "source_rows": 9
+    },
+    {
+      "postal": "id",
+      "name": "Idaho",
+      "kind": "state",
+      "court_of_last_resort": "Idaho Supreme Court",
+      "criminal_court_of_last_resort": null,
+      "page": "references/us-law/states/id.md",
+      "verified_sources": 10,
+      "source_rows": 11
+    },
+    {
+      "postal": "il",
+      "name": "Illinois",
+      "kind": "state",
+      "court_of_last_resort": "Supreme Court of Illinois",
+      "criminal_court_of_last_resort": null,
+      "page": "references/us-law/states/il.md",
+      "verified_sources": 9,
+      "source_rows": 9
+    },
+    {
+      "postal": "in",
+      "name": "Indiana",
+      "kind": "state",
+      "court_of_last_resort": "Indiana Supreme Court",
+      "criminal_court_of_last_resort": null,
+      "page": "references/us-law/states/in.md",
+      "verified_sources": 5,
+      "source_rows": 9
+    },
+    {
+      "postal": "ks",
+      "name": "Kansas",
+      "kind": "state",
+      "court_of_last_resort": "Kansas Supreme Court",
+      "criminal_court_of_last_resort": null,
+      "page": "references/us-law/states/ks.md",
+      "verified_sources": 6,
+      "source_rows": 6
+    },
+    {
+      "postal": "ky",
+      "name": "Kentucky",
+      "kind": "state",
+      "court_of_last_resort": "Supreme Court of Kentucky",
+      "criminal_court_of_last_resort": null,
+      "page": "references/us-law/states/ky.md",
+      "verified_sources": 10,
+      "source_rows": 10
+    },
+    {
+      "postal": "la",
+      "name": "Louisiana",
+      "kind": "state",
+      "court_of_last_resort": "Supreme Court of Louisiana",
+      "criminal_court_of_last_resort": null,
+      "page": "references/us-law/states/la.md",
+      "verified_sources": 9,
+      "source_rows": 9
+    },
+    {
+      "postal": "ma",
+      "name": "Massachusetts",
+      "kind": "state",
+      "court_of_last_resort": "Massachusetts Supreme Judicial Court",
+      "criminal_court_of_last_resort": null,
+      "page": "references/us-law/states/ma.md",
+      "verified_sources": 5,
+      "source_rows": 8
+    },
+    {
+      "postal": "md",
+      "name": "Maryland",
+      "kind": "state",
+      "court_of_last_resort": "Supreme Court of Maryland",
+      "criminal_court_of_last_resort": null,
+      "page": "references/us-law/states/md.md",
+      "verified_sources": 9,
+      "source_rows": 9
+    },
+    {
+      "postal": "me",
+      "name": "Maine",
+      "kind": "state",
+      "court_of_last_resort": "Maine Supreme Judicial Court",
+      "criminal_court_of_last_resort": null,
+      "page": "references/us-law/states/me.md",
+      "verified_sources": 8,
+      "source_rows": 10
+    },
+    {
+      "postal": "mi",
+      "name": "Michigan",
+      "kind": "state",
+      "court_of_last_resort": null,
+      "criminal_court_of_last_resort": null,
+      "page": "references/us-law/states/mi.md",
+      "verified_sources": 6,
+      "source_rows": 9
+    },
+    {
+      "postal": "mn",
+      "name": "Minnesota",
+      "kind": "state",
+      "court_of_last_resort": "Minnesota Supreme Court",
+      "criminal_court_of_last_resort": null,
+      "page": "references/us-law/states/mn.md",
+      "verified_sources": 8,
+      "source_rows": 9
+    },
+    {
+      "postal": "mo",
+      "name": "Missouri",
+      "kind": "state",
+      "court_of_last_resort": "Missouri supreme court",
+      "criminal_court_of_last_resort": null,
+      "page": "references/us-law/states/mo.md",
+      "verified_sources": 5,
+      "source_rows": 9
+    },
+    {
+      "postal": "ms",
+      "name": "Mississippi",
+      "kind": "state",
+      "court_of_last_resort": "Supreme Court of Mississippi",
+      "criminal_court_of_last_resort": null,
+      "page": "references/us-law/states/ms.md",
+      "verified_sources": 7,
+      "source_rows": 13
+    },
+    {
+      "postal": "mt",
+      "name": "Montana",
+      "kind": "state",
+      "court_of_last_resort": "Montana Supreme Court",
+      "criminal_court_of_last_resort": null,
+      "page": "references/us-law/states/mt.md",
+      "verified_sources": 9,
+      "source_rows": 9
+    },
+    {
+      "postal": "nc",
+      "name": "North Carolina",
+      "kind": "state",
+      "court_of_last_resort": "Supreme Court of North Carolina",
+      "criminal_court_of_last_resort": null,
+      "page": "references/us-law/states/nc.md",
+      "verified_sources": 9,
+      "source_rows": 9
+    },
+    {
+      "postal": "nd",
+      "name": "North Dakota",
+      "kind": "state",
+      "court_of_last_resort": "North Dakota Supreme Court",
+      "criminal_court_of_last_resort": null,
+      "page": "references/us-law/states/nd.md",
+      "verified_sources": 10,
+      "source_rows": 10
+    },
+    {
+      "postal": "ne",
+      "name": "Nebraska",
+      "kind": "state",
+      "court_of_last_resort": "Nebraska Supreme Court",
+      "criminal_court_of_last_resort": null,
+      "page": "references/us-law/states/ne.md",
+      "verified_sources": 9,
+      "source_rows": 9
+    },
+    {
+      "postal": "nh",
+      "name": "New Hampshire",
+      "kind": "state",
+      "court_of_last_resort": "New Hampshire Supreme Court",
+      "criminal_court_of_last_resort": null,
+      "page": "references/us-law/states/nh.md",
+      "verified_sources": 5,
+      "source_rows": 9
+    },
+    {
+      "postal": "nj",
+      "name": "New Jersey",
+      "kind": "state",
+      "court_of_last_resort": "Supreme Court of New Jersey",
+      "criminal_court_of_last_resort": null,
+      "page": "references/us-law/states/nj.md",
+      "verified_sources": 10,
+      "source_rows": 12
+    },
+    {
+      "postal": "nm",
+      "name": "New Mexico",
+      "kind": "state",
+      "court_of_last_resort": "New Mexico Supreme Court",
+      "criminal_court_of_last_resort": null,
+      "page": "references/us-law/states/nm.md",
+      "verified_sources": 11,
+      "source_rows": 11
+    },
+    {
+      "postal": "nv",
+      "name": "Nevada",
+      "kind": "state",
+      "court_of_last_resort": "Supreme Court of Nevada",
+      "criminal_court_of_last_resort": null,
+      "page": "references/us-law/states/nv.md",
+      "verified_sources": 7,
+      "source_rows": 11
+    },
+    {
+      "postal": "ny",
+      "name": "New York",
+      "kind": "state",
+      "court_of_last_resort": null,
+      "criminal_court_of_last_resort": null,
+      "page": "references/us-law/states/ny.md",
+      "verified_sources": 2,
+      "source_rows": 12
+    },
+    {
+      "postal": "oh",
+      "name": "Ohio",
+      "kind": "state",
+      "court_of_last_resort": "Supreme Court of Ohio",
+      "criminal_court_of_last_resort": null,
+      "page": "references/us-law/states/oh.md",
+      "verified_sources": 9,
+      "source_rows": 9
+    },
+    {
+      "postal": "ok",
+      "name": "Oklahoma",
+      "kind": "state",
+      "court_of_last_resort": "Oklahoma Supreme Court",
+      "criminal_court_of_last_resort": "Oklahoma Court of Criminal Appeals",
+      "page": "references/us-law/states/ok.md",
+      "verified_sources": 15,
+      "source_rows": 20
+    },
+    {
+      "postal": "or",
+      "name": "Oregon",
+      "kind": "state",
+      "court_of_last_resort": "Oregon Supreme Court",
+      "criminal_court_of_last_resort": null,
+      "page": "references/us-law/states/or.md",
+      "verified_sources": 13,
+      "source_rows": 13
+    },
+    {
+      "postal": "pa",
+      "name": "Pennsylvania",
+      "kind": "state",
+      "court_of_last_resort": "Supreme Court of Pennsylvania",
+      "criminal_court_of_last_resort": null,
+      "page": "references/us-law/states/pa.md",
+      "verified_sources": 12,
+      "source_rows": 13
+    },
+    {
+      "postal": "ri",
+      "name": "Rhode Island",
+      "kind": "state",
+      "court_of_last_resort": "Rhode Island Supreme Court",
+      "criminal_court_of_last_resort": null,
+      "page": "references/us-law/states/ri.md",
+      "verified_sources": 8,
+      "source_rows": 10
+    },
+    {
+      "postal": "sc",
+      "name": "South Carolina",
+      "kind": "state",
+      "court_of_last_resort": "Supreme Court of South Carolina",
+      "criminal_court_of_last_resort": null,
+      "page": "references/us-law/states/sc.md",
+      "verified_sources": 10,
+      "source_rows": 10
+    },
+    {
+      "postal": "sd",
+      "name": "South Dakota",
+      "kind": "state",
+      "court_of_last_resort": "South Dakota Supreme Court",
+      "criminal_court_of_last_resort": null,
+      "page": "references/us-law/states/sd.md",
+      "verified_sources": 10,
+      "source_rows": 10
+    },
+    {
+      "postal": "tn",
+      "name": "Tennessee",
+      "kind": "state",
+      "court_of_last_resort": null,
+      "criminal_court_of_last_resort": null,
+      "page": "references/us-law/states/tn.md",
+      "verified_sources": 5,
+      "source_rows": 7
+    },
+    {
+      "postal": "tx",
+      "name": "Texas",
+      "kind": "state",
+      "court_of_last_resort": "Supreme Court of Texas",
+      "criminal_court_of_last_resort": "Court of Criminal Appeals of Texas",
+      "page": "references/us-law/states/tx.md",
+      "verified_sources": 11,
+      "source_rows": 11
+    },
+    {
+      "postal": "ut",
+      "name": "Utah",
+      "kind": "state",
+      "court_of_last_resort": "Utah Supreme Court",
+      "criminal_court_of_last_resort": null,
+      "page": "references/us-law/states/ut.md",
+      "verified_sources": 9,
+      "source_rows": 9
+    },
+    {
+      "postal": "va",
+      "name": "Virginia",
+      "kind": "state",
+      "court_of_last_resort": "Supreme Court of Virginia",
+      "criminal_court_of_last_resort": null,
+      "page": "references/us-law/states/va.md",
+      "verified_sources": 9,
+      "source_rows": 9
+    },
+    {
+      "postal": "vt",
+      "name": "Vermont",
+      "kind": "state",
+      "court_of_last_resort": "Vermont Supreme Court",
+      "criminal_court_of_last_resort": null,
+      "page": "references/us-law/states/vt.md",
+      "verified_sources": 8,
+      "source_rows": 9
+    },
+    {
+      "postal": "wa",
+      "name": "Washington",
+      "kind": "state",
+      "court_of_last_resort": "Washington Supreme Court",
+      "criminal_court_of_last_resort": null,
+      "page": "references/us-law/states/wa.md",
+      "verified_sources": 10,
+      "source_rows": 10
+    },
+    {
+      "postal": "wi",
+      "name": "Wisconsin",
+      "kind": "state",
+      "court_of_last_resort": "Wisconsin Supreme Court",
+      "criminal_court_of_last_resort": null,
+      "page": "references/us-law/states/wi.md",
+      "verified_sources": 9,
+      "source_rows": 9
+    },
+    {
+      "postal": "wv",
+      "name": "West Virginia",
+      "kind": "state",
+      "court_of_last_resort": "Supreme Court of Appeals of West Virginia",
+      "criminal_court_of_last_resort": null,
+      "page": "references/us-law/states/wv.md",
+      "verified_sources": 10,
+      "source_rows": 10
+    },
+    {
+      "postal": "wy",
+      "name": "Wyoming",
+      "kind": "state",
+      "court_of_last_resort": "Wyoming Supreme Court",
+      "criminal_court_of_last_resort": null,
+      "page": "references/us-law/states/wy.md",
+      "verified_sources": 7,
+      "source_rows": 9
+    }
+  ]
+}

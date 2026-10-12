@@ -1,10 +1,13 @@
 # Valid Sources Catalog
 
+> [!IMPORTANT]
+> **Human-Facing Documentation Only**: This README is maintained strictly for human developers and repository visitors. Autonomous AI agents MUST NOT ingest or utilize `README.md` files for operational instructions or context. All agent directives and navigation reside strictly in [`AGENTS.md`](../AGENTS.md) and [`routing/`](../../routing/).
+
 Catalog of vetted, authoritative primary sources, official vendor documentation portals, and standards bodies.
 
 ## Purpose
 
-Provides machine-discoverable and human-readable registries of Tier 1 and Tier 2 primary sources for agent research, validation, and reference maintenance per [`../../docs/standards/research-and-empirical-validation.md`](../../docs/standards/research-and-empirical-validation.md).
+Provides machine-discoverable and human-readable registries of Tier 1 and Tier 2 primary sources for agent research, validation, and reference maintenance.
 
 ## Topic Pages
 

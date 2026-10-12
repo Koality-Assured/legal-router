@@ -1,0 +1,81 @@
+{
+  "postal": "mi",
+  "name": "Michigan",
+  "kind": "state",
+  "captured_at_utc": "2026-10-07T18:00:00Z",
+  "court_of_last_resort": null,
+  "sources": [
+    {
+      "role": "constitution",
+      "authority": "official-primary",
+      "title": "Constitution of Michigan of 1963",
+      "url": "https://www.legislature.mi.gov/Laws/MCL?objectName=mcl-Constitution",
+      "http_status": 200,
+      "check_note": "HEAD 405; GET 200."
+    },
+    {
+      "role": "statutes",
+      "authority": "official-primary",
+      "title": "MCL Chapter Index",
+      "url": "https://www.legislature.mi.gov/Laws/ChapterIndex",
+      "http_status": 200,
+      "check_note": "HEAD 405; GET 200. 227 numbered chapter links."
+    },
+    {
+      "role": "session laws",
+      "authority": "official-primary",
+      "title": "Public and Local Acts",
+      "url": "https://www.legislature.mi.gov/Laws/PublicActs",
+      "http_status": 200,
+      "check_note": "HEAD 405; GET 200. Banner: complete through PA 103 of 2026."
+    },
+    {
+      "role": "administrative code",
+      "authority": "official-primary",
+      "title": "Administrative Rules, MOAHR",
+      "url": "https://www.michigan.gov/lara/bureau-list/moahr/admin-rules",
+      "http_status": 200,
+      "check_note": "HEAD failed without a status code; GET 200. ARS AdminCode URL redirected to an error page."
+    },
+    {
+      "role": "court-site",
+      "authority": "official-primary",
+      "title": "Michigan courts, supreme court",
+      "url": "https://www.courts.michigan.gov/courts/supreme-court/",
+      "http_status": null,
+      "check_note": "GET 200. Static HTML is an application shell without a text heading. Failed document check."
+    },
+    {
+      "role": "court-site",
+      "authority": "official-primary",
+      "title": "Michigan courts, court of appeals",
+      "url": "https://www.courts.michigan.gov/courts/court-of-appeals/",
+      "http_status": null,
+      "check_note": "GET 200. Static HTML is an application shell without a text heading. Failed document check."
+    },
+    {
+      "role": "court-site",
+      "authority": "official-primary",
+      "title": "Michigan courts case search",
+      "url": "https://www.courts.michigan.gov/case-search/",
+      "http_status": null,
+      "check_note": "GET 200. Static HTML is an application shell without a text heading. Failed document check."
+    },
+    {
+      "role": "court rules",
+      "authority": "official-primary",
+      "title": "Michigan Court Rules, Chapter 1",
+      "url": "https://www.courts.michigan.gov/siteassets/rules-instructions-administrative-orders/michigan-court-rules/michigan-court-rules-responsive-html5.zip/Michigan_Court_Rules/Court_Rules_Chapter_1/Court_Rules_Chapter_1.htm",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200. Title: Court Rules Chapter 1."
+    },
+    {
+      "role": "attorney general opinions",
+      "authority": "official-primary",
+      "title": "Attorney General opinions",
+      "url": "https://www.michigan.gov/ag/news/opinions",
+      "http_status": 200,
+      "check_note": "HEAD failed without a status code; GET 200."
+    }
+  ]
+}

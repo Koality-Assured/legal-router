@@ -1,0 +1,73 @@
+{
+  "postal": "ma",
+  "name": "Massachusetts",
+  "kind": "state",
+  "captured_at_utc": "2026-10-07T18:00:00Z",
+  "court_of_last_resort": "Massachusetts Supreme Judicial Court",
+  "sources": [
+    {
+      "role": "constitution",
+      "authority": "official-primary",
+      "title": "Constitution of the Commonwealth of Massachusetts",
+      "url": "https://malegislature.gov/Laws/Constitution",
+      "http_status": 200,
+      "check_note": "HEAD"
+    },
+    {
+      "role": "statutes",
+      "authority": "unofficial",
+      "title": "General Laws browse by part; page disclaims the Official Edition",
+      "url": "https://malegislature.gov/Laws/GeneralLaws/",
+      "http_status": 200,
+      "check_note": "HEAD"
+    },
+    {
+      "role": "session-laws",
+      "authority": "official-primary",
+      "title": "Session laws",
+      "url": "https://malegislature.gov/Laws/SessionLaws",
+      "http_status": 200,
+      "check_note": "HEAD"
+    },
+    {
+      "role": "administrative-code",
+      "authority": "official-primary",
+      "title": "Secretary of the Commonwealth regulations manual",
+      "url": "https://www.sec.state.ma.us/divisions/pubs-regs/download/manual.pdf",
+      "http_status": 200,
+      "check_note": "HEAD"
+    },
+    {
+      "role": "dockets",
+      "authority": "official-primary",
+      "title": "MassCourts",
+      "url": "https://www.masscourts.org/eservices/home.page",
+      "http_status": 200,
+      "check_note": "HEAD"
+    },
+    {
+      "role": "opinions",
+      "authority": "official-primary",
+      "title": "New opinions, Reporter of Decisions",
+      "url": "https://www.mass.gov/info-details/new-opinions",
+      "http_status": 403,
+      "check_note": "HEAD and GET 403. Court name is from the fetched constitution, not this page."
+    },
+    {
+      "role": "intermediate-appellate",
+      "authority": "official-primary",
+      "title": "Appeals Court organization page",
+      "url": "https://www.mass.gov/orgs/appeals-court",
+      "http_status": 403,
+      "check_note": "HEAD and GET 403"
+    },
+    {
+      "role": "court-rules",
+      "authority": "official-primary",
+      "title": "Massachusetts court rules",
+      "url": "https://www.mass.gov/law-library/massachusetts-court-rules",
+      "http_status": 403,
+      "check_note": "HEAD and GET 403"
+    }
+  ]
+}

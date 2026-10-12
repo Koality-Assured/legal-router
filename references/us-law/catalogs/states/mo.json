@@ -1,0 +1,81 @@
+{
+  "postal": "mo",
+  "name": "Missouri",
+  "kind": "state",
+  "captured_at_utc": "2026-10-07T18:00:00Z",
+  "court_of_last_resort": "Missouri supreme court",
+  "sources": [
+    {
+      "role": "constitution",
+      "authority": "official-primary",
+      "title": "Missouri Constitution",
+      "url": "https://revisor.mo.gov/main/Home.aspx?constit=y",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200. ?chapter=Const redirected to nofish.aspx."
+    },
+    {
+      "role": "statutes",
+      "authority": "official-primary",
+      "title": "Revised Statutes of Missouri",
+      "url": "https://revisor.mo.gov/main/Home.aspx",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200. Page calls itself the official RSMo website. 41 titles."
+    },
+    {
+      "role": "session laws",
+      "authority": "official-primary",
+      "title": "Revisor publications, session laws",
+      "url": "https://revisor.mo.gov/main/Info.aspx",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200. Lists session-law PDFs for 2009 through 2025."
+    },
+    {
+      "role": "administrative code",
+      "authority": "official-primary",
+      "title": "Current Code of State Regulations",
+      "url": "https://www.sos.mo.gov/adrules/csr/csr",
+      "http_status": 200,
+      "check_note": "HEAD failed without a status code; GET 200. Division home /adrules also GET 200."
+    },
+    {
+      "role": "court of last resort",
+      "authority": "official-primary",
+      "title": "Missouri courts",
+      "url": "https://www.courts.mo.gov/",
+      "http_status": null,
+      "check_note": "HEAD and GET failed: Could not create SSL/TLS secure channel. Constitution Article V names the supreme court."
+    },
+    {
+      "role": "intermediate appellate",
+      "authority": "official-primary",
+      "title": "Missouri courts",
+      "url": "https://www.courts.mo.gov/page.jsp?id=261",
+      "http_status": null,
+      "check_note": "HEAD and GET failed: Could not create SSL/TLS secure channel."
+    },
+    {
+      "role": "dockets",
+      "authority": "official-primary",
+      "title": "Case.net",
+      "url": "https://www.courts.mo.gov/casenet/base/welcome.do",
+      "http_status": null,
+      "check_note": "HEAD and GET failed: Could not create SSL/TLS secure channel."
+    },
+    {
+      "role": "court rules",
+      "authority": "official-primary",
+      "title": "Missouri court rules path",
+      "url": "https://www.courts.mo.gov/page.jsp?id=46",
+      "http_status": null,
+      "check_note": "HEAD and GET failed: Could not create SSL/TLS secure channel."
+    },
+    {
+      "role": "attorney general opinions",
+      "authority": "official-primary",
+      "title": "AG Opinions",
+      "url": "https://ago.mo.gov/other-resources/ag-opinions/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    }
+  ]
+}

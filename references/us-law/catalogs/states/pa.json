@@ -1,0 +1,22 @@
+{
+  "postal": "pa",
+  "name": "Pennsylvania",
+  "kind": "state",
+  "captured_at_utc": "2026-10-07T18:00:00Z",
+  "court_of_last_resort": "Supreme Court of Pennsylvania",
+  "sources": [
+    {"role": "constitution", "authority": "official-primary", "title": "Constitution of the Commonwealth of Pennsylvania", "url": "https://www.palegis.us/statutes/consolidated/view-statute?txtType=HTM&ttl=00", "http_status": 200, "check_note": "HEAD"},
+    {"role": "statutes", "authority": "official-primary", "title": "Pennsylvania Consolidated Statutes", "url": "https://www.palegis.us/statutes/consolidated", "http_status": 200, "check_note": "HEAD"},
+    {"role": "session-laws", "authority": "official-primary", "title": "Unconsolidated statutes (Laws of Pennsylvania, pamphlet laws)", "url": "https://www.palegis.us/statutes/unconsolidated", "http_status": 200, "check_note": "HEAD"},
+    {"role": "administrative-code", "authority": "official-primary", "title": "Pennsylvania Code and Pennsylvania Bulletin", "url": "https://www.pacodeandbulletin.gov/", "http_status": 200, "check_note": "HEAD"},
+    {"role": "court-of-last-resort", "authority": "official-primary", "title": "Supreme Court of Pennsylvania", "url": "https://www.pacourts.us/courts/supreme-court", "http_status": 200, "check_note": "HEAD"},
+    {"role": "intermediate-appellate", "authority": "official-primary", "title": "Superior Court", "url": "https://www.pacourts.us/courts/superior-court", "http_status": 200, "check_note": "HEAD"},
+    {"role": "intermediate-appellate", "authority": "official-primary", "title": "Commonwealth Court", "url": "https://www.pacourts.us/courts/commonwealth-court", "http_status": 200, "check_note": "HEAD"},
+    {"role": "opinions", "authority": "official-primary", "title": "Supreme Court opinions and postings", "url": "https://www.pacourts.us/courts/supreme-court/court-opinions/", "http_status": 200, "check_note": "HEAD"},
+    {"role": "dockets", "authority": "official-primary", "title": "Pennsylvania Judiciary Web Portal", "url": "https://ujsportal.pacourts.us/", "http_status": 200, "check_note": "HEAD"},
+    {"role": "court-rules", "authority": "official-primary", "title": "Pennsylvania Code and Bulletin", "url": "https://www.pacodeandbulletin.gov/", "http_status": 200, "check_note": "HEAD; dedicated court-rules path returned 404"},
+    {"role": "court-rules", "authority": "official-primary", "title": "Pennsylvania Code Title 201, Rules of Judicial Administration", "url": "https://www.pacodeandbulletin.gov/Display/pacode?file=/secure/pacode/data/201/201toc.html", "http_status": 200, "check_note": "HEAD; page says publication gives judicial text no special status"},
+    {"role": "attorney-general-opinions", "authority": "official-primary", "title": "Official Attorney General opinions", "url": "https://www.attorneygeneral.gov/the-office/official-attorney-general-opinions/", "http_status": 200, "check_note": "HEAD"},
+    {"role": "court-rules", "authority": "official-primary", "title": "Unused Supreme Court rules path", "url": "https://www.pacourts.us/courts/supreme-court/court-rules", "http_status": 404, "check_note": "HEAD and GET 404"}
+  ]
+}

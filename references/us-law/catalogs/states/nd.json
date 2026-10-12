@@ -1,0 +1,89 @@
+{
+  "postal": "nd",
+  "name": "North Dakota",
+  "kind": "state",
+  "captured_at_utc": "2026-10-07T18:00:00Z",
+  "court_of_last_resort": "North Dakota Supreme Court",
+  "sources": [
+    {
+      "role": "constitution",
+      "authority": "official-primary",
+      "title": "Constitution of North Dakota",
+      "url": "https://ndlegis.gov/constitution",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200"
+    },
+    {
+      "role": "statutes",
+      "authority": "official-primary",
+      "title": "North Dakota Century Code",
+      "url": "https://ndlegis.gov/prod/general-information/north-dakota-century-code/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200"
+    },
+    {
+      "role": "session-laws",
+      "authority": "official-primary",
+      "title": "Session Laws of North Dakota",
+      "url": "https://ndlegis.gov/research-and-archives/session-laws",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200"
+    },
+    {
+      "role": "administrative-code",
+      "authority": "official-primary",
+      "title": "North Dakota Administrative Code",
+      "url": "https://ndlegis.gov/prod/agency-rules/north-dakota-administrative-code/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200"
+    },
+    {
+      "role": "court-of-last-resort",
+      "authority": "official-primary",
+      "title": "North Dakota Supreme Court",
+      "url": "https://www.ndcourts.gov/supreme-court",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200"
+    },
+    {
+      "role": "intermediate-appellate",
+      "authority": "official-primary",
+      "title": "North Dakota Court System about us, including the Court of Appeals",
+      "url": "https://www.ndcourts.gov/about-us",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200"
+    },
+    {
+      "role": "dockets",
+      "authority": "official-primary",
+      "title": "Search appellate records",
+      "url": "https://www.ndcourts.gov/supreme-court/docket-search",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200"
+    },
+    {
+      "role": "dockets",
+      "authority": "official-primary",
+      "title": "Public access, district court case search",
+      "url": "https://www.ndcourts.gov/public-access",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200"
+    },
+    {
+      "role": "court-rules",
+      "authority": "official-primary",
+      "title": "North Dakota court rules",
+      "url": "https://www.ndcourts.gov/legal-resources/rules",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200"
+    },
+    {
+      "role": "attorney-general-opinions",
+      "authority": "official-primary",
+      "title": "North Dakota Attorney General legal opinions",
+      "url": "https://attorneygeneral.nd.gov/attorney-generals-office/legal-opinions/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200"
+    }
+  ]
+}

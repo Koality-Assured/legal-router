@@ -28,7 +28,7 @@ Hole-poking review (`antagonistic-review`). Short exec summary (`executive-repor
 
 ## Criticality
 
-High when invoked: all findings must be empirical and research-backed per [`docs/standards/research-and-empirical-validation.md`](../../../../docs/standards/research-and-empirical-validation.md). Strictly prioritize Tier 1/Tier 2 official primary sources (official vendor docs, standards bodies); prohibit feelings-based assertions, unvetted blogs, or inventing control IDs.
+High when invoked: all findings must be empirical and research-backed per [`references/valid-sources/`](../../../../references/valid-sources/). Strictly prioritize Tier 1/Tier 2 official primary sources (official vendor docs, standards bodies); prohibit feelings-based assertions, unvetted blogs, or inventing control IDs.
 
 ## Source of truth
 

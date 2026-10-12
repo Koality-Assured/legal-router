@@ -1,0 +1,81 @@
+{
+  "postal": "nc",
+  "name": "North Carolina",
+  "kind": "state",
+  "captured_at_utc": "2026-10-07T18:00:00Z",
+  "court_of_last_resort": "Supreme Court of North Carolina",
+  "sources": [
+    {
+      "role": "constitution",
+      "authority": "official-primary",
+      "title": "NC Constitution",
+      "url": "https://www.ncleg.gov/Laws/Constitution",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200."
+    },
+    {
+      "role": "statutes",
+      "authority": "official-mirror",
+      "title": "North Carolina General Statutes",
+      "url": "https://www.ncleg.gov/Laws/GeneralStatutes",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200. The page says the website text is not the official version."
+    },
+    {
+      "role": "session laws",
+      "authority": "official-primary",
+      "title": "Session Laws",
+      "url": "https://www.ncleg.gov/Laws/SessionLaws",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200."
+    },
+    {
+      "role": "administrative code",
+      "authority": "official-primary",
+      "title": "North Carolina Administrative Code",
+      "url": "http://reports.oah.state.nc.us/ncac.asp",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200 on http. The https form of this host did not connect. The OAH Rules Division links this URL."
+    },
+    {
+      "role": "court of last resort opinions",
+      "authority": "official-primary",
+      "title": "Appellate Court Opinions",
+      "url": "https://www.nccourts.gov/documents/appellate-court-opinions",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200. Covers the Supreme Court and the Court of Appeals."
+    },
+    {
+      "role": "intermediate appellate court",
+      "authority": "official-primary",
+      "title": "Court of Appeals",
+      "url": "https://www.nccourts.gov/courts/court-of-appeals",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200."
+    },
+    {
+      "role": "dockets",
+      "authority": "official-primary",
+      "title": "Supreme Court Docket Sheets",
+      "url": "https://appellate.nccourts.org/dockets.php?c=1",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200. Linked from the Supreme Court page."
+    },
+    {
+      "role": "court rules",
+      "authority": "official-primary",
+      "title": "Court Rules",
+      "url": "https://www.nccourts.gov/courts/supreme-court/court-rules",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200."
+    },
+    {
+      "role": "court of last resort opinions",
+      "authority": "official-primary",
+      "title": "Supreme Court - North Carolina Judicial Branch",
+      "url": "https://www.nccourts.gov/courts/supreme-court",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200. Page describes the court as the state's highest court on matters of state law."
+    }
+  ]
+}

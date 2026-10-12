@@ -1,0 +1,89 @@
+{
+  "postal": "sc",
+  "name": "South Carolina",
+  "kind": "state",
+  "captured_at_utc": "2026-10-07T18:00:00Z",
+  "court_of_last_resort": "Supreme Court of South Carolina",
+  "sources": [
+    {
+      "role": "constitution",
+      "authority": "official-primary",
+      "title": "South Carolina Constitution",
+      "url": "https://www.scstatehouse.gov/scconstitution/scconst.php",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200 on default TLS negotiation. An earlier check pinned to TLS 1.2 could not create a secure channel to this host."
+    },
+    {
+      "role": "statutes",
+      "authority": "official-mirror",
+      "title": "South Carolina Code of Laws",
+      "url": "https://www.scstatehouse.gov/code/statmast.php",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200 on default TLS negotiation. An earlier check pinned to TLS 1.2 could not create a secure channel to this host. The page says this website version is not official and that the published volumes are the official version."
+    },
+    {
+      "role": "session laws",
+      "authority": "official-primary",
+      "title": "South Carolina Legislature Online - Legislation",
+      "url": "https://www.scstatehouse.gov/legislation.php",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200 on default TLS negotiation. An earlier check pinned to TLS 1.2 could not create a secure channel to this host."
+    },
+    {
+      "role": "administrative code",
+      "authority": "official-mirror",
+      "title": "South Carolina Code of Regulations",
+      "url": "https://www.scstatehouse.gov/coderegs/statmast.php",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200 on default TLS negotiation. An earlier check pinned to TLS 1.2 could not create a secure channel to this host. Regulations index on the legislature site."
+    },
+    {
+      "role": "court of last resort opinions",
+      "authority": "official-primary",
+      "title": "Opinions - South Carolina Judicial Branch",
+      "url": "https://www.sccourts.org/opinions-orders/opinions/",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200."
+    },
+    {
+      "role": "intermediate appellate court",
+      "authority": "official-primary",
+      "title": "Court of Appeals - South Carolina Judicial Branch",
+      "url": "https://www.sccourts.org/courts/court-of-appeals/",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200."
+    },
+    {
+      "role": "court rules",
+      "authority": "official-primary",
+      "title": "Court Rules - South Carolina Judicial Branch",
+      "url": "https://www.sccourts.org/resources/judicial-community/court-rules/",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200."
+    },
+    {
+      "role": "attorney general opinions",
+      "authority": "official-primary",
+      "title": "Opinions - South Carolina Attorney General",
+      "url": "https://www.scag.gov/opinions/",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200."
+    },
+    {
+      "role": "administrative code",
+      "authority": "official-primary",
+      "title": "South Carolina State Register",
+      "url": "https://www.scstatehouse.gov/state_register.php",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200. Register of regulatory actions on the legislature site."
+    },
+    {
+      "role": "court of last resort opinions",
+      "authority": "official-primary",
+      "title": "Supreme Court - South Carolina Judicial Branch",
+      "url": "https://www.sccourts.org/courts/supreme-court/",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200. Court description page."
+    }
+  ]
+}

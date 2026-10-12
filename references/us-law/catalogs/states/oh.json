@@ -1,0 +1,81 @@
+{
+  "postal": "oh",
+  "name": "Ohio",
+  "kind": "state",
+  "captured_at_utc": "2026-10-07T18:00:00Z",
+  "court_of_last_resort": "Supreme Court of Ohio",
+  "sources": [
+    {
+      "role": "constitution",
+      "authority": "official-primary",
+      "title": "Ohio Constitution",
+      "url": "https://codes.ohio.gov/ohio-constitution",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    },
+    {
+      "role": "statutes",
+      "authority": "official-primary",
+      "title": "Ohio Revised Code",
+      "url": "https://codes.ohio.gov/ohio-revised-code",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200. Title list read from this page."
+    },
+    {
+      "role": "session laws",
+      "authority": "official-primary",
+      "title": "Acts, Ohio Legislature",
+      "url": "https://www.legislature.ohio.gov/legislation/acts",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200. Redirected to /legislation/acts/136. Secretary of State Laws of Ohio URLs returned 403."
+    },
+    {
+      "role": "administrative code",
+      "authority": "official-primary",
+      "title": "Ohio Administrative Code",
+      "url": "https://codes.ohio.gov/ohio-administrative-code",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    },
+    {
+      "role": "court of last resort",
+      "authority": "official-primary",
+      "title": "Supreme Court of Ohio",
+      "url": "https://www.supremecourt.ohio.gov/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    },
+    {
+      "role": "intermediate appellate",
+      "authority": "official-primary",
+      "title": "Ohio Court of Appeals",
+      "url": "https://www.supremecourt.ohio.gov/courts/judicial-system/ohio-court-of-appeals/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    },
+    {
+      "role": "dockets",
+      "authority": "official-primary",
+      "title": "Public Docket",
+      "url": "https://www.supremecourt.ohio.gov/clerk/ecms/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200. Static body is the online-docket application shell."
+    },
+    {
+      "role": "court rules",
+      "authority": "official-primary",
+      "title": "Ohio Rules of Court",
+      "url": "https://www.supremecourt.ohio.gov/laws-rules/ohio-rules-of-court/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    },
+    {
+      "role": "attorney general opinions",
+      "authority": "official-primary",
+      "title": "Opinions, Ohio Attorney General",
+      "url": "https://www.ohioattorneygeneral.gov/About-AG/Service-Divisions/Formal-Opinions",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200. Page title: Opinions - Ohio Attorney General."
+    }
+  ]
+}

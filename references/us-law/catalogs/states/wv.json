@@ -1,0 +1,89 @@
+{
+  "postal": "wv",
+  "name": "West Virginia",
+  "kind": "state",
+  "captured_at_utc": "2026-10-07T18:00:00Z",
+  "court_of_last_resort": "Supreme Court of Appeals of West Virginia",
+  "sources": [
+    {
+      "role": "constitution",
+      "authority": "official-primary",
+      "title": "The Constitution of West Virginia",
+      "url": "https://code.wvlegislature.gov/west-virginia-constitution",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200. Page says as ratified in 1872 and subsequently amended."
+    },
+    {
+      "role": "statutes",
+      "authority": "official-primary",
+      "title": "West Virginia Code",
+      "url": "https://code.wvlegislature.gov/",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200. Chapter select list contains 138 chapters."
+    },
+    {
+      "role": "session laws",
+      "authority": "official-primary",
+      "title": "Publications - WV Legislative Library",
+      "url": "https://library.wvlegislature.gov/pubs/",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200. Library describes its publications as the record of acts."
+    },
+    {
+      "role": "administrative code",
+      "authority": "official-primary",
+      "title": "Code of State Rules",
+      "url": "https://apps.sos.wv.gov/adlaw/csr/default.aspx",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200. Secretary of State administrative-law service."
+    },
+    {
+      "role": "court of last resort opinions",
+      "authority": "official-primary",
+      "title": "Supreme Court - Opinions",
+      "url": "https://www.courtswv.gov/appellate-courts/supreme-court-of-appeals/opinions",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200."
+    },
+    {
+      "role": "intermediate appellate court",
+      "authority": "official-primary",
+      "title": "Intermediate Court of Appeals",
+      "url": "https://www.courtswv.gov/appellate-courts/intermediate-court-of-appeals/about-the-court",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200."
+    },
+    {
+      "role": "intermediate appellate court",
+      "authority": "official-primary",
+      "title": "Intermediate Court - Opinions",
+      "url": "https://www.courtswv.gov/appellate-courts/intermediate-court-of-appeals/opinions",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200."
+    },
+    {
+      "role": "dockets",
+      "authority": "official-primary",
+      "title": "Supreme Court - Current Docket",
+      "url": "https://www.courtswv.gov/appellate-courts/supreme-court-of-appeals/current-docket",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200."
+    },
+    {
+      "role": "court rules",
+      "authority": "official-primary",
+      "title": "Court Rules",
+      "url": "https://www.courtswv.gov/legal-community/court-rules",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200."
+    },
+    {
+      "role": "attorney general opinions",
+      "authority": "official-primary",
+      "title": "Attorney General Opinions",
+      "url": "https://ago.wv.gov/transparency/attorney-general-opinions",
+      "http_status": 200,
+      "check_note": "GET 200. https://ago.wv.gov/attorney-general-opinions redirected here."
+    }
+  ]
+}

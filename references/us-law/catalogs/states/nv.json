@@ -1,0 +1,97 @@
+{
+  "postal": "nv",
+  "name": "Nevada",
+  "kind": "state",
+  "captured_at_utc": "2026-10-07T18:00:00Z",
+  "court_of_last_resort": "Supreme Court of Nevada",
+  "sources": [
+    {
+      "role": "constitution",
+      "authority": "official-primary",
+      "title": "Constitution of the State of Nevada",
+      "url": "https://www.leg.state.nv.us/Const/NvConst.html",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    },
+    {
+      "role": "statutes",
+      "authority": "official-primary",
+      "title": "Nevada Revised Statutes",
+      "url": "https://www.leg.state.nv.us/NRS/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200. Law library hub https://www.leg.state.nv.us/law1.html also returned GET 200. law1.cfm returned 503."
+    },
+    {
+      "role": "session laws",
+      "authority": "official-primary",
+      "title": "Nevada Statutes Search",
+      "url": "http://search.leg.state.nv.us/Statutes/Statutes.html",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200. Linked from the Nevada Law Library. The /Statutes/ directory returned 403."
+    },
+    {
+      "role": "administrative code",
+      "authority": "official-primary",
+      "title": "Nevada Administrative Code",
+      "url": "https://www.leg.state.nv.us/NAC/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    },
+    {
+      "role": "court of last resort",
+      "authority": "official-primary",
+      "title": "Nevada Supreme Court",
+      "url": "https://nvcourts.gov/supreme",
+      "http_status": 403,
+      "check_note": "HEAD 403; GET 403. No replacement host substituted."
+    },
+    {
+      "role": "intermediate appellate courts",
+      "authority": "official-primary",
+      "title": "Nevada Court of Appeals",
+      "url": "https://nvcourts.gov/courtofappeals",
+      "http_status": 403,
+      "check_note": "HEAD 403; GET 403. No replacement host substituted."
+    },
+    {
+      "role": "court opinions",
+      "authority": "official-primary",
+      "title": "Supreme Court advance opinions",
+      "url": "https://nvcourts.gov/supreme/decisions/advance_opinions/",
+      "http_status": 403,
+      "check_note": "HEAD 403; GET 403. Linked from the Nevada Law Library. Separate from the find-a-case URL, which also returned 403."
+    },
+    {
+      "role": "dockets",
+      "authority": "official-primary",
+      "title": "Find a case",
+      "url": "https://nvcourts.gov/supreme/how_do_i/find_a_case",
+      "http_status": 403,
+      "check_note": "HEAD 403; GET 403. caseinfo.nvsupremecourt.us did not connect and was not substituted."
+    },
+    {
+      "role": "court rules",
+      "authority": "official-primary",
+      "title": "Court Rules of Nevada",
+      "url": "https://www.leg.state.nv.us/CourtRules/index.html",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    },
+    {
+      "role": "attorney general opinions",
+      "authority": "official-primary",
+      "title": "Official Attorney General opinions",
+      "url": "https://ag.nv.gov/Publications/Opinions/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    },
+    {
+      "role": "city charters",
+      "authority": "official-primary",
+      "title": "City Charters of Nevada",
+      "url": "https://www.leg.state.nv.us/CityCharters/index.html",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200. Legislative compilation of city charters, not municipal ordinance codes."
+    }
+  ]
+}

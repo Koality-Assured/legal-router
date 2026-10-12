@@ -1,0 +1,18 @@
+{
+  "postal": "nh",
+  "name": "New Hampshire",
+  "kind": "state",
+  "captured_at_utc": "2026-10-07T18:00:00Z",
+  "court_of_last_resort": "New Hampshire Supreme Court",
+  "sources": [
+    {"role": "statutes", "authority": "official-primary", "title": "Revised Statutes Online, table of contents", "url": "https://www.gencourt.state.nh.us/rsa/html/nhtoc.htm", "http_status": 200, "check_note": "HEAD"},
+    {"role": "statutes", "authority": "official-primary", "title": "Revised Statutes Online indexes", "url": "https://gencourt.state.nh.us/rsa/html/indexes/default.aspx", "http_status": 200, "check_note": "HEAD"},
+    {"role": "constitution", "authority": "official-primary", "title": "State Constitution on NH.gov", "url": "https://www.nh.gov/glance/state-constitution", "http_status": 403, "check_note": "HEAD and GET 403; a separate fetch retrieved the page"},
+    {"role": "session-laws", "authority": "official-primary", "title": "2026 chaptered final versions", "url": "https://gencourt.state.nh.us/bill_status/misc/chaptered_final_version.aspx", "http_status": 200, "check_note": "HEAD"},
+    {"role": "administrative-code", "authority": "official-primary", "title": "New Hampshire Code of Administrative Rules", "url": "https://gencourt.state.nh.us/rules", "http_status": 200, "check_note": "HEAD"},
+    {"role": "court-of-last-resort", "authority": "official-primary", "title": "RSA Title LI chapter index", "url": "https://www.gencourt.state.nh.us/rsa/html/NHTOC/NHTOC-LI.htm", "http_status": 200, "check_note": "HEAD"},
+    {"role": "dockets", "authority": "official-primary", "title": "Superior Court case access", "url": "https://www.courts.nh.gov/our-courts/superior-court/case-access", "http_status": 403, "check_note": "HEAD and GET 403"},
+    {"role": "court-rules", "authority": "official-primary", "title": "New Hampshire court rules", "url": "https://www.courts.nh.gov/rules-court", "http_status": 403, "check_note": "HEAD and GET 403"},
+    {"role": "attorney-general-opinions", "authority": "official-primary", "title": "Department of Justice opinions path", "url": "https://www.doj.nh.gov/public-documents/opinions.htm", "http_status": 403, "check_note": "HEAD and GET 403"}
+  ]
+}

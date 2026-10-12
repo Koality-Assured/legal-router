@@ -1,0 +1,81 @@
+{
+  "postal": "ia",
+  "name": "Iowa",
+  "kind": "state",
+  "captured_at_utc": "2026-10-07T18:00:00Z",
+  "court_of_last_resort": "Iowa Supreme Court",
+  "sources": [
+    {
+      "role": "constitution",
+      "authority": "official-primary",
+      "title": "Constitution of the State of Iowa",
+      "url": "https://www.legis.iowa.gov/law/statutory/constitution",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200. Page names the Constitution of the State of Iowa and the year 1857."
+    },
+    {
+      "role": "statutes",
+      "authority": "official-primary",
+      "title": "Iowa Code, 2026",
+      "url": "https://www.legis.iowa.gov/law/iowaCode/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200. Page separates an official PDF edition from unofficial PDF and RTF editions."
+    },
+    {
+      "role": "session laws",
+      "authority": "official-primary",
+      "title": "Iowa Acts and Passed Legislation",
+      "url": "https://www.legis.iowa.gov/law/statutory/acts",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    },
+    {
+      "role": "administrative code",
+      "authority": "official-primary",
+      "title": "Iowa Administrative Rules",
+      "url": "https://www.legis.iowa.gov/law/administrativeRules",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    },
+    {
+      "role": "court of last resort",
+      "authority": "official-primary",
+      "title": "Iowa Supreme Court",
+      "url": "https://www.iowacourts.gov/iowa-courts/supreme-court",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200. Title: Supreme Court | Iowa Judicial Branch."
+    },
+    {
+      "role": "intermediate appellate",
+      "authority": "official-primary",
+      "title": "Iowa Court of Appeals",
+      "url": "https://www.iowacourts.gov/iowa-courts/court-of-appeals",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    },
+    {
+      "role": "dockets",
+      "authority": "official-primary",
+      "title": "Iowa Courts Online Search",
+      "url": "https://www.iowacourts.state.ia.us/ESAWebApp/DefaultFrame",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    },
+    {
+      "role": "court rules",
+      "authority": "official-primary",
+      "title": "Court Rules",
+      "url": "https://www.legis.iowa.gov/law/courtRules/courtRulesListings",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    },
+    {
+      "role": "attorney general opinions",
+      "authority": "official-primary",
+      "title": "Attorney General Opinions",
+      "url": "https://www.iowaattorneygeneral.gov/what-we-do/attorney-general-opinions",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200. Legislature archive also returned 200."
+    }
+  ]
+}

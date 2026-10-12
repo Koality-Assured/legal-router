@@ -1,0 +1,81 @@
+{
+  "postal": "wi",
+  "name": "Wisconsin",
+  "kind": "state",
+  "captured_at_utc": "2026-10-07T18:00:00Z",
+  "court_of_last_resort": "Wisconsin Supreme Court",
+  "sources": [
+    {
+      "role": "constitution",
+      "authority": "official-primary",
+      "title": "Annotated Wisconsin Constitution",
+      "url": "https://docs.legis.wisconsin.gov/constitution/wi",
+      "http_status": 200,
+      "check_note": "GET 200 after redirect from /document/wisconsinconstitution/top."
+    },
+    {
+      "role": "statutes",
+      "authority": "official-primary",
+      "title": "Wisconsin Statutes",
+      "url": "https://docs.legis.wisconsin.gov/statutes/statutes",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200. 470 chapter entries. Updated through 2025 Wis. Act 247."
+    },
+    {
+      "role": "session laws",
+      "authority": "official-primary",
+      "title": "2025 acts",
+      "url": "https://docs.legis.wisconsin.gov/2025/related/acts",
+      "http_status": 200,
+      "check_note": "GET 200 after redirect from /document/acts/2025/top. /acts returned 404."
+    },
+    {
+      "role": "administrative code",
+      "authority": "official-primary",
+      "title": "Administrative Code",
+      "url": "https://docs.legis.wisconsin.gov/code/admin_code",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    },
+    {
+      "role": "court of last resort",
+      "authority": "official-primary",
+      "title": "Wisconsin Supreme Court",
+      "url": "https://www.wicourts.gov/courts/supreme/index.htm",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    },
+    {
+      "role": "intermediate appellate",
+      "authority": "official-primary",
+      "title": "Wisconsin Court of Appeals",
+      "url": "https://www.wicourts.gov/courts/appeals/index.htm",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    },
+    {
+      "role": "dockets",
+      "authority": "official-primary",
+      "title": "WSCCA case search",
+      "url": "https://wscca.wicourts.gov/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    },
+    {
+      "role": "court rules",
+      "authority": "official-primary",
+      "title": "Wisconsin Supreme Court Rules",
+      "url": "https://docs.legis.wisconsin.gov/misc/scr",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200. wicourts.gov/sc/scrules.jsp returned 500."
+    },
+    {
+      "role": "attorney general opinions",
+      "authority": "official-primary",
+      "title": "Opinions of the Attorney General",
+      "url": "https://docs.legis.wisconsin.gov/misc/oag",
+      "http_status": 200,
+      "check_note": "GET 200 after redirect from /document/oag/top. DOJ opinion paths redirected to the DOJ home page."
+    }
+  ]
+}

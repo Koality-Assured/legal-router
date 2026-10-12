@@ -1,0 +1,97 @@
+{
+  "postal": "fl",
+  "name": "Florida",
+  "kind": "state",
+  "captured_at_utc": "2026-10-07T18:00:00Z",
+  "court_of_last_resort": "Supreme Court of Florida",
+  "sources": [
+    {
+      "role": "constitution",
+      "authority": "official-primary",
+      "title": "The Florida Constitution",
+      "url": "https://www.flsenate.gov/Laws/Constitution",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200."
+    },
+    {
+      "role": "statutes",
+      "authority": "official-primary",
+      "title": "2026 Florida Statutes - Online Sunshine",
+      "url": "https://www.leg.state.fl.us/statutes/",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200. Title index for the 2026 Florida Statutes."
+    },
+    {
+      "role": "statutes",
+      "authority": "official-mirror",
+      "title": "2026 Florida Statutes - The Florida Senate",
+      "url": "https://www.flsenate.gov/Laws/Statutes",
+      "http_status": 200,
+      "check_note": "GET 200. HEAD returned HTTP 404."
+    },
+    {
+      "role": "session laws",
+      "authority": "official-primary",
+      "title": "2026 Laws of Florida",
+      "url": "https://laws.flrules.org/",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200. Linked from the Senate statutes page."
+    },
+    {
+      "role": "administrative code",
+      "authority": "official-primary",
+      "title": "Florida Administrative Code and Register",
+      "url": "https://www.flrules.org/",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200. Department of State."
+    },
+    {
+      "role": "court of last resort opinions",
+      "authority": "official-primary",
+      "title": "Opinion Search For All Appellate Courts",
+      "url": "https://supremecourt.flcourts.gov/case-information/Opinions/Opinion-Search-For-All-Appellate-Courts",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200. Page defaults to Supreme Court opinions and also searches other appellate courts."
+    },
+    {
+      "role": "intermediate appellate court",
+      "authority": "official-primary",
+      "title": "Florida Courts",
+      "url": "https://www.flcourts.gov/",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200. Fetched page refers to district courts of appeal."
+    },
+    {
+      "role": "dockets",
+      "authority": "official-primary",
+      "title": "Appellate Case Information System",
+      "url": "https://acis.flcourts.gov/",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200. HTML shell states the application needs JavaScript."
+    },
+    {
+      "role": "court rules",
+      "authority": "official-primary",
+      "title": "Practice and Procedures - Florida Supreme Court",
+      "url": "https://supremecourt.flcourts.gov/Practice-Procedures",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200."
+    },
+    {
+      "role": "attorney general opinions",
+      "authority": "official-primary",
+      "title": "Attorney General Opinions",
+      "url": "https://www.myfloridalegal.com/ag-opinions",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200."
+    },
+    {
+      "role": "court of last resort opinions",
+      "authority": "official-primary",
+      "title": "Florida Supreme Court",
+      "url": "https://supremecourt.flcourts.gov/",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200. Court home page."
+    }
+  ]
+}

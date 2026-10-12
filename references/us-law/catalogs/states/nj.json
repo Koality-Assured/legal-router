@@ -1,0 +1,21 @@
+{
+  "postal": "nj",
+  "name": "New Jersey",
+  "kind": "state",
+  "captured_at_utc": "2026-10-07T18:00:00Z",
+  "court_of_last_resort": "Supreme Court of New Jersey",
+  "sources": [
+    {"role": "constitution", "authority": "official-primary", "title": "New Jersey Constitution", "url": "https://www.njleg.state.nj.us/constitution", "http_status": 200, "check_note": "HEAD"},
+    {"role": "statutes", "authority": "official-primary", "title": "New Jersey general and permanent statutes", "url": "https://lis.njleg.state.nj.us/nxt/gateway.dll?f=templates&fn=default.htm&vid=Publish:10.1048/Enu", "http_status": 200, "check_note": "HEAD"},
+    {"role": "session-laws", "authority": "official-primary", "title": "Legislature bill search", "url": "https://www.njleg.state.nj.us/bill-search", "http_status": 200, "check_note": "HEAD"},
+    {"role": "administrative-code", "authority": "official-primary", "title": "Office of Administrative Law", "url": "https://www.nj.gov/oal/", "http_status": 200, "check_note": "HEAD"},
+    {"role": "administrative-code", "authority": "unofficial", "title": "LexisNexis New Jersey Administrative Code search", "url": "https://www.lexisnexis.com/hottopics/njcode/", "http_status": 200, "check_note": "HEAD"},
+    {"role": "court-of-last-resort", "authority": "official-primary", "title": "Supreme Court of New Jersey", "url": "https://www.njcourts.gov/courts/supreme", "http_status": 200, "check_note": "HEAD"},
+    {"role": "intermediate-appellate", "authority": "official-primary", "title": "Appellate Division of the Superior Court", "url": "https://www.njcourts.gov/courts/appellate", "http_status": 200, "check_note": "HEAD"},
+    {"role": "opinions", "authority": "official-primary", "title": "Court opinions", "url": "https://www.njcourts.gov/attorneys/opinions", "http_status": 200, "check_note": "HEAD"},
+    {"role": "dockets", "authority": "official-primary", "title": "Courts public access portal", "url": "https://portal.njcourts.gov/webe41/ExternalPGPA/", "http_status": 200, "check_note": "HEAD"},
+    {"role": "court-rules", "authority": "official-primary", "title": "Rules of court", "url": "https://www.njcourts.gov/attorneys/rules-of-court", "http_status": 200, "check_note": "HEAD"},
+    {"role": "attorney-general-opinions", "authority": "official-primary", "title": "Formal opinions path", "url": "https://www.nj.gov/oag/law/formalopinions.htm", "http_status": 404, "check_note": "HEAD and GET 404"},
+    {"role": "attorney-general-opinions", "authority": "official-primary", "title": "Alternate formal-opinions path", "url": "https://www.njoag.gov/resources/formal-opinions/", "http_status": null, "check_note": "HEAD 404 then GET connection closed"}
+  ]
+}

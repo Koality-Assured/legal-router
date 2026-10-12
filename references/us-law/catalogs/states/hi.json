@@ -1,0 +1,89 @@
+{
+  "postal": "hi",
+  "name": "Hawaii",
+  "kind": "state",
+  "captured_at_utc": "2026-10-07T18:00:00Z",
+  "court_of_last_resort": "Supreme Court of Hawaii",
+  "sources": [
+    {
+      "role": "constitution",
+      "authority": "official-primary",
+      "title": "Constitution of the State of Hawaii",
+      "url": "https://www.capitol.hawaii.gov/hrscurrent/Vol01_Ch0001-0042F/05-CONST/CONST_.htm",
+      "http_status": 403,
+      "check_note": "HEAD 403; GET 403. Identified from the Legislative Reference Bureau finding-the-laws page, which returned 200. No unofficial host substituted."
+    },
+    {
+      "role": "statutes",
+      "authority": "official-primary",
+      "title": "Hawaii Revised Statutes",
+      "url": "https://www.capitol.hawaii.gov/hrsall/",
+      "http_status": 403,
+      "check_note": "HEAD 403; GET 403. Named on https://lrb.hawaii.gov/par/finding-the-laws/ (GET 200)."
+    },
+    {
+      "role": "session laws",
+      "authority": "official-primary",
+      "title": "Session Laws of Hawaii",
+      "url": "https://www.capitol.hawaii.gov/session/slh.aspx",
+      "http_status": 403,
+      "check_note": "HEAD 403; GET 403. Named on the Bureau finding-the-laws page."
+    },
+    {
+      "role": "administrative code",
+      "authority": "official-primary",
+      "title": "Hawaii Administrative Rules",
+      "url": "https://ltgov.hawaii.gov/the-office/administrative-rules/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200. Bureau page says executive rules are posted on the Lieutenant Governor site."
+    },
+    {
+      "role": "court of last resort",
+      "authority": "official-primary",
+      "title": "Supreme Court",
+      "url": "https://www.courts.state.hi.us/courts/supreme",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    },
+    {
+      "role": "intermediate appellate courts",
+      "authority": "official-primary",
+      "title": "Intermediate Court of Appeals",
+      "url": "https://www.courts.state.hi.us/courts/appeals",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    },
+    {
+      "role": "court opinions",
+      "authority": "official-primary",
+      "title": "Hawaii appellate court opinions and orders",
+      "url": "https://www.courts.state.hi.us/opinions_and_orders",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200. Separate from the court-records search."
+    },
+    {
+      "role": "dockets",
+      "authority": "official-primary",
+      "title": "Search court records",
+      "url": "https://www.courts.state.hi.us/legal_references/records/search_court_records",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200. Linked from the Supreme Court page."
+    },
+    {
+      "role": "court rules",
+      "authority": "official-primary",
+      "title": "Rules of Court",
+      "url": "https://www.courts.state.hi.us/legal_references/rules",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    },
+    {
+      "role": "attorney general opinions",
+      "authority": "official-primary",
+      "title": "Attorney General opinions",
+      "url": "https://ag.hawaii.gov/publications/ag-opinions/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200. publications/opinions/ returned 404."
+    }
+  ]
+}
