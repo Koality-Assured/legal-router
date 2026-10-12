@@ -1,0 +1,45 @@
+{
+  "schema_version": "1.0",
+  "cases": [
+    {
+      "case_id": "bad-case-001",
+      "title": "Bad Case",
+      "request": {
+        "schema_version": "1.0",
+        "request_id": "req-bad-001",
+        "version": "1.0",
+        "operation": "review",
+        "representations": [
+          {
+            "id": "unknown-extract",
+            "route": "nonexistent_route",
+            "asset": {"type": "saas_agreement"},
+            "role": "primary",
+            "delivery": {
+              "intended_use": "internal_risk_memo",
+              "format": "markdown"
+            }
+          }
+        ],
+        "privilege_and_safeguards": {
+          "supervising_attorney_required": false,
+          "upl_disclaimer_required": false
+        },
+        "review_handoff": {
+          "reviewer": "wrong-reviewer"
+        }
+      },
+      "deliverables": [
+        {
+          "representation_id": "unknown-extract",
+          "route": "nonexistent_route",
+          "asset_type": "saas_agreement",
+          "role": "primary",
+          "status": "complete",
+          "advisory_stamp": "BAD STAMP",
+          "citations_verified": false
+        }
+      ]
+    }
+  ]
+}
