@@ -1,0 +1,81 @@
+{
+  "postal": "mn",
+  "name": "Minnesota",
+  "kind": "state",
+  "captured_at_utc": "2026-10-07T18:00:00Z",
+  "court_of_last_resort": "Minnesota Supreme Court",
+  "sources": [
+    {
+      "role": "constitution",
+      "authority": "official-primary",
+      "title": "MN Constitution",
+      "url": "https://www.revisor.mn.gov/constitution/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    },
+    {
+      "role": "statutes",
+      "authority": "official-primary",
+      "title": "2025 MN Statutes",
+      "url": "https://www.revisor.mn.gov/statutes/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200. Browse has 105 chapter ranges through chapter 648."
+    },
+    {
+      "role": "session laws",
+      "authority": "official-primary",
+      "title": "MN Laws",
+      "url": "https://www.revisor.mn.gov/laws/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    },
+    {
+      "role": "administrative code",
+      "authority": "official-primary",
+      "title": "MN Rules",
+      "url": "https://www.revisor.mn.gov/rules/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    },
+    {
+      "role": "judicial-branch",
+      "authority": "official-primary",
+      "title": "Minnesota Judicial Branch",
+      "url": "https://www.mncourts.gov/",
+      "http_status": 403,
+      "check_note": "HEAD 403; GET 403. Court name is from Chapter 480 on the revisor, which is titled Supreme Court."
+    },
+    {
+      "role": "intermediate appellate",
+      "authority": "official-primary",
+      "title": "Chapter 480A, Court of Appeals",
+      "url": "https://www.revisor.mn.gov/statutes/cite/480A",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200. mncourts.gov Court of Appeals paths returned 403."
+    },
+    {
+      "role": "dockets",
+      "authority": "official-primary",
+      "title": "P-MACS public site",
+      "url": "https://macsnc.courts.state.mn.us/ctrack/publicLogin.do",
+      "http_status": 200,
+      "check_note": "HEAD 403; GET 200."
+    },
+    {
+      "role": "court rules",
+      "authority": "official-primary",
+      "title": "MN Court Rules",
+      "url": "https://www.revisor.mn.gov/court_rules/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200. Index includes evidence, civil procedure, and criminal procedure."
+    },
+    {
+      "role": "attorney general opinions",
+      "authority": "official-primary",
+      "title": "Attorney General Opinions",
+      "url": "https://www.ag.state.mn.us/office/opinions/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    }
+  ]
+}

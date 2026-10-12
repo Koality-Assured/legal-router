@@ -1,0 +1,170 @@
+{
+  "postal": "ok",
+  "name": "Oklahoma",
+  "kind": "state",
+  "captured_at_utc": "2026-10-07T18:00:00Z",
+  "court_of_last_resort": "Oklahoma Supreme Court",
+  "criminal_court_of_last_resort": "Oklahoma Court of Criminal Appeals",
+  "sources": [
+    {
+      "role": "constitution",
+      "authority": "official-primary",
+      "title": "OSCN Oklahoma Constitution index",
+      "url": "https://www.oscn.net/applications/oscn/Index.asp?ftdb=STOKCN&level=1",
+      "http_status": 200,
+      "check_note": "HEAD 200, GET 200. Title: OCIS Document Index."
+    },
+    {
+      "role": "constitution",
+      "authority": "official-mirror",
+      "title": "Oklahoma Legislature constitution page",
+      "url": "https://www.oklegislature.gov/ok_constitution.aspx",
+      "http_status": 200,
+      "check_note": "HEAD 200, GET 200."
+    },
+    {
+      "role": "statutes",
+      "authority": "official-primary",
+      "title": "Oklahoma Statutes title page",
+      "url": "https://www.oklegislature.gov/osstatuestitle.aspx",
+      "http_status": 200,
+      "check_note": "HEAD 200, GET 200. Title index is in the embedded frame osStatuesTitle.html."
+    },
+    {
+      "role": "statutes",
+      "authority": "official-primary",
+      "title": "Oklahoma Statutes title index frame",
+      "url": "https://www.oklegislature.gov/osStatuesTitle.html",
+      "http_status": 200,
+      "check_note": "HEAD 200, GET 200. Page says last updated November 18, 2025. Lists Title 38 twice."
+    },
+    {
+      "role": "session laws",
+      "authority": "official-primary",
+      "title": "OSCN Oklahoma Session Laws index",
+      "url": "https://www.oscn.net/applications/oscn/index.asp?ftdb=STOKLG&level=1",
+      "http_status": 200,
+      "check_note": "HEAD 200, GET 200."
+    },
+    {
+      "role": "session laws",
+      "authority": "official-primary",
+      "title": "Secretary of State enrolled legislation",
+      "url": "https://www.sos.ok.gov/gov/legislation.aspx",
+      "http_status": 200,
+      "check_note": "HEAD 200, GET 200. Receiving lists of enrolled bills and resolutions."
+    },
+    {
+      "role": "statutes",
+      "authority": "official-primary",
+      "title": "Secretary of State annual statutes and session laws distribution",
+      "url": "https://www.sos.ok.gov/gov/annualDistribution.aspx",
+      "http_status": 200,
+      "check_note": "HEAD 200, GET 200. Page links certified electronic compilations to govt.westlaw.com, which this capture does not rank as official-primary."
+    },
+    {
+      "role": "administrative code",
+      "authority": "official-primary",
+      "title": "Oklahoma Rules portal",
+      "url": "https://rules.ok.gov/home",
+      "http_status": 403,
+      "check_note": "HEAD 403, GET 403. Linked from the Secretary of State sitemap. No code text captured."
+    },
+    {
+      "role": "administrative code",
+      "authority": "official-primary",
+      "title": "Oklahoma Rules code search",
+      "url": "https://rules.ok.gov/code",
+      "http_status": 403,
+      "check_note": "HEAD 403, GET 403."
+    },
+    {
+      "role": "administrative code",
+      "authority": "official-primary",
+      "title": "Office of Administrative Rules code viewer",
+      "url": "https://www.sos.ok.gov/oar/online/viewCode.aspx",
+      "http_status": 401,
+      "check_note": "HEAD 401, GET 401."
+    },
+    {
+      "role": "administrative code",
+      "authority": "official-primary",
+      "title": "Office of Administrative Rules register",
+      "url": "https://www.sos.ok.gov/oar/onlineRegister.aspx",
+      "http_status": 401,
+      "check_note": "HEAD 401, GET 401."
+    },
+    {
+      "role": "administrative code",
+      "authority": "official-primary",
+      "title": "Office of Administrative Rules contact",
+      "url": "https://www.sos.ok.gov/oar/contact.aspx",
+      "http_status": 401,
+      "check_note": "HEAD 401, GET 401."
+    },
+    {
+      "role": "court opinions",
+      "authority": "official-primary",
+      "title": "Oklahoma Supreme Court",
+      "url": "https://oksc.oscn.net/",
+      "http_status": 200,
+      "check_note": "HEAD 200, GET 200."
+    },
+    {
+      "role": "court opinions",
+      "authority": "official-primary",
+      "title": "Oklahoma Supreme Court orders",
+      "url": "https://www.oscn.net/orders/",
+      "http_status": 200,
+      "check_note": "HEAD 200, GET 200. Supplied orders URL."
+    },
+    {
+      "role": "court opinions",
+      "authority": "official-primary",
+      "title": "Oklahoma Court of Criminal Appeals",
+      "url": "https://okcca.net/",
+      "http_status": 200,
+      "check_note": "HEAD 200, GET 200. OSCN courts page, not this home page alone, states the criminal last-resort role."
+    },
+    {
+      "role": "intermediate appellate",
+      "authority": "official-primary",
+      "title": "OSCN courts page",
+      "url": "https://www.oscn.net/courts/",
+      "http_status": 200,
+      "check_note": "HEAD 200, GET 200. Names the Court of Civil Appeals and states two courts of last resort."
+    },
+    {
+      "role": "dockets",
+      "authority": "official-primary",
+      "title": "OSCN docket search",
+      "url": "https://www.oscn.net/dockets/search.aspx#all",
+      "http_status": 200,
+      "check_note": "HEAD and GET of https://www.oscn.net/dockets/search.aspx returned 200. The #all fragment is not sent to the server."
+    },
+    {
+      "role": "court rules",
+      "authority": "official-primary",
+      "title": "OSCN Oklahoma Supreme Court Rules",
+      "url": "https://www.oscn.net/applications/oscn/index.asp?ftdb=STOKRUCPSC&level=1",
+      "http_status": 200,
+      "check_note": "HEAD 200, GET 200."
+    },
+    {
+      "role": "attorney general",
+      "authority": "official-primary",
+      "title": "Oklahoma Attorney General opinions",
+      "url": "https://oklahoma.gov/oag/opinions.html",
+      "http_status": 200,
+      "check_note": "HEAD 200, GET 200."
+    },
+    {
+      "role": "attorney general",
+      "authority": "official-mirror",
+      "title": "OSCN Attorney General opinions index",
+      "url": "https://www.oscn.net/applications/oscn/Index.asp?ftdb=STOKAG&level=1",
+      "http_status": 200,
+      "check_note": "HEAD 200, GET 200."
+    }
+  ]
+}

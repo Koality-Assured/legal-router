@@ -1,0 +1,65 @@
+{
+  "postal": "tn",
+  "name": "Tennessee",
+  "kind": "state",
+  "captured_at_utc": "2026-10-07T18:00:00Z",
+  "court_of_last_resort": null,
+  "sources": [
+    {
+      "role": "constitution",
+      "authority": "official-primary",
+      "title": "Tennessee Constitution",
+      "url": "https://sos.tn.gov/publications/services/tennessee-constitution",
+      "http_status": 200,
+      "check_note": "HEAD 200, GET 200. Page says updated January 11, 2023."
+    },
+    {
+      "role": "statutes",
+      "authority": "official-primary",
+      "title": "Tennessee General Assembly legislative publications",
+      "url": "https://wapp.capitol.tn.gov/apps/WebPublications/",
+      "http_status": 200,
+      "check_note": "HEAD 200, GET 200. Describes the Tennessee Code and links the text to LexisNexis. No title list in the page."
+    },
+    {
+      "role": "statutes",
+      "authority": "unofficial",
+      "title": "LexisNexis Tennessee Code",
+      "url": "https://www.lexisnexis.com/hottopics/tncode",
+      "http_status": 200,
+      "check_note": "HEAD 200, GET 200. Linked from the General Assembly publications page. Titles were not copied."
+    },
+    {
+      "role": "session laws",
+      "authority": "official-primary",
+      "title": "Tennessee acts and resolutions",
+      "url": "https://sos.tn.gov/publications/services/acts-and-resolutions",
+      "http_status": 200,
+      "check_note": "HEAD 200, GET 200. Requested division-publications path redirected here."
+    },
+    {
+      "role": "administrative code",
+      "authority": "official-primary",
+      "title": "Rules and Regulations of the State of Tennessee",
+      "url": "https://sos.tn.gov/publications/services/effective-rules-and-regulations-of-the-state-of-tennessee",
+      "http_status": 200,
+      "check_note": "HEAD 200, GET 200. Agency-number list exceeds the 120-line cap and was not copied."
+    },
+    {
+      "role": "court opinions",
+      "authority": "official-primary",
+      "title": "Tennessee Administrative Office of the Courts",
+      "url": "https://www.tncourts.gov/",
+      "http_status": null,
+      "check_note": "HEAD 200, GET 200, but the body is a JavaScript browser-validation challenge. Not a verified court page."
+    },
+    {
+      "role": "court opinions",
+      "authority": "official-primary",
+      "title": "Tennessee courts public resources path",
+      "url": "https://www.tncourts.gov/general-public",
+      "http_status": null,
+      "check_note": "GET 200. Body was a browser-validation challenge, not the public-resources page."
+    }
+  ]
+}

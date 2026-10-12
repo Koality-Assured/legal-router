@@ -1,0 +1,81 @@
+{
+  "postal": "la",
+  "name": "Louisiana",
+  "kind": "state",
+  "captured_at_utc": "2026-10-07T18:00:00Z",
+  "court_of_last_resort": "Supreme Court of Louisiana",
+  "sources": [
+    {
+      "role": "constitution",
+      "authority": "official-primary",
+      "title": "Louisiana laws search",
+      "url": "https://www.legis.la.gov/legis/lawsearch.aspx",
+      "http_status": 200,
+      "check_note": "HEAD 200, GET 200. Names Louisiana Constitution, Civil Code, and the other official codes."
+    },
+    {
+      "role": "constitution",
+      "authority": "official-primary",
+      "title": "Louisiana Constitution supreme court section",
+      "url": "https://legis.la.gov/legis/Law.aspx?d=206475",
+      "http_status": 200,
+      "check_note": "HEAD 200, GET 200. Legislature text of the supreme court provision. Not copied here."
+    },
+    {
+      "role": "statutes",
+      "authority": "official-primary",
+      "title": "Louisiana laws table of contents",
+      "url": "https://legis.la.gov/legis/Laws_Toc.aspx",
+      "http_status": 200,
+      "check_note": "HEAD 200, GET 200. Lists the official code names."
+    },
+    {
+      "role": "statutes",
+      "authority": "official-primary",
+      "title": "Louisiana Revised Statutes title table",
+      "url": "https://legis.la.gov/legis/Laws_Toc.aspx?folder=75",
+      "http_status": 200,
+      "check_note": "HEAD 200, GET 200. 54 titles. Numbers 5 and 7 are absent."
+    },
+    {
+      "role": "administrative code",
+      "authority": "official-primary",
+      "title": "Louisiana Administrative Code",
+      "url": "https://www.doa.louisiana.gov/doa/osr/louisiana-administrative-code/",
+      "http_status": 200,
+      "check_note": "HEAD 200, GET 200. Office of the State Register."
+    },
+    {
+      "role": "court opinions",
+      "authority": "official-primary",
+      "title": "Louisiana Supreme Court",
+      "url": "https://www.lasc.org/",
+      "http_status": 200,
+      "check_note": "HEAD 302, GET 200. Home HTML is a client-rendered shell."
+    },
+    {
+      "role": "court opinions",
+      "authority": "official-primary",
+      "title": "Louisiana Supreme Court opinion releases",
+      "url": "https://www.lasc.org/CourtActions/opinions",
+      "http_status": 200,
+      "check_note": "HEAD 302, GET 200."
+    },
+    {
+      "role": "court rules",
+      "authority": "official-primary",
+      "title": "Louisiana Supreme Court rules",
+      "url": "https://www.lasc.org/SupremeCourtRules",
+      "http_status": 200,
+      "check_note": "HEAD 302, GET 200. Response body had no document title."
+    },
+    {
+      "role": "attorney general",
+      "authority": "official-primary",
+      "title": "Louisiana Attorney General opinions",
+      "url": "https://www.ag.state.la.us/Opinions",
+      "http_status": 200,
+      "check_note": "HEAD 200, GET 200."
+    }
+  ]
+}

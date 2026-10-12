@@ -1,0 +1,97 @@
+{
+  "postal": "nm",
+  "name": "New Mexico",
+  "kind": "state",
+  "captured_at_utc": "2026-10-07T18:00:00Z",
+  "court_of_last_resort": "New Mexico Supreme Court",
+  "sources": [
+    {
+      "role": "constitution",
+      "authority": "official-primary",
+      "title": "NMOneSource, official laws database",
+      "url": "https://nmonesource.com/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200; final https://nmonesource.com/nmos/en/nav.do"
+    },
+    {
+      "role": "statutes",
+      "authority": "official-primary",
+      "title": "New Mexico Compilation Commission search laws",
+      "url": "https://www.nmcompcomm.us/search-laws/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200"
+    },
+    {
+      "role": "session-laws",
+      "authority": "official-primary",
+      "title": "NMOneSource session laws, described by the Compilation Commission",
+      "url": "https://nmonesource.com/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200; same official database as statutes"
+    },
+    {
+      "role": "administrative-code",
+      "authority": "official-primary",
+      "title": "New Mexico Administrative Code",
+      "url": "https://www.srca.nm.gov/nmac-home/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200"
+    },
+    {
+      "role": "court-of-last-resort",
+      "authority": "official-primary",
+      "title": "New Mexico Supreme Court",
+      "url": "https://supremecourt.nmcourts.gov/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200"
+    },
+    {
+      "role": "intermediate-appellate",
+      "authority": "official-primary",
+      "title": "New Mexico Court of Appeals",
+      "url": "https://coa.nmcourts.gov/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200"
+    },
+    {
+      "role": "dockets",
+      "authority": "official-primary",
+      "title": "New Mexico Case Lookup",
+      "url": "https://caselookup.nmcourts.gov/caselookup/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200"
+    },
+    {
+      "role": "court-rules",
+      "authority": "official-primary",
+      "title": "New Mexico court rules on NMOneSource",
+      "url": "https://nmonesource.com/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200; Compilation Commission search page identifies court rules in this database"
+    },
+    {
+      "role": "statutes",
+      "authority": "official-primary",
+      "title": "Official publisher",
+      "url": "https://www.nmcompcomm.us/",
+      "http_status": 200,
+      "check_note": "HEAD/GET 200; aligned from source table"
+    },
+    {
+      "role": "administrative-code",
+      "authority": "official-primary",
+      "title": "NMAC titles",
+      "url": "https://www.srca.nm.gov/nmac-home/nmac-titles/",
+      "http_status": 200,
+      "check_note": "HEAD/GET 200; aligned from source table"
+    },
+    {
+      "role": "court-structure",
+      "authority": "official-primary",
+      "title": "Courts overview",
+      "url": "https://nmcourts.gov/courts-in-new-mexico/",
+      "http_status": 200,
+      "check_note": "HEAD/GET 200; aligned from source table"
+    }
+  ]
+}

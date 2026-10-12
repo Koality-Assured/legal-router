@@ -1,0 +1,97 @@
+{
+  "postal": "id",
+  "name": "Idaho",
+  "kind": "state",
+  "captured_at_utc": "2026-10-07T18:00:00Z",
+  "court_of_last_resort": "Idaho Supreme Court",
+  "sources": [
+    {
+      "role": "constitution",
+      "authority": "official-primary",
+      "title": "Idaho Constitution",
+      "url": "https://legislature.idaho.gov/statutesrules/idconst/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    },
+    {
+      "role": "statutes",
+      "authority": "official-primary",
+      "title": "Idaho Statutes",
+      "url": "https://legislature.idaho.gov/statutesrules/idstat/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    },
+    {
+      "role": "session laws",
+      "authority": "official-primary",
+      "title": "Idaho Session Laws",
+      "url": "https://legislature.idaho.gov/statutesrules/sessionlaws/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    },
+    {
+      "role": "administrative code",
+      "authority": "official-primary",
+      "title": "Idaho Administrative Rules, current",
+      "url": "https://adminrules.idaho.gov/rules/current/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200. Linked from the Legislature laws-and-rules page."
+    },
+    {
+      "role": "court of last resort",
+      "authority": "official-primary",
+      "title": "Idaho Supreme Court",
+      "url": "https://isc.idaho.gov/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    },
+    {
+      "role": "intermediate appellate courts",
+      "authority": "official-primary",
+      "title": "Idaho Court of Appeals opinions",
+      "url": "https://isc.idaho.gov/cases-opinions/ica-opinions",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200. Linked from the Supreme Court homepage."
+    },
+    {
+      "role": "court opinions",
+      "authority": "official-primary",
+      "title": "Idaho Supreme Court opinions",
+      "url": "https://isc.idaho.gov/cases-opinions/isc-opinions",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200. Separate from iCourt."
+    },
+    {
+      "role": "dockets",
+      "authority": "official-primary",
+      "title": "iCourt",
+      "url": "https://icourt.idaho.gov/",
+      "http_status": 403,
+      "check_note": "HEAD 403; GET 403. Linked from the Supreme Court homepage. No replacement portal substituted."
+    },
+    {
+      "role": "court data",
+      "authority": "official-primary",
+      "title": "Idaho Court Data",
+      "url": "https://courtdata.idaho.gov/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200. Criminal and civil filing dashboards, not a case-docket viewer."
+    },
+    {
+      "role": "court rules",
+      "authority": "official-primary",
+      "title": "Rules and procedures",
+      "url": "https://isc.idaho.gov/rules-procedure",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    },
+    {
+      "role": "attorney general opinions",
+      "authority": "official-primary",
+      "title": "Attorney General opinions",
+      "url": "https://www.ag.idaho.gov/office-resources/opinions/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    }
+  ]
+}

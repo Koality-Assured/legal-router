@@ -1,0 +1,81 @@
+{
+  "postal": "mt",
+  "name": "Montana",
+  "kind": "state",
+  "captured_at_utc": "2026-10-07T18:00:00Z",
+  "court_of_last_resort": "Montana Supreme Court",
+  "sources": [
+    {
+      "role": "constitution",
+      "authority": "official-primary",
+      "title": "Montana Constitution in the Montana Code Annotated",
+      "url": "https://mca.legmt.gov/bills/mca/title_0000/chapters_index.html",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200; also reached by redirect from leg.mt.gov"
+    },
+    {
+      "role": "statutes",
+      "authority": "official-primary",
+      "title": "Montana Code Annotated index",
+      "url": "https://mca.legmt.gov/bills/mca/index.html",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200"
+    },
+    {
+      "role": "session-laws",
+      "authority": "official-primary",
+      "title": "Montana Code Annotated archives, including session laws",
+      "url": "https://www.legmt.gov/statute/archives/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200"
+    },
+    {
+      "role": "administrative-code",
+      "authority": "official-primary",
+      "title": "Administrative Rules of Montana",
+      "url": "https://rules.mt.gov/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200; short shell"
+    },
+    {
+      "role": "court-of-last-resort",
+      "authority": "official-primary",
+      "title": "Montana Supreme Court",
+      "url": "https://courts.mt.gov/Courts/Supreme/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200; request path /Courts/Supreme/index landed here"
+    },
+    {
+      "role": "dockets",
+      "authority": "official-primary",
+      "title": "Montana Supreme Court docket search instructions",
+      "url": "https://juddocumentservice.mt.gov/instructions",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200"
+    },
+    {
+      "role": "court-rules",
+      "authority": "official-primary",
+      "title": "Montana court rules",
+      "url": "https://courts.mt.gov/Courts/Rules/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200; request path /Courts/Rules/index landed here"
+    },
+    {
+      "role": "statutes",
+      "authority": "official-primary",
+      "title": "Statutes portal",
+      "url": "https://www.legmt.gov/statute/",
+      "http_status": 200,
+      "check_note": "HEAD/GET 200; aligned from source table"
+    },
+    {
+      "role": "dockets",
+      "authority": "official-primary",
+      "title": "Clerk of court",
+      "url": "https://courts.mt.gov/clerk/",
+      "http_status": 200,
+      "check_note": "HEAD/GET 200; aligned from source table"
+    }
+  ]
+}

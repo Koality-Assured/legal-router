@@ -1,0 +1,89 @@
+{
+  "postal": "wa",
+  "name": "Washington",
+  "kind": "state",
+  "captured_at_utc": "2026-10-07T18:00:00Z",
+  "court_of_last_resort": "Washington Supreme Court",
+  "sources": [
+    {
+      "role": "constitution",
+      "authority": "official-primary",
+      "title": "Washington State Constitution",
+      "url": "https://leg.wa.gov/state-laws-and-rules/washington-state-constitution/",
+      "http_status": 200,
+      "check_note": "HEAD 405; GET 200."
+    },
+    {
+      "role": "statutes",
+      "authority": "official-primary",
+      "title": "Revised Code of Washington",
+      "url": "https://apps.leg.wa.gov/RCW/default.aspx",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200. 101 titles. Page says the certified PDF archive is the official publication."
+    },
+    {
+      "role": "session laws",
+      "authority": "official-primary",
+      "title": "Session laws",
+      "url": "https://leg.wa.gov/state-laws-and-rules/state-laws-rcw/session-laws/",
+      "http_status": 200,
+      "check_note": "HEAD 405; GET 200."
+    },
+    {
+      "role": "administrative code",
+      "authority": "official-primary",
+      "title": "Washington Administrative Code",
+      "url": "https://apps.leg.wa.gov/wac/default.aspx",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    },
+    {
+      "role": "court of last resort",
+      "authority": "official-primary",
+      "title": "Washington Supreme Court",
+      "url": "https://www.courts.wa.gov/appellate_trial_courts/SupremeCourt/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    },
+    {
+      "role": "intermediate appellate courts",
+      "authority": "official-primary",
+      "title": "Appellate and trial courts",
+      "url": "https://www.courts.wa.gov/appellate_trial_courts/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200. Lists Court of Appeals Divisions I, II, and III."
+    },
+    {
+      "role": "court opinions",
+      "authority": "official-primary",
+      "title": "Washington State Court slip opinions",
+      "url": "https://www.courts.wa.gov/opinions/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200. Separate from the Odyssey case-search portal. Page says official reports replace slip opinions."
+    },
+    {
+      "role": "dockets",
+      "authority": "official-primary",
+      "title": "Odyssey Portal",
+      "url": "https://odysseyportal.courts.wa.gov/odyportal",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200. Title: Odyssey Portal - Washington Courts Online Case Search. The portal root without /odyportal was an IIS placeholder."
+    },
+    {
+      "role": "court rules",
+      "authority": "official-primary",
+      "title": "Washington court rules",
+      "url": "https://www.courts.wa.gov/court_rules/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    },
+    {
+      "role": "attorney general opinions",
+      "authority": "official-primary",
+      "title": "AGO opinions",
+      "url": "https://www.atg.wa.gov/ago-opinions",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "postal": "vt",
+  "name": "Vermont",
+  "kind": "state",
+  "captured_at_utc": "2026-10-07T18:00:00Z",
+  "court_of_last_resort": "Vermont Supreme Court",
+  "sources": [
+    {"role": "constitution", "authority": "official-primary", "title": "Constitution of the State of Vermont", "url": "https://legislature.vermont.gov/statutes/constitution-of-the-state-of-vermont", "http_status": 200, "check_note": "HEAD"},
+    {"role": "statutes", "authority": "unofficial", "title": "Vermont Statutes Online; page says it is an unofficial copy of the Vermont Statutes Annotated", "url": "https://legislature.vermont.gov/statutes/", "http_status": 200, "check_note": "HEAD"},
+    {"role": "session-laws", "authority": "official-primary", "title": "Acts and resolves, 2025-2026 session", "url": "https://legislature.vermont.gov/bill/acts/2026", "http_status": 200, "check_note": "HEAD"},
+    {"role": "administrative-code", "authority": "official-primary", "title": "Vermont Secretary of State rules service", "url": "https://secure.vermont.gov/SOS/rules/", "http_status": 200, "check_note": "HEAD"},
+    {"role": "court-of-last-resort", "authority": "official-primary", "title": "Vermont Supreme Court", "url": "https://www.vermontjudiciary.org/supreme-court", "http_status": 200, "check_note": "HEAD"},
+    {"role": "opinions", "authority": "official-primary", "title": "Opinions, decisions, and orders", "url": "https://www.vermontjudiciary.org/opinions-decisions", "http_status": 200, "check_note": "HEAD"},
+    {"role": "dockets", "authority": "official-primary", "title": "Vermont Judiciary", "url": "https://www.vermontjudiciary.org/", "http_status": 200, "check_note": "HEAD"},
+    {"role": "court-rules", "authority": "official-primary", "title": "Judiciary court-rules path", "url": "https://www.vermontjudiciary.org/attorneys/court-rules", "http_status": 404, "check_note": "HEAD and GET 404"},
+    {"role": "attorney-general", "authority": "official-primary", "title": "Office of the Attorney General", "url": "https://ago.vermont.gov/", "http_status": 200, "check_note": "HEAD; opinions index not separately verified"}
+  ]
+}

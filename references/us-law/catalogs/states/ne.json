@@ -1,0 +1,81 @@
+{
+  "postal": "ne",
+  "name": "Nebraska",
+  "kind": "state",
+  "captured_at_utc": "2026-10-07T18:00:00Z",
+  "court_of_last_resort": "Nebraska Supreme Court",
+  "sources": [
+    {
+      "role": "constitution",
+      "authority": "official-primary",
+      "title": "Nebraska Constitution",
+      "url": "https://nebraskalegislature.gov/laws/browse-constitution.php",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200"
+    },
+    {
+      "role": "statutes",
+      "authority": "official-primary",
+      "title": "Nebraska Revised Statutes browse by chapter",
+      "url": "https://nebraskalegislature.gov/laws/browse-statutes.php",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200"
+    },
+    {
+      "role": "administrative-code",
+      "authority": "official-primary",
+      "title": "Nebraska Rules and Regulations",
+      "url": "https://rules.nebraska.gov/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200; short application shell"
+    },
+    {
+      "role": "court-of-last-resort",
+      "authority": "official-primary",
+      "title": "Nebraska Supreme Court",
+      "url": "https://nebraskajudicial.gov/courts/supreme-court",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200"
+    },
+    {
+      "role": "intermediate-appellate",
+      "authority": "official-primary",
+      "title": "Nebraska Court of Appeals",
+      "url": "https://nebraskajudicial.gov/courts/court-appeals",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200"
+    },
+    {
+      "role": "dockets",
+      "authority": "official-primary",
+      "title": "Nebraska Appellate Courts Online Library",
+      "url": "https://www.nebraska.gov/apps-courts-epub/public/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200; appellate opinions, not a trial-court docket"
+    },
+    {
+      "role": "court-rules",
+      "authority": "official-primary",
+      "title": "Nebraska Supreme Court Rules",
+      "url": "https://nebraskajudicial.gov/supreme-court-rules",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200"
+    },
+    {
+      "role": "attorney-general-opinions",
+      "authority": "official-primary",
+      "title": "Nebraska Attorney General opinions",
+      "url": "https://ago.nebraska.gov/opinions",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200"
+    },
+    {
+      "role": "statutes",
+      "authority": "official-primary",
+      "title": "Laws search",
+      "url": "https://nebraskalegislature.gov/laws/laws.php",
+      "http_status": 200,
+      "check_note": "HEAD/GET 200; aligned from source table"
+    }
+  ]
+}

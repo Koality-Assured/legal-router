@@ -1,0 +1,105 @@
+{
+  "postal": "ny",
+  "name": "New York",
+  "kind": "state",
+  "captured_at_utc": "2026-10-07T18:00:00Z",
+  "court_of_last_resort": null,
+  "sources": [
+    {
+      "role": "statutes",
+      "authority": "official-primary",
+      "title": "Consolidated Laws of New York",
+      "url": "https://www.nysenate.gov/legislation/laws/CONSOLIDATED",
+      "http_status": 403,
+      "check_note": "HEAD and GET 403. Content from a second fetch was not stored."
+    },
+    {
+      "role": "constitution",
+      "authority": "official-primary",
+      "title": "Constitution (CNS)",
+      "url": "https://www.nysenate.gov/legislation/laws/CNS",
+      "http_status": 403,
+      "check_note": "HEAD and GET 403; a later content fetch timed out"
+    },
+    {
+      "role": "session-laws",
+      "authority": "official-primary",
+      "title": "Laws of New York, Legislative Bill Drafting Commission",
+      "url": "http://public.leginfo.state.ny.us/lawssrch.cgi?NVLWO:",
+      "http_status": 200,
+      "check_note": "GET 200. Page says the Laws database is current and shows Chapters 1-312."
+    },
+    {
+      "role": "session-laws",
+      "authority": "official-primary",
+      "title": "New York State Assembly bill search",
+      "url": "https://nyassembly.gov/leg/",
+      "http_status": 200,
+      "check_note": "HEAD"
+    },
+    {
+      "role": "session-laws",
+      "authority": "official-primary",
+      "title": "Legislative Bill Drafting Commission laws search, https",
+      "url": "https://public.leginfo.state.ny.us/lawssrch.cgi?NVLWO:",
+      "http_status": null,
+      "check_note": "HEAD failed and GET did not return a status"
+    },
+    {
+      "role": "administrative-code",
+      "authority": "official-primary",
+      "title": "Department of State State Register",
+      "url": "https://dos.ny.gov/state-register",
+      "http_status": 403,
+      "check_note": "HEAD and GET 403. Content from a second fetch was not stored."
+    },
+    {
+      "role": "administrative-code",
+      "authority": "unofficial",
+      "title": "Unofficial NYCRR on Westlaw",
+      "url": "https://govt.westlaw.com/nycrr/Index",
+      "http_status": 403,
+      "check_note": "HEAD and GET 403. Content from a second fetch was not stored."
+    },
+    {
+      "role": "decisions",
+      "authority": "official-primary",
+      "title": "New York Official Reports decisions",
+      "url": "https://nycourts.gov/reporter/Decisions.htm",
+      "http_status": 403,
+      "check_note": "HEAD and GET 403. This response does not name a court of last resort."
+    },
+    {
+      "role": "intermediate-appellate",
+      "authority": "official-primary",
+      "title": "Appellate Division courts page",
+      "url": "https://www.nycourts.gov/courts/appellatedivisions.shtml",
+      "http_status": 403,
+      "check_note": "HEAD and GET 403"
+    },
+    {
+      "role": "dockets",
+      "authority": "official-primary",
+      "title": "WebCivil",
+      "url": "https://iapps.courts.state.ny.us/webcivil/FCASMain",
+      "http_status": 403,
+      "check_note": "HEAD and GET 403"
+    },
+    {
+      "role": "court-rules",
+      "authority": "official-primary",
+      "title": "Trial court rules",
+      "url": "https://www.nycourts.gov/rules/trialcourts/index.shtml",
+      "http_status": 403,
+      "check_note": "HEAD and GET 403"
+    },
+    {
+      "role": "attorney-general-opinions",
+      "authority": "official-primary",
+      "title": "Attorney General opinions path",
+      "url": "https://ag.ny.gov/opinions",
+      "http_status": 404,
+      "check_note": "HEAD and GET 404"
+    }
+  ]
+}

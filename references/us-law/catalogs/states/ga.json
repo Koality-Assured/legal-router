@@ -1,0 +1,105 @@
+{
+  "postal": "ga",
+  "name": "Georgia",
+  "kind": "state",
+  "captured_at_utc": "2026-10-07T18:00:00Z",
+  "court_of_last_resort": "Supreme Court of Georgia",
+  "sources": [
+    {
+      "role": "constitution",
+      "authority": "official-primary",
+      "title": "Georgia General Assembly constitution path",
+      "url": "https://www.legis.ga.gov/laws/constitution",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200. HTML is an application shell and does not include the constitution text."
+    },
+    {
+      "role": "statutes",
+      "authority": "official-primary",
+      "title": "Georgia General Assembly codes path",
+      "url": "https://www.legis.ga.gov/laws/codes",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200. HTML is an application shell and does not include a title index. A commercial code link on the Judicial Council site is not cataloged."
+    },
+    {
+      "role": "session laws",
+      "authority": "official-primary",
+      "title": "Legislation Search - Georgia General Assembly",
+      "url": "https://www.legis.ga.gov/legislation/all",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200. HTML is an application shell."
+    },
+    {
+      "role": "administrative code",
+      "authority": "official-primary",
+      "title": "Rules and Regulations of the State of Georgia",
+      "url": "https://rules.sos.ga.gov/",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200. Secretary of State compilation of filed agency rules."
+    },
+    {
+      "role": "court of last resort opinions",
+      "authority": "official-primary",
+      "title": "2026 Opinions - Supreme Court of Georgia",
+      "url": "https://www.gasupreme.us/2026-opinions/",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200. The path /opinions/ returned HTTP 404 and the GET connection then closed."
+    },
+    {
+      "role": "intermediate appellate court",
+      "authority": "official-primary",
+      "title": "Court of Appeals of the State of Georgia",
+      "url": "https://www.gaappeals.gov/",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200."
+    },
+    {
+      "role": "intermediate appellate court",
+      "authority": "official-primary",
+      "title": "Opinion Search - Georgia Court of Appeals",
+      "url": "https://www.gaappeals.gov/opinion-search/",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200."
+    },
+    {
+      "role": "dockets",
+      "authority": "official-primary",
+      "title": "Docket Search - Supreme Court of Georgia",
+      "url": "https://www.gasupreme.us/docket-search/",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200."
+    },
+    {
+      "role": "court rules",
+      "authority": "official-primary",
+      "title": "Supreme Court of Georgia Rules",
+      "url": "https://www.gasupreme.us/rules/",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200."
+    },
+    {
+      "role": "attorney general opinions",
+      "authority": "official-primary",
+      "title": "Opinions - Office of the Attorney General",
+      "url": "https://law.georgia.gov/opinions",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200."
+    },
+    {
+      "role": "court of last resort opinions",
+      "authority": "official-primary",
+      "title": "Supreme Court of Georgia",
+      "url": "https://www.gasupreme.us/",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200. Court home page."
+    },
+    {
+      "role": "court rules",
+      "authority": "official-primary",
+      "title": "Georgia Supreme Court Rules - Georgia Courts",
+      "url": "https://georgiacourts.gov/georgia-supreme-court-rules/",
+      "http_status": 200,
+      "check_note": "HEAD 200 and GET 200. Judicial Council rules page."
+    }
+  ]
+}

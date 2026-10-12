@@ -1,0 +1,19 @@
+{
+  "postal": "me",
+  "name": "Maine",
+  "kind": "state",
+  "captured_at_utc": "2026-10-07T18:00:00Z",
+  "court_of_last_resort": "Maine Supreme Judicial Court",
+  "sources": [
+    {"role": "constitution", "authority": "official-primary", "title": "Constitution of the State of Maine", "url": "https://legislature.maine.gov/doc/10674", "http_status": 200, "check_note": "HEAD"},
+    {"role": "statutes", "authority": "official-primary", "title": "Maine Revised Statutes, list of titles", "url": "https://legislature.maine.gov/statutes/homepage.html", "http_status": 200, "check_note": "HEAD"},
+    {"role": "session-laws", "authority": "official-primary", "title": "Session Laws of Maine, published volumes", "url": "https://legislature.maine.gov/ros/LOM/LOMpdfDirectory.htm", "http_status": 200, "check_note": "HEAD"},
+    {"role": "administrative-code", "authority": "official-primary", "title": "Adopted State of Maine agency rules", "url": "https://www.maine.gov/sos/rulemaking/agency-rules", "http_status": 200, "check_note": "HEAD"},
+    {"role": "court-of-last-resort", "authority": "official-primary", "title": "Supreme Judicial Court published opinions", "url": "https://www.courts.maine.gov/courts/sjc/opinions.html", "http_status": 200, "check_note": "HEAD"},
+    {"role": "dockets", "authority": "official-primary", "title": "Maine eCourts public portal", "url": "https://publicportal.courts.maine.gov/Portal", "http_status": 200, "check_note": "HEAD"},
+    {"role": "court-rules", "authority": "official-primary", "title": "Maine court rules", "url": "https://www.courts.maine.gov/rules/index.html", "http_status": 200, "check_note": "HEAD"},
+    {"role": "attorney-general-opinions", "authority": "official-primary", "title": "Attorney General opinions and memoranda", "url": "https://www.maine.gov/legis/lawlib/lldl/agops/agabout.htm", "http_status": 200, "check_note": "HEAD"},
+    {"role": "session-laws", "authority": "official-primary", "title": "Unused Laws of Maine index path", "url": "https://legislature.maine.gov/ros/LawsOfMaine/Index.html", "http_status": 404, "check_note": "HEAD and GET 404"},
+    {"role": "session-laws", "authority": "official-primary", "title": "Unused laws.htm path", "url": "https://legislature.maine.gov/legis/laws/laws.htm", "http_status": 404, "check_note": "HEAD and GET 404"}
+  ]
+}

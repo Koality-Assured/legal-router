@@ -1,0 +1,81 @@
+{
+  "postal": "il",
+  "name": "Illinois",
+  "kind": "state",
+  "captured_at_utc": "2026-10-07T18:00:00Z",
+  "court_of_last_resort": "Supreme Court of Illinois",
+  "sources": [
+    {
+      "role": "constitution",
+      "authority": "official-primary",
+      "title": "Constitution of the State of Illinois",
+      "url": "https://www.ilga.gov/commission/lrb/conmain.htm",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200. Adopted at special election on December 15, 1970."
+    },
+    {
+      "role": "statutes",
+      "authority": "unofficial",
+      "title": "Illinois Compiled Statutes",
+      "url": "https://www.ilga.gov/legislation/ILCS/Chapters",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200. Page says the database is not the official enacted text."
+    },
+    {
+      "role": "session laws",
+      "authority": "official-primary",
+      "title": "Public Acts",
+      "url": "https://www.ilga.gov/legislation/publicacts",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200. /legislation/publicacts/default.asp returned 404."
+    },
+    {
+      "role": "administrative code",
+      "authority": "unofficial",
+      "title": "Illinois Administrative Code",
+      "url": "https://www.ilga.gov/agencies/JCAR/AdminCode",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200. Page says the database is not the official text."
+    },
+    {
+      "role": "court of last resort",
+      "authority": "official-primary",
+      "title": "The Supreme Court of Illinois",
+      "url": "https://www.illinoiscourts.gov/courts/supreme-court/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    },
+    {
+      "role": "intermediate appellate",
+      "authority": "official-primary",
+      "title": "Appellate Court",
+      "url": "https://www.illinoiscourts.gov/courts/appellate-court/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    },
+    {
+      "role": "dockets",
+      "authority": "official-primary",
+      "title": "Supreme Court Docket and Briefs",
+      "url": "https://www.illinoiscourts.gov/courts/supreme-court/docket/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    },
+    {
+      "role": "court rules",
+      "authority": "official-primary",
+      "title": "Supreme Court Rules",
+      "url": "https://www.illinoiscourts.gov/rules-law/supreme-court-rules/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    },
+    {
+      "role": "attorney general opinions",
+      "authority": "official-primary",
+      "title": "Official Opinions",
+      "url": "https://illinoisattorneygeneral.gov/opinions/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "postal": "ct",
+  "name": "Connecticut",
+  "kind": "state",
+  "captured_at_utc": "2026-10-07T18:00:00Z",
+  "court_of_last_resort": "Connecticut Supreme Court",
+  "sources": [
+    {"role": "constitution", "authority": "official-primary", "title": "Constitution of the State of Connecticut, revised to January 1, 2025", "url": "https://www.cga.ct.gov/asp/Content/constitutions/Constitution_State_CT.pdf", "http_status": 200, "check_note": "HEAD"},
+    {"role": "statutes", "authority": "official-primary", "title": "General Statutes of Connecticut, title index", "url": "https://www.cga.ct.gov/current/pub/titles.htm", "http_status": 200, "check_note": "HEAD"},
+    {"role": "session-laws", "authority": "official-primary", "title": "General Assembly bill-status and public-act search", "url": "https://www.cga.ct.gov/asp/CGABillStatus/CGAbillstatus.asp", "http_status": 200, "check_note": "HEAD"},
+    {"role": "administrative-code", "authority": "official-primary", "title": "eRegulations System, Regulations of Connecticut State Agencies", "url": "https://eregulations.ct.gov/eRegsPortal/Browse/RCSA", "http_status": 200, "check_note": "HEAD"},
+    {"role": "court-of-last-resort", "authority": "official-primary", "title": "Connecticut Judicial Branch", "url": "https://www.jud.ct.gov/", "http_status": 200, "check_note": "HEAD"},
+    {"role": "intermediate-appellate", "authority": "official-primary", "title": "Supreme and Appellate Court advance-release opinions", "url": "https://www.jud.ct.gov/LawLib/opinions.htm", "http_status": 200, "check_note": "HEAD"},
+    {"role": "dockets", "authority": "official-primary", "title": "Civil, family, housing, and small-claims case look-up", "url": "https://civilinquiry.jud.ct.gov/", "http_status": 200, "check_note": "HEAD"},
+    {"role": "dockets", "authority": "official-primary", "title": "Criminal and motor-vehicle case look-up", "url": "https://www.jud.ct.gov/crim.htm", "http_status": 200, "check_note": "HEAD"},
+    {"role": "court-rules", "authority": "official-primary", "title": "Connecticut Practice Book", "url": "https://www.jud.ct.gov/pb.htm", "http_status": 200, "check_note": "HEAD"},
+    {"role": "attorney-general-opinions", "authority": "official-primary", "title": "Formal opinions of the Attorney General", "url": "https://portal.ct.gov/AG/Opinions", "http_status": 200, "check_note": "HEAD"},
+    {"role": "constitution", "authority": "official-primary", "title": "Unused HTML constitution path", "url": "https://www.cga.ct.gov/current/pub/const.htm", "http_status": 404, "check_note": "HEAD and GET 404"},
+    {"role": "session-laws", "authority": "official-primary", "title": "Unused public-acts path", "url": "https://www.cga.ct.gov/asp/cgapublicacts/cgapublicacts.asp", "http_status": 404, "check_note": "HEAD and GET 404"}
+  ]
+}

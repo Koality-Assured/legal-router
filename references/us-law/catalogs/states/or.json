@@ -1,0 +1,113 @@
+{
+  "postal": "or",
+  "name": "Oregon",
+  "kind": "state",
+  "captured_at_utc": "2026-10-07T18:00:00Z",
+  "court_of_last_resort": "Oregon Supreme Court",
+  "sources": [
+    {
+      "role": "constitution",
+      "authority": "official-primary",
+      "title": "Oregon Constitution",
+      "url": "https://www.oregonlegislature.gov/bills_laws/Pages/OrConst.aspx",
+      "http_status": 200,
+      "check_note": "HEAD timed out; GET 200."
+    },
+    {
+      "role": "statutes",
+      "authority": "unofficial",
+      "title": "Oregon Revised Statutes",
+      "url": "https://www.oregonlegislature.gov/bills_laws/Pages/ORS.aspx",
+      "http_status": 200,
+      "check_note": "HEAD timed out; GET 200. Page says the printed ORS is the official text and this database is not."
+    },
+    {
+      "role": "statutes",
+      "authority": "official-primary",
+      "title": "Table of Titles and Chapters",
+      "url": "https://www.oregonlegislature.gov/bills_laws/BillsLawsEDL/ORS_TitlesChapters.pdf",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200. Official title table. 60 titles; some numbers are omitted."
+    },
+    {
+      "role": "session laws",
+      "authority": "official-primary",
+      "title": "Oregon Laws",
+      "url": "https://www.oregonlegislature.gov/bills_laws/Pages/Oregon-Laws.aspx",
+      "http_status": 200,
+      "check_note": "HEAD timed out; GET 200."
+    },
+    {
+      "role": "administrative code",
+      "authority": "official-primary",
+      "title": "Oregon Administrative Rules",
+      "url": "https://sos.oregon.gov/archives/Pages/oregon_administrative_rules.aspx",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    },
+    {
+      "role": "administrative code",
+      "authority": "official-primary",
+      "title": "Oregon Administrative Rules search",
+      "url": "https://secure.sos.state.or.us/oard/ruleSearch.action",
+      "http_status": 200,
+      "check_note": "HEAD failed with a connection error; GET 200. HTML title tag was empty."
+    },
+    {
+      "role": "court of last resort",
+      "authority": "official-primary",
+      "title": "Oregon Supreme Court",
+      "url": "https://www.courts.oregon.gov/courts/appellate/supreme/Pages/default.aspx",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    },
+    {
+      "role": "intermediate appellate courts",
+      "authority": "official-primary",
+      "title": "Oregon Court of Appeals",
+      "url": "https://www.courts.oregon.gov/courts/appellate/coa/Pages/default.aspx",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    },
+    {
+      "role": "court opinions",
+      "authority": "official-primary",
+      "title": "Supreme Court opinions",
+      "url": "https://www.courts.oregon.gov/publications/sc/Pages/default.aspx",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200. Separate from OJCIN."
+    },
+    {
+      "role": "court opinions",
+      "authority": "official-primary",
+      "title": "Court of Appeals opinions",
+      "url": "https://www.courts.oregon.gov/publications/coa/Pages/default.aspx",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    },
+    {
+      "role": "dockets",
+      "authority": "official-primary",
+      "title": "OJCIN OnLine",
+      "url": "https://www.courts.oregon.gov/services/online/Pages/ojcin.aspx",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200. A subscription fee was not confirmed from this page."
+    },
+    {
+      "role": "court rules",
+      "authority": "official-primary",
+      "title": "Oregon court rules",
+      "url": "https://www.courts.oregon.gov/rules/Pages/default.aspx",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    },
+    {
+      "role": "attorney general opinions",
+      "authority": "official-primary",
+      "title": "Attorney General opinions",
+      "url": "https://www.doj.state.or.us/oregon-department-of-justice/office-of-the-attorney-general/attorney-general-opinions/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    }
+  ]
+}

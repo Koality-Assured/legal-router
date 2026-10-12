@@ -1,0 +1,81 @@
+{
+  "postal": "ut",
+  "name": "Utah",
+  "kind": "state",
+  "captured_at_utc": "2026-10-07T18:00:00Z",
+  "court_of_last_resort": "Utah Supreme Court",
+  "sources": [
+    {
+      "role": "constitution",
+      "authority": "official-primary",
+      "title": "Utah Constitution Index",
+      "url": "https://le.utah.gov/xcode/constitution.html",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    },
+    {
+      "role": "statutes",
+      "authority": "official-primary",
+      "title": "Utah Code Index",
+      "url": "https://le.utah.gov/xcode/code.html",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    },
+    {
+      "role": "session laws",
+      "authority": "official-primary",
+      "title": "Recent Laws",
+      "url": "https://le.utah.gov/documents/laws-recent.htm",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200. Linked from the Legislature code-and-constitution page. Documents/laws.htm returned 404."
+    },
+    {
+      "role": "administrative code",
+      "authority": "official-primary",
+      "title": "Utah Office of Administrative Rules",
+      "url": "https://adminrules.utah.gov/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200. Office describes the Utah Administrative Code as its official publication."
+    },
+    {
+      "role": "court of last resort",
+      "authority": "official-primary",
+      "title": "Utah Supreme Court",
+      "url": "https://www.utcourts.gov/en/courts/court-types/appellate-courts/sup.html",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    },
+    {
+      "role": "intermediate appellate courts",
+      "authority": "official-primary",
+      "title": "Utah Court of Appeals",
+      "url": "https://www.utcourts.gov/en/courts/court-types/appellate-courts/coa.html",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    },
+    {
+      "role": "court opinions",
+      "authority": "official-primary",
+      "title": "Utah Court Opinions, Decisions, and Orders",
+      "url": "https://legacy.utcourts.gov/opinions/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200. Separate host from Xchange case search."
+    },
+    {
+      "role": "dockets",
+      "authority": "official-primary",
+      "title": "Xchange public case search",
+      "url": "https://www.utcourts.gov/en/court-records-publications/records/xchange.html",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200. Page presents Xchange as public case search. A subscription fee was not confirmed from this page."
+    },
+    {
+      "role": "court rules",
+      "authority": "official-primary",
+      "title": "Utah Court Rules",
+      "url": "https://legacy.utcourts.gov/rules/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    }
+  ]
+}

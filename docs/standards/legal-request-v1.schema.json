@@ -1,0 +1,190 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Legal request contract",
+  "description": "Versioned machine-readable request shape used by legal-router case manifests. The prose standard remains authoritative for ethics and licensed attorney review controls.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "request_id",
+    "version",
+    "operation",
+    "matter",
+    "jurisdiction",
+    "intent",
+    "representations",
+    "constraints",
+    "references",
+    "privilege_and_safeguards",
+    "audience_delivery",
+    "provenance",
+    "open_questions",
+    "review_handoff"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "request_id": {"type": "string", "minLength": 1},
+    "version": {"type": "string", "minLength": 1},
+    "operation": {
+      "enum": [
+        "draft",
+        "review",
+        "redline",
+        "crosswalk",
+        "verify_citations",
+        "sbom_audit",
+        "memo"
+      ]
+    },
+    "matter": {
+      "type": "object",
+      "required": ["matter_type", "confidentiality_tier"],
+      "properties": {
+        "title": {"type": "string"},
+        "matter_type": {
+          "enum": [
+            "commercial_contract",
+            "regulatory_compliance",
+            "intellectual_property",
+            "corporate_governance",
+            "privacy_data_protection",
+            "dispute_analysis"
+          ]
+        },
+        "confidentiality_tier": {
+          "enum": ["public", "internal_confidential", "attorney_client_privileged"]
+        },
+        "client_matter_id": {"type": "string"}
+      },
+      "additionalProperties": true
+    },
+    "jurisdiction": {
+      "type": "object",
+      "required": ["primary_jurisdiction", "governing_law"],
+      "properties": {
+        "primary_jurisdiction": {"type": "string", "minLength": 1},
+        "governing_law": {"type": "string", "minLength": 1},
+        "forum": {"type": "string"}
+      },
+      "additionalProperties": true
+    },
+    "intent": {
+      "type": "object",
+      "required": ["primary_objective", "legal_basis"],
+      "properties": {
+        "primary_objective": {"type": "string", "minLength": 1},
+        "legal_basis": {"type": "string", "minLength": 1},
+        "risk_tolerance": {"enum": ["low", "moderate", "aggressive"]},
+        "preserve_clauses": {"type": "array", "items": {"type": "string"}}
+      },
+      "additionalProperties": true
+    },
+    "representations": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 100,
+      "items": {"$ref": "#/$defs/representation"}
+    },
+    "constraints": {
+      "type": "array",
+      "maxItems": 100,
+      "items": {"$ref": "#/$defs/constraint"}
+    },
+    "references": {
+      "type": "array",
+      "maxItems": 100,
+      "items": {"type": "object", "additionalProperties": true}
+    },
+    "privilege_and_safeguards": {
+      "type": "object",
+      "required": ["supervising_attorney_required", "upl_disclaimer_required"],
+      "properties": {
+        "supervising_attorney_required": {"type": "boolean"},
+        "upl_disclaimer_required": {"type": "boolean"},
+        "zero_data_retention_endpoint": {"type": "boolean"},
+        "client_matter_scrubbed": {"type": "boolean"}
+      },
+      "additionalProperties": true
+    },
+    "audience_delivery": {
+      "type": "object",
+      "required": ["recipient_role", "delivery_format"],
+      "properties": {
+        "recipient_role": {"type": "string", "minLength": 1},
+        "delivery_format": {"enum": ["markdown", "html", "docx", "pdf", "json"]},
+        "filing_prohibited": {"type": "boolean"}
+      },
+      "additionalProperties": true
+    },
+    "provenance": {
+      "type": "object",
+      "required": ["model_tier", "citation_verifier_run"],
+      "properties": {
+        "model_tier": {"type": "string"},
+        "citation_verifier_run": {"type": "boolean"},
+        "timestamp_utc": {"type": "string"}
+      },
+      "additionalProperties": true
+    },
+    "open_questions": {
+      "type": "array",
+      "maxItems": 100,
+      "items": {"type": "string"}
+    },
+    "review_handoff": {
+      "type": "object",
+      "required": ["owner", "reviewer", "acceptance_tests"],
+      "properties": {
+        "owner": {"type": "string", "minLength": 1},
+        "reviewer": {"type": "string", "minLength": 1},
+        "acceptance_tests": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "advisory_stamp_verified": {"type": "boolean"}
+      },
+      "additionalProperties": true
+    }
+  },
+  "$defs": {
+    "representation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "route", "asset", "role", "delivery"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "route": {"type": "string", "minLength": 1},
+        "asset": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["type"],
+          "properties": {
+            "type": {"type": "string", "minLength": 1}
+          }
+        },
+        "role": {"enum": ["primary", "supporting"]},
+        "delivery": {
+          "type": "object",
+          "required": ["intended_use", "format"],
+          "properties": {
+            "intended_use": {"type": "string", "minLength": 1},
+            "format": {"type": "string", "minLength": 1}
+          },
+          "additionalProperties": true
+        }
+      }
+    },
+    "constraint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["text", "source", "status", "hardness"],
+      "properties": {
+        "text": {"type": "string", "minLength": 1},
+        "source": {"enum": ["statute", "court_rule", "client", "standard", "agent_default"]},
+        "status": {"enum": ["required", "preferred", "open", "blocked"]},
+        "hardness": {"enum": ["hard", "soft"]}
+      }
+    }
+  }
+}

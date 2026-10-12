@@ -1,0 +1,81 @@
+{
+  "postal": "wy",
+  "name": "Wyoming",
+  "kind": "state",
+  "captured_at_utc": "2026-10-07T18:00:00Z",
+  "court_of_last_resort": "Wyoming Supreme Court",
+  "sources": [
+    {
+      "role": "constitution",
+      "authority": "official-primary",
+      "title": "Wyoming Constitution and statutes download",
+      "url": "https://wyoleg.gov/stateStatutes/StatutesDownload",
+      "http_status": null,
+      "check_note": "GET 200. Body is an application shell without a title index. Failed document check."
+    },
+    {
+      "role": "statutes",
+      "authority": "official-primary",
+      "title": "Wyoming Statutes and Constitution application",
+      "url": "https://www.wyoleg.gov/StateStatutes/StatutesConstitution",
+      "http_status": null,
+      "check_note": "GET 200. Body is an application shell. Failed document check."
+    },
+    {
+      "role": "administrative-code",
+      "authority": "official-primary",
+      "title": "Wyoming Administrative Rules",
+      "url": "https://rules.wyo.gov/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200"
+    },
+    {
+      "role": "court-of-last-resort",
+      "authority": "official-primary",
+      "title": "Wyoming Supreme Court",
+      "url": "https://www.wyocourts.gov/supreme-court/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200"
+    },
+    {
+      "role": "dockets",
+      "authority": "official-primary",
+      "title": "Wyoming public docket portal",
+      "url": "https://ctefiling.wyocourts.gov/portal/home",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200"
+    },
+    {
+      "role": "court-rules",
+      "authority": "official-primary",
+      "title": "Wyoming court rules",
+      "url": "https://www.wyocourts.gov/court-rules/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200"
+    },
+    {
+      "role": "attorney-general-opinions",
+      "authority": "official-primary",
+      "title": "Wyoming Attorney General formal opinions",
+      "url": "https://ag.wyo.gov/formal-opinions",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200"
+    },
+    {
+      "role": "administrative-code",
+      "authority": "official-primary",
+      "title": "Agency rule index",
+      "url": "https://rules.wyo.gov/Agencies.aspx",
+      "http_status": 200,
+      "check_note": "HEAD/GET 200; aligned from source table"
+    },
+    {
+      "role": "appellate-opinions",
+      "authority": "official-primary",
+      "title": "Supreme Court opinions",
+      "url": "https://www.wyocourts.gov/wy-supreme-court-opinions/",
+      "http_status": 200,
+      "check_note": "HEAD/GET 200; aligned from source table"
+    }
+  ]
+}

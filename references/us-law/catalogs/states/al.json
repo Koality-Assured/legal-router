@@ -1,0 +1,97 @@
+{
+  "postal": "al",
+  "name": "Alabama",
+  "kind": "state",
+  "captured_at_utc": "2026-10-07T18:00:00Z",
+  "court_of_last_resort": "Supreme Court of Alabama",
+  "sources": [
+    {
+      "role": "statutes",
+      "authority": "official-primary",
+      "title": "Code of Alabama",
+      "url": "https://alison.legislature.state.al.us/code-of-alabama",
+      "http_status": 200,
+      "check_note": "HEAD 200, GET 200. HTML shell did not include a title index."
+    },
+    {
+      "role": "session laws",
+      "authority": "official-primary",
+      "title": "Acts of Alabama",
+      "url": "https://alison.legislature.state.al.us/acts",
+      "http_status": 200,
+      "check_note": "HEAD 200, GET 200. Linked from the code page."
+    },
+    {
+      "role": "administrative code",
+      "authority": "official-primary",
+      "title": "Alabama Administrative Code",
+      "url": "https://admincode.legislature.state.al.us/",
+      "http_status": 200,
+      "check_note": "HEAD 200, GET 200."
+    },
+    {
+      "role": "administrative code",
+      "authority": "official-primary",
+      "title": "alabamaadministrativecode.state.al.us",
+      "url": "https://alabamaadministrativecode.state.al.us/",
+      "http_status": null,
+      "check_note": "TLS trust failure on HEAD and GET. No HTTP status. Not used."
+    },
+    {
+      "role": "court opinions",
+      "authority": "official-primary",
+      "title": "Supreme Court of Alabama",
+      "url": "https://judicial.alabama.gov/Appellate/SupremeCourt",
+      "http_status": 200,
+      "check_note": "HEAD 200, GET 200. Page says the Supreme Court is the highest state court."
+    },
+    {
+      "role": "intermediate appellate",
+      "authority": "official-primary",
+      "title": "Alabama Court of Criminal Appeals",
+      "url": "https://judicial.alabama.gov/Appellate/CriminalAppeals",
+      "http_status": 200,
+      "check_note": "HEAD 200, GET 200. Hears felony, misdemeanor, city-ordinance, and post-conviction appeals. Not described as a court of last resort."
+    },
+    {
+      "role": "intermediate appellate",
+      "authority": "official-primary",
+      "title": "Alabama Court of Civil Appeals",
+      "url": "https://judicial.alabama.gov/Appellate/CivilAppeals",
+      "http_status": 200,
+      "check_note": "HEAD 200, GET 200. States a $50,000 civil appellate amount."
+    },
+    {
+      "role": "dockets",
+      "authority": "official-primary",
+      "title": "Alabama appellate public portal",
+      "url": "https://publicportal.alappeals.gov/",
+      "http_status": 200,
+      "check_note": "HEAD 200, GET 200. Linked from judicial.alabama.gov."
+    },
+    {
+      "role": "dockets",
+      "authority": "official-primary",
+      "title": "AlaCourt trial-court portal",
+      "url": "https://pa.alacourt.com/default.aspx?loc=alacourt.gov",
+      "http_status": 200,
+      "check_note": "HEAD 200, GET 200."
+    },
+    {
+      "role": "court rules",
+      "authority": "official-primary",
+      "title": "Alabama Rules of Court",
+      "url": "https://judicial.alabama.gov/library/rulesofcourt",
+      "http_status": 200,
+      "check_note": "HEAD 200, GET 200."
+    },
+    {
+      "role": "attorney general",
+      "authority": "official-primary",
+      "title": "Alabama Attorney General opinions",
+      "url": "https://www.alabamaag.gov/opinions/",
+      "http_status": 200,
+      "check_note": "HEAD 200, GET 200."
+    }
+  ]
+}

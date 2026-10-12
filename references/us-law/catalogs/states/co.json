@@ -1,0 +1,97 @@
+{
+  "postal": "co",
+  "name": "Colorado",
+  "kind": "state",
+  "captured_at_utc": "2026-10-07T18:00:00Z",
+  "court_of_last_resort": "Colorado Supreme Court",
+  "sources": [
+    {
+      "role": "constitution",
+      "authority": "official-primary",
+      "title": "Colorado Constitution",
+      "url": "https://leg.colorado.gov/laws/colorado-constitution",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200"
+    },
+    {
+      "role": "statutes",
+      "authority": "official-primary",
+      "title": "2026 Colorado Revised Statutes titles for download",
+      "url": "https://content.leg.colorado.gov/agencies/office-legislative-legal-services/2026-crs-titles-download",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200"
+    },
+    {
+      "role": "session-laws",
+      "authority": "official-primary",
+      "title": "Colorado session laws",
+      "url": "https://www.leg.colorado.gov/laws/session-laws",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200"
+    },
+    {
+      "role": "administrative-code",
+      "authority": "official-primary",
+      "title": "Code of Colorado Regulations",
+      "url": "https://coloradosos.gov/CCR/Welcome.do",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200"
+    },
+    {
+      "role": "court-of-last-resort",
+      "authority": "official-primary",
+      "title": "Colorado Supreme Court",
+      "url": "https://www.coloradojudicial.gov/supreme-court",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200"
+    },
+    {
+      "role": "intermediate-appellate",
+      "authority": "official-primary",
+      "title": "Colorado Court of Appeals",
+      "url": "https://www.coloradojudicial.gov/court-appeals",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200"
+    },
+    {
+      "role": "dockets",
+      "authority": "official-primary",
+      "title": "Colorado judicial docket search",
+      "url": "https://www.coloradojudicial.gov/dockets",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200"
+    },
+    {
+      "role": "court-rules",
+      "authority": "official-primary",
+      "title": "Colorado Supreme Court adopted and proposed rule changes",
+      "url": "https://www.coloradojudicial.gov/supreme-court/adopted-proposed-rule-changes",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200"
+    },
+    {
+      "role": "attorney-general-opinions",
+      "authority": "official-primary",
+      "title": "Colorado Attorney General opinions",
+      "url": "https://coag.gov/attorney-general-opinions/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200"
+    },
+    {
+      "role": "statutes",
+      "authority": "official-primary",
+      "title": "Laws hub",
+      "url": "https://leg.colorado.gov/laws",
+      "http_status": 200,
+      "check_note": "HEAD/GET 200; aligned from source table"
+    },
+    {
+      "role": "administrative-code",
+      "authority": "official-primary",
+      "title": "Rulemaking portal",
+      "url": "https://rulemaking.colorado.gov/",
+      "http_status": 200,
+      "check_note": "HEAD/GET 200; aligned from source table"
+    }
+  ]
+}

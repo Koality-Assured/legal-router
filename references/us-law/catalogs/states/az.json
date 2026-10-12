@@ -1,0 +1,97 @@
+{
+  "postal": "az",
+  "name": "Arizona",
+  "kind": "state",
+  "captured_at_utc": "2026-10-07T18:00:00Z",
+  "court_of_last_resort": "Arizona Supreme Court",
+  "sources": [
+    {
+      "role": "constitution",
+      "authority": "official-primary",
+      "title": "Arizona State Constitution",
+      "url": "https://www.azleg.gov/constitution/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    },
+    {
+      "role": "statutes",
+      "authority": "official-primary",
+      "title": "Arizona Revised Statutes",
+      "url": "https://www.azleg.gov/arstitle/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200. Page says the online text is for legislative drafting and that Thomson Reuters publishes the official print."
+    },
+    {
+      "role": "session laws",
+      "authority": "official-primary",
+      "title": "Session Laws",
+      "url": "https://www.azleg.gov/sessionlaws/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    },
+    {
+      "role": "administrative code",
+      "authority": "official-primary",
+      "title": "Arizona Administrative Code",
+      "url": "https://azsos.gov/rules/arizona-administrative-code",
+      "http_status": 403,
+      "check_note": "HEAD 403; GET 403. No replacement host substituted."
+    },
+    {
+      "role": "court of last resort",
+      "authority": "official-primary",
+      "title": "Arizona Supreme Court",
+      "url": "https://www.azcourts.gov/azsupremecourt",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    },
+    {
+      "role": "intermediate appellate courts",
+      "authority": "official-primary",
+      "title": "Arizona Court of Appeals, Division One",
+      "url": "https://www.azcourts.gov/coa1",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    },
+    {
+      "role": "intermediate appellate courts",
+      "authority": "official-primary",
+      "title": "Arizona Court of Appeals, Division Two",
+      "url": "https://www.appeals2.az.gov/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200. Linked from the Division One site. www.azcourts.gov/coa2 returned 404."
+    },
+    {
+      "role": "court opinions",
+      "authority": "official-primary",
+      "title": "Opinions and memorandum decisions",
+      "url": "https://opinions.azcourts.gov/cld",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200. Separate host from Public Access Case Lookup. Page says bound Arizona Reports are the final official report."
+    },
+    {
+      "role": "dockets",
+      "authority": "official-primary",
+      "title": "Public Access Case Lookup",
+      "url": "https://apps.azcourts.gov/publicAccess/caselookup.aspx",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    },
+    {
+      "role": "court rules",
+      "authority": "official-primary",
+      "title": "Arizona court rules",
+      "url": "https://www.azcourts.gov/rules",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    },
+    {
+      "role": "attorney general opinions",
+      "authority": "official-primary",
+      "title": "Attorney General opinions",
+      "url": "https://www.azag.gov/opinions",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    }
+  ]
+}

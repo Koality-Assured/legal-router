@@ -1,0 +1,97 @@
+{
+  "postal": "ar",
+  "name": "Arkansas",
+  "kind": "state",
+  "captured_at_utc": "2026-10-07T18:00:00Z",
+  "court_of_last_resort": "Arkansas Supreme Court",
+  "sources": [
+    {
+      "role": "constitution",
+      "authority": "official-primary",
+      "title": "Arkansas Law",
+      "url": "https://www.arkleg.state.ar.us/ArkansasLaw/",
+      "http_status": 200,
+      "check_note": "HEAD 200, GET 200. Names Arkansas Code and Constitution of 1874. No title index in the HTML."
+    },
+    {
+      "role": "constitution",
+      "authority": "official-mirror",
+      "title": "Arkansas Judiciary constitutions",
+      "url": "https://arcourts.gov/courts/supreme-court/library/constitutions",
+      "http_status": 200,
+      "check_note": "HEAD 200, GET 200."
+    },
+    {
+      "role": "statutes",
+      "authority": "official-primary",
+      "title": "Arkansas Law",
+      "url": "https://www.arkleg.state.ar.us/ArkansasLaw",
+      "http_status": 200,
+      "check_note": "HEAD 200, GET 200. Same section without the trailing slash."
+    },
+    {
+      "role": "session laws",
+      "authority": "official-primary",
+      "title": "Acts of Arkansas",
+      "url": "https://www.arkleg.state.ar.us/Acts",
+      "http_status": 200,
+      "check_note": "HEAD 200, GET 200."
+    },
+    {
+      "role": "administrative code",
+      "authority": "official-primary",
+      "title": "Code of Arkansas Rules",
+      "url": "https://codeofarrules.arkansas.gov/",
+      "http_status": 200,
+      "check_note": "HEAD 200, GET 200."
+    },
+    {
+      "role": "court opinions",
+      "authority": "official-primary",
+      "title": "Arkansas Supreme Court",
+      "url": "https://arcourts.gov/courts/supreme-court",
+      "http_status": 200,
+      "check_note": "HEAD 200, GET 200. States statewide appellate jurisdiction and superintending control."
+    },
+    {
+      "role": "court opinions",
+      "authority": "official-primary",
+      "title": "Arkansas opinions, court rules, and administrative orders",
+      "url": "https://opinions.arcourts.gov/ark/en/nav.do",
+      "http_status": 200,
+      "check_note": "HEAD 200, GET 200."
+    },
+    {
+      "role": "intermediate appellate",
+      "authority": "official-primary",
+      "title": "Arkansas Court of Appeals",
+      "url": "https://arcourts.gov/courts/court-of-appeals",
+      "http_status": 200,
+      "check_note": "HEAD 200, GET 200. Supreme Court page says this court may seek transfer to the Supreme Court."
+    },
+    {
+      "role": "dockets",
+      "authority": "official-primary",
+      "title": "Arkansas public case search",
+      "url": "https://caseinfo.arcourts.gov/opad",
+      "http_status": 200,
+      "check_note": "The cconnect public search URL returned HTTP 200 and redirected here."
+    },
+    {
+      "role": "court rules",
+      "authority": "official-primary",
+      "title": "Arkansas opinions and court rules",
+      "url": "https://opinions.arcourts.gov/ark/en/nav.do",
+      "http_status": 200,
+      "check_note": "Same host as opinions. Page title includes court rules."
+    },
+    {
+      "role": "attorney general",
+      "authority": "official-primary",
+      "title": "Arkansas Attorney General opinions search",
+      "url": "https://arkansasag.gov/divisions/opinions-foia/attorney-general-opinions-search/",
+      "http_status": 200,
+      "check_note": "HEAD 200, GET 200. Linked from arkansasag.gov, which also returned HTTP 200."
+    }
+  ]
+}

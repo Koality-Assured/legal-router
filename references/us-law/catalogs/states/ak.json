@@ -1,0 +1,105 @@
+{
+  "postal": "ak",
+  "name": "Alaska",
+  "kind": "state",
+  "captured_at_utc": "2026-10-07T18:00:00Z",
+  "court_of_last_resort": "Alaska Supreme Court",
+  "sources": [
+    {
+      "role": "constitution",
+      "authority": "official-primary",
+      "title": "Alaska's Constitution",
+      "url": "https://ltgov.alaska.gov/information/alaskas-constitution/",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200. Older lieutenant-governor path redirected here."
+    },
+    {
+      "role": "constitution",
+      "authority": "official-primary",
+      "title": "Alaska Constitution PDF",
+      "url": "https://akleg.gov/docs/pdf/Alaska_Constitution.pdf",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200. Legislature PDF."
+    },
+    {
+      "role": "statutes",
+      "authority": "official-primary",
+      "title": "Alaska Statutes 2025",
+      "url": "https://www.akleg.gov/basis/Statutes.asp",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    },
+    {
+      "role": "session laws",
+      "authority": "official-primary",
+      "title": "Bills and laws, 34th Legislature",
+      "url": "https://www.akleg.gov/basis/Home/Law/34",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200. Linked from the Legislature bills-and-laws page."
+    },
+    {
+      "role": "administrative code",
+      "authority": "official-primary",
+      "title": "Alaska Administrative Code",
+      "url": "https://www.akleg.gov/basis/aac.asp",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200. Court legal-resources page names LexisNexis as the print publisher."
+    },
+    {
+      "role": "court of last resort",
+      "authority": "official-primary",
+      "title": "Alaska Court System information",
+      "url": "https://courts.alaska.gov/main/ctinfo.htm",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200. Covers the Supreme Court. courts/supreme.htm returned 404."
+    },
+    {
+      "role": "intermediate appellate courts",
+      "authority": "official-primary",
+      "title": "Alaska Court of Appeals",
+      "url": "https://courts.alaska.gov/main/ctinfo.htm#appeals",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200 on the court-information page. courts/coa.htm returned 404."
+    },
+    {
+      "role": "court opinions",
+      "authority": "official-primary",
+      "title": "Supreme Court opinions",
+      "url": "https://appellate-records.courts.alaska.gov/CMSPublic/Home/Opinions?isCOA=False",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200. Separate host from CourtView."
+    },
+    {
+      "role": "court opinions",
+      "authority": "official-primary",
+      "title": "Court of Appeals opinions",
+      "url": "https://appellate-records.courts.alaska.gov/CMSPublic/Home/Opinions?isCOA=True",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    },
+    {
+      "role": "dockets",
+      "authority": "official-primary",
+      "title": "CourtView",
+      "url": "https://records.courts.alaska.gov/eaccess/home.page",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    },
+    {
+      "role": "court rules",
+      "authority": "official-primary",
+      "title": "Alaska court rules",
+      "url": "https://courts.alaska.gov/rules/index.htm",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200."
+    },
+    {
+      "role": "attorney general opinions",
+      "authority": "official-primary",
+      "title": "Attorney General opinions",
+      "url": "https://law.alaska.gov/doclibrary/opinions_index.html",
+      "http_status": 200,
+      "check_note": "HEAD 200; GET 200. Linked from the court legal-resources page. department/opinions.html returned a Page Not Found title."
+    }
+  ]
+}
