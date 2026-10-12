@@ -15,7 +15,7 @@ sys.path.insert(0, str(_SCRIPTS))
 sys.path.insert(0, str(_SCRIPTS / "legal"))
 sys.path.insert(0, str(_SCRIPTS / "_lib"))
 
-from contract_differ import (  # noqa: E402
+from contract_differ import (
     ADVISORY_STAMP,
     diff_contracts,
     extract_clauses,

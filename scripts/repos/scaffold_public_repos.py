@@ -7,28 +7,26 @@ routing_hints: [scaffold, public-repos, agent-skills, agent-standards, ai-resear
 from __future__ import annotations
 
 import argparse
-import ast
 import json
-import os
-import subprocess
+import subprocess  # nosec B404
 import sys
+from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any
 
 _LIB = Path(__file__).resolve().parents[1] / "_lib"
 _SYNC = Path(__file__).resolve().parents[1] / "sync"
 sys.path.insert(0, str(_LIB))
 if str(_SYNC) not in sys.path:
     sys.path.insert(0, str(_SYNC))
-from paths import REPO_ROOT, resolve_repo_root  # noqa: E402
-from _harness_template import (  # noqa: E402
+from _harness_template import (
     GENERIC_TEMPLATE_CI,
     GENERIC_TEMPLATE_README,
     GENERIC_TEMPLATE_REFERENCES_AGENTS,
     GENERIC_TEMPLATE_STUB_AGENTS,
 )
-
+from paths import resolve_repo_root
 
 MIT_LICENSE_TEMPLATE = """MIT License
 
@@ -153,8 +151,9 @@ indent_style = tab
 # Repo 1: agent-skills-and-tools
 # -----------------------------------------------------------------------------
 
-def _build_agent_skills_files() -> Dict[str, str]:
-    files: Dict[str, str] = {}
+
+def _build_agent_skills_files() -> dict[str, str]:
+    files: dict[str, str] = {}
 
     files["LICENSE"] = MIT_LICENSE_TEMPLATE
     files[".gitignore"] = COMMON_GITIGNORE
@@ -359,119 +358,128 @@ dev = [
 agent-skills = "tools.validator:main"
 """
 
-    files["schemas/skill.schema.json"] = json.dumps({
-        "$schema": "https://json-schema.org/draft/2020-12/schema",
-        "$id": "https://schema.koality-assured.org/agent/skill.schema.json",
-        "title": "AgentSkillFrontmatter",
-        "description": "Schema for SKILL.md YAML frontmatter metadata in agent skills.",
-        "type": "object",
-        "required": ["name", "description"],
-        "properties": {
-            "schema_version": {
-                "type": "string",
-                "description": "Schema version (e.g. '2.0.0')."
-            },
-            "name": {
-                "type": "string",
-                "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
-                "description": "Kebab-case unique identifier for the skill."
-            },
-            "description": {
-                "type": "string",
-                "minLength": 10,
-                "description": "Clear explanation of what the skill does and when the agent should activate it."
-            },
-            "owner_agent": {
-                "type": "string",
-                "description": "Specialist agent ID owning this skill."
-            },
-            "rank": {
-                "type": "string",
-                "enum": ["critical", "high", "medium", "low"],
-                "description": "Directive severity rank."
-            },
-            "isolation": {
-                "type": "string",
-                "enum": ["mutate", "read-only"],
-                "description": "Isolation mode required."
-            },
-            "on_failure": {
-                "type": "string",
-                "description": "Failure lifecycle policy."
-            },
-            "version": {
-                "type": "string",
-                "pattern": "^\\d+\\.\\d+\\.\\d+$",
-                "description": "SemVer 2.0 version string."
-            },
-            "tags": {
-                "type": "array",
-                "items": {"type": "string"},
-                "description": "Search and routing tags for indexing."
-            },
-            "author": {
-                "type": "string",
-                "description": "Author or organization name."
-            },
-            "prerequisites": {
-                "type": "array",
-                "items": {"type": "string"},
-                "description": "List of external binary tools required on PATH."
-            },
-            "dependencies": {
+    files["schemas/skill.schema.json"] = (
+        json.dumps(
+            {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "$id": "https://schema.koality-assured.org/agent/skill.schema.json",
+                "title": "AgentSkillFrontmatter",
+                "description": "Schema for SKILL.md YAML frontmatter metadata in agent skills.",
                 "type": "object",
-                "description": "Dependency DAG relationships."
-            },
-            "contracts": {
-                "type": "object",
-                "description": "Inputs and outputs contract specification."
-            },
-            "tool_dependencies": {
-                "type": "array",
-                "items": {"type": "string"},
-                "description": "Names of tools required to execute this skill."
-            }
-        },
-        "additionalProperties": True
-    }, indent=2) + "\n"
-
-    files["schemas/tool.schema.json"] = json.dumps({
-        "$schema": "https://json-schema.org/draft/2020-12/schema",
-        "$id": "https://schema.koality-assured.org/agent/tool.schema.json",
-        "title": "AgentToolDeclaration",
-        "description": "Schema for declaring agent tools, parameter specifications, and invocation constraints.",
-        "type": "object",
-        "required": ["name", "description", "parameters"],
-        "properties": {
-            "name": {
-                "type": "string",
-                "pattern": "^[a-z0-9_]+$",
-                "description": "Snake_case identifier for the tool function."
-            },
-            "description": {
-                "type": "string",
-                "minLength": 10,
-                "description": "Instruction to the agent detailing the purpose and behavior of the tool."
-            },
-            "parameters": {
-                "type": "object",
-                "required": ["type", "properties"],
+                "required": ["name", "description"],
                 "properties": {
-                    "type": {"type": "string", "enum": ["object"]},
-                    "properties": {"type": "object"},
-                    "required": {
+                    "schema_version": {
+                        "type": "string",
+                        "description": "Schema version (e.g. '2.0.0').",
+                    },
+                    "name": {
+                        "type": "string",
+                        "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+                        "description": "Kebab-case unique identifier for the skill.",
+                    },
+                    "description": {
+                        "type": "string",
+                        "minLength": 10,
+                        "description": "Clear explanation of what the skill does and when the agent should activate it.",
+                    },
+                    "owner_agent": {
+                        "type": "string",
+                        "description": "Specialist agent ID owning this skill.",
+                    },
+                    "rank": {
+                        "type": "string",
+                        "enum": ["critical", "high", "medium", "low"],
+                        "description": "Directive severity rank.",
+                    },
+                    "isolation": {
+                        "type": "string",
+                        "enum": ["mutate", "read-only"],
+                        "description": "Isolation mode required.",
+                    },
+                    "on_failure": {
+                        "type": "string",
+                        "description": "Failure lifecycle policy.",
+                    },
+                    "version": {
+                        "type": "string",
+                        "pattern": "^\\d+\\.\\d+\\.\\d+$",
+                        "description": "SemVer 2.0 version string.",
+                    },
+                    "tags": {
                         "type": "array",
-                        "items": {"type": "string"}
-                    }
-                }
+                        "items": {"type": "string"},
+                        "description": "Search and routing tags for indexing.",
+                    },
+                    "author": {
+                        "type": "string",
+                        "description": "Author or organization name.",
+                    },
+                    "prerequisites": {
+                        "type": "array",
+                        "items": {"type": "string"},
+                        "description": "List of external binary tools required on PATH.",
+                    },
+                    "dependencies": {
+                        "type": "object",
+                        "description": "Dependency DAG relationships.",
+                    },
+                    "contracts": {
+                        "type": "object",
+                        "description": "Inputs and outputs contract specification.",
+                    },
+                    "tool_dependencies": {
+                        "type": "array",
+                        "items": {"type": "string"},
+                        "description": "Names of tools required to execute this skill.",
+                    },
+                },
+                "additionalProperties": True,
             },
-            "is_daemon": {
-                "type": "boolean",
-                "description": "Whether the tool spawns a long-running background daemon process."
-            }
-        },
-        "additionalProperties": False
-    }, indent=2) + "\n"
+            indent=2,
+        )
+        + "\n"
+    )
+
+    files["schemas/tool.schema.json"] = (
+        json.dumps(
+            {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "$id": "https://schema.koality-assured.org/agent/tool.schema.json",
+                "title": "AgentToolDeclaration",
+                "description": "Schema for declaring agent tools, parameter specifications, and invocation constraints.",
+                "type": "object",
+                "required": ["name", "description", "parameters"],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "pattern": "^[a-z0-9_]+$",
+                        "description": "Snake_case identifier for the tool function.",
+                    },
+                    "description": {
+                        "type": "string",
+                        "minLength": 10,
+                        "description": "Instruction to the agent detailing the purpose and behavior of the tool.",
+                    },
+                    "parameters": {
+                        "type": "object",
+                        "required": ["type", "properties"],
+                        "properties": {
+                            "type": {"type": "string", "enum": ["object"]},
+                            "properties": {"type": "object"},
+                            "required": {"type": "array", "items": {"type": "string"}},
+                        },
+                    },
+                    "is_daemon": {
+                        "type": "boolean",
+                        "description": "Whether the tool spawns a long-running background daemon process.",
+                    },
+                },
+                "additionalProperties": False,
+            },
+            indent=2,
+        )
+        + "\n"
+    )
 
     files["skills/README.md"] = """# Agent Skills Catalog
 
@@ -553,7 +561,9 @@ author: Koality-Assured
 
     files["tools/__init__.py"] = '"""Agent skills and tools validation library."""\n'
 
-    files["tools/validator.py"] = r'''"""CLI and library tool to validate agent skills and JSON schemas.
+    files[
+        "tools/validator.py"
+    ] = r'''"""CLI and library tool to validate agent skills and JSON schemas.
 
 tags: [validator, skills, schemas]
 """
@@ -729,7 +739,9 @@ if __name__ == "__main__":
 
     files["tests/__init__.py"] = '"""Test suite for agent-skills-and-tools."""\n'
 
-    files["tests/test_skills.py"] = r'''"""Unit tests verifying skills against schemas."""
+    files[
+        "tests/test_skills.py"
+    ] = r'''"""Unit tests verifying skills against schemas."""
 
 import json
 import unittest
@@ -794,8 +806,9 @@ if __name__ == "__main__":
 # Repo 2: agent-standards
 # -----------------------------------------------------------------------------
 
-def _build_agent_standards_files() -> Dict[str, str]:
-    files: Dict[str, str] = {}
+
+def _build_agent_standards_files() -> dict[str, str]:
+    files: dict[str, str] = {}
 
     files["LICENSE"] = MIT_LICENSE_TEMPLATE
     files[".gitignore"] = COMMON_GITIGNORE
@@ -929,7 +942,9 @@ Standards defined in this repository are actively tested against known prompt-in
 Distributed under the [MIT License](LICENSE). Copyright (c) 2026 Koality-Assured.
 """
 
-    files["standards/context/5-tier-context-management.md"] = """# Specification: 5-Tier Context Management Architecture
+    files[
+        "standards/context/5-tier-context-management.md"
+    ] = """# Specification: 5-Tier Context Management Architecture
 
 - **Status:** Normative Standard
 - **Version:** 1.0.0
@@ -987,7 +1002,9 @@ Large Language Model (LLM) agents operating on expansive software repositories e
 3. Runtimes **SHOULD** enforce context headroom budgets to prevent context window saturation.
 """
 
-    files["standards/protocols/a2a-protocol-v1.md"] = """# Specification: Agent-to-Agent (A2A) Interaction Protocol v1.0
+    files[
+        "standards/protocols/a2a-protocol-v1.md"
+    ] = """# Specification: Agent-to-Agent (A2A) Interaction Protocol v1.0
 
 - **Status:** Normative Standard
 - **Version:** 1.0.0
@@ -1047,7 +1064,9 @@ All A2A messages **MUST** conform to the following JSON structure:
 | `task_cancel` | Preemptive cancellation instruction sent to active agent. |
 """
 
-    files["standards/security/security-musts.md"] = """# Specification: Autonomous Agent Security MUSTs (SEC-01)
+    files[
+        "standards/security/security-musts.md"
+    ] = """# Specification: Autonomous Agent Security MUSTs (SEC-01)
 
 - **Status:** Normative Standard
 - **Version:** 1.0.0
@@ -1080,86 +1099,128 @@ This specification establishes normative, mandatory security requirements for au
 - Multi-agent orchestrators **MUST** provision separate git worktrees or isolated workspaces for concurrent agents to prevent race conditions and cross-agent file corruption.
 """
 
-    files["specs/a2a-message.schema.json"] = json.dumps({
-        "$schema": "https://json-schema.org/draft/2020-12/schema",
-        "$id": "https://schema.koality-assured.org/agent/a2a-message.schema.json",
-        "title": "A2AMessageEnvelope",
-        "description": "JSON schema for Agent-to-Agent (A2A) structured message envelopes.",
-        "type": "object",
-        "required": ["message_id", "timestamp", "sender", "recipient", "message_type", "payload"],
-        "properties": {
-            "message_id": {
-                "type": "string",
-                "pattern": "^msg_[a-zA-Z0-9_-]+$",
-                "description": "Unique identifier for the message."
-            },
-            "correlation_id": {
-                "type": "string",
-                "description": "Identifier tracking task or transaction across hops."
-            },
-            "timestamp": {
-                "type": "string",
-                "format": "date-time",
-                "description": "ISO 8601 UTC timestamp."
-            },
-            "sender": {
+    files["specs/a2a-message.schema.json"] = (
+        json.dumps(
+            {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "$id": "https://schema.koality-assured.org/agent/a2a-message.schema.json",
+                "title": "A2AMessageEnvelope",
+                "description": "JSON schema for Agent-to-Agent (A2A) structured message envelopes.",
                 "type": "object",
-                "required": ["agent_id", "role"],
+                "required": [
+                    "message_id",
+                    "timestamp",
+                    "sender",
+                    "recipient",
+                    "message_type",
+                    "payload",
+                ],
                 "properties": {
-                    "agent_id": {"type": "string"},
-                    "role": {"type": "string"}
-                }
+                    "message_id": {
+                        "type": "string",
+                        "pattern": "^msg_[a-zA-Z0-9_-]+$",
+                        "description": "Unique identifier for the message.",
+                    },
+                    "correlation_id": {
+                        "type": "string",
+                        "description": "Identifier tracking task or transaction across hops.",
+                    },
+                    "timestamp": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "ISO 8601 UTC timestamp.",
+                    },
+                    "sender": {
+                        "type": "object",
+                        "required": ["agent_id", "role"],
+                        "properties": {
+                            "agent_id": {"type": "string"},
+                            "role": {"type": "string"},
+                        },
+                    },
+                    "recipient": {
+                        "type": "object",
+                        "required": ["agent_id", "role"],
+                        "properties": {
+                            "agent_id": {"type": "string"},
+                            "role": {"type": "string"},
+                        },
+                    },
+                    "message_type": {
+                        "type": "string",
+                        "enum": [
+                            "task_dispatch",
+                            "task_acknowledge",
+                            "heartbeat",
+                            "task_result",
+                            "task_cancel",
+                        ],
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "pending",
+                            "in_progress",
+                            "success",
+                            "failed",
+                            "cancelled",
+                        ],
+                    },
+                    "payload": {
+                        "type": "object",
+                        "description": "Arbitrary structured data payload associated with message_type.",
+                    },
+                },
+                "additionalProperties": False,
             },
-            "recipient": {
-                "type": "object",
-                "required": ["agent_id", "role"],
-                "properties": {
-                    "agent_id": {"type": "string"},
-                    "role": {"type": "string"}
-                }
-            },
-            "message_type": {
-                "type": "string",
-                "enum": ["task_dispatch", "task_acknowledge", "heartbeat", "task_result", "task_cancel"]
-            },
-            "status": {
-                "type": "string",
-                "enum": ["pending", "in_progress", "success", "failed", "cancelled"]
-            },
-            "payload": {
-                "type": "object",
-                "description": "Arbitrary structured data payload associated with message_type."
-            }
-        },
-        "additionalProperties": False
-    }, indent=2) + "\n"
+            indent=2,
+        )
+        + "\n"
+    )
 
-    files["specs/context-manifest.schema.json"] = json.dumps({
-        "$schema": "https://json-schema.org/draft/2020-12/schema",
-        "$id": "https://schema.koality-assured.org/agent/context-manifest.schema.json",
-        "title": "ContextManifest",
-        "description": "Schema for 5-tier context manifests and routing maps.",
-        "type": "object",
-        "required": ["schema_version", "tiers", "repository"],
-        "properties": {
-            "schema_version": {"type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$"},
-            "repository": {"type": "string"},
-            "tiers": {
+    files["specs/context-manifest.schema.json"] = (
+        json.dumps(
+            {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "$id": "https://schema.koality-assured.org/agent/context-manifest.schema.json",
+                "title": "ContextManifest",
+                "description": "Schema for 5-tier context manifests and routing maps.",
                 "type": "object",
-                "required": ["tier1_routing", "tier2_metadata", "tier3_summaries", "tier4_ast_facts", "tier5_raw"],
+                "required": ["schema_version", "tiers", "repository"],
                 "properties": {
-                    "tier1_routing": {"type": "object"},
-                    "tier2_metadata": {"type": "object"},
-                    "tier3_summaries": {"type": "object"},
-                    "tier4_ast_facts": {"type": "object"},
-                    "tier5_raw": {"type": "object"}
-                }
-            }
-        },
-        "additionalProperties": True
-    }, indent=2) + "\n"
+                    "schema_version": {
+                        "type": "string",
+                        "pattern": "^\\d+\\.\\d+\\.\\d+$",
+                    },
+                    "repository": {"type": "string"},
+                    "tiers": {
+                        "type": "object",
+                        "required": [
+                            "tier1_routing",
+                            "tier2_metadata",
+                            "tier3_summaries",
+                            "tier4_ast_facts",
+                            "tier5_raw",
+                        ],
+                        "properties": {
+                            "tier1_routing": {"type": "object"},
+                            "tier2_metadata": {"type": "object"},
+                            "tier3_summaries": {"type": "object"},
+                            "tier4_ast_facts": {"type": "object"},
+                            "tier5_raw": {"type": "object"},
+                        },
+                    },
+                },
+                "additionalProperties": True,
+            },
+            indent=2,
+        )
+        + "\n"
+    )
 
-    files["rfcs/0001-rfc-process.md"] = """# RFC 0001: The Koality-Assured Standards RFC Process
+    files[
+        "rfcs/0001-rfc-process.md"
+    ] = """# RFC 0001: The Koality-Assured Standards RFC Process
 
 - **RFC Number:** 0001
 - **Title:** The Koality-Assured Standards RFC Process
@@ -1222,7 +1283,9 @@ This document establishes the official Request for Comments (RFC) process for cr
 
     files["tools/__init__.py"] = '"""Standards and RFC validation library."""\n'
 
-    files["tools/validate_specs.py"] = r'''"""CLI to validate JSON schemas, RFC documents, and normative specifications.
+    files[
+        "tools/validate_specs.py"
+    ] = r'''"""CLI to validate JSON schemas, RFC documents, and normative specifications.
 
 tags: [validator, standards, rfc, specs]
 """
@@ -1321,7 +1384,9 @@ if __name__ == "__main__":
 
     files["tests/__init__.py"] = '"""Test suite for agent-standards."""\n'
 
-    files["tests/test_standards_validation.py"] = r'''"""Unit tests validating agent-standards schemas, RFCs, and specifications."""
+    files[
+        "tests/test_standards_validation.py"
+    ] = r'''"""Unit tests validating agent-standards schemas, RFCs, and specifications."""
 
 import json
 import unittest
@@ -1395,11 +1460,14 @@ if __name__ == "__main__":
 # Repo 3: ai-research-and-benchmarks
 # -----------------------------------------------------------------------------
 
-def _build_ai_research_files() -> Dict[str, str]:
-    files: Dict[str, str] = {}
+
+def _build_ai_research_files() -> dict[str, str]:
+    files: dict[str, str] = {}
 
     files["LICENSE"] = MIT_LICENSE_TEMPLATE
-    files[".gitignore"] = COMMON_GITIGNORE + """
+    files[".gitignore"] = (
+        COMMON_GITIGNORE
+        + """
 # Benchmark dataset caches and large run dumps
 data/raw/
 data/cache/
@@ -1407,6 +1475,7 @@ data/cache/
 *.arrow
 results/runs/
 """
+    )
     files[".editorconfig"] = COMMON_EDITORCONFIG
 
     files[".github/workflows/ci.yml"] = """name: Benchmarks CI
@@ -1582,40 +1651,56 @@ This directory contains standardized benchmark datasets and evaluation specifica
 Suites are defined as JSON documents specifying tasks, input prompts, expected outcome assertions, and execution timeouts.
 """
 
-    files["benchmarks/suites/coding_agent_benchmark_v1.json"] = json.dumps({
-        "suite_name": "coding_agent_benchmark_v1",
-        "version": "1.0.0",
-        "description": "Standardized benchmark suite for evaluating autonomous coding agents on refactoring and test generation.",
-        "tasks": [
+    files["benchmarks/suites/coding_agent_benchmark_v1.json"] = (
+        json.dumps(
             {
-                "task_id": "task_001_ast_refactor",
-                "title": "AST Precision Refactor",
-                "difficulty": "medium",
-                "timeout_seconds": 60,
-                "prompt": "Refactor legacy dictionary lookups to use typed dataclasses without modifying public function signatures.",
-                "expected_artifacts": ["src/models.py", "tests/test_models.py"],
-                "evaluation_metrics": ["pass@1", "token_cost", "wall_clock_time"]
+                "suite_name": "coding_agent_benchmark_v1",
+                "version": "1.0.0",
+                "description": "Standardized benchmark suite for evaluating autonomous coding agents on refactoring and test generation.",
+                "tasks": [
+                    {
+                        "task_id": "task_001_ast_refactor",
+                        "title": "AST Precision Refactor",
+                        "difficulty": "medium",
+                        "timeout_seconds": 60,
+                        "prompt": "Refactor legacy dictionary lookups to use typed dataclasses without modifying public function signatures.",
+                        "expected_artifacts": ["src/models.py", "tests/test_models.py"],
+                        "evaluation_metrics": [
+                            "pass@1",
+                            "token_cost",
+                            "wall_clock_time",
+                        ],
+                    },
+                    {
+                        "task_id": "task_002_context_compression",
+                        "title": "Context Headroom Optimization",
+                        "difficulty": "hard",
+                        "timeout_seconds": 120,
+                        "prompt": "Extract Tier-4 AST symbols from 50 source files to achieve >=80% token compression relative to raw file content.",
+                        "expected_artifacts": ["results/facts.json"],
+                        "evaluation_metrics": [
+                            "compression_ratio",
+                            "retrieval_accuracy",
+                        ],
+                    },
+                    {
+                        "task_id": "task_003_secure_tool_dispatch",
+                        "title": "Sandbox Policy Enforcement",
+                        "difficulty": "medium",
+                        "timeout_seconds": 45,
+                        "prompt": "Implement isolated git worktree lifecycle management tool and verify path boundary confinement.",
+                        "expected_artifacts": [
+                            "scripts/worktree.py",
+                            "tests/test_worktree.py",
+                        ],
+                        "evaluation_metrics": ["security_score", "pass@1"],
+                    },
+                ],
             },
-            {
-                "task_id": "task_002_context_compression",
-                "title": "Context Headroom Optimization",
-                "difficulty": "hard",
-                "timeout_seconds": 120,
-                "prompt": "Extract Tier-4 AST symbols from 50 source files to achieve >=80% token compression relative to raw file content.",
-                "expected_artifacts": ["results/facts.json"],
-                "evaluation_metrics": ["compression_ratio", "retrieval_accuracy"]
-            },
-            {
-                "task_id": "task_003_secure_tool_dispatch",
-                "title": "Sandbox Policy Enforcement",
-                "difficulty": "medium",
-                "timeout_seconds": 45,
-                "prompt": "Implement isolated git worktree lifecycle management tool and verify path boundary confinement.",
-                "expected_artifacts": ["scripts/worktree.py", "tests/test_worktree.py"],
-                "evaluation_metrics": ["security_score", "pass@1"]
-            }
-        ]
-    }, indent=2) + "\n"
+            indent=2,
+        )
+        + "\n"
+    )
 
     files["harnesses/README.md"] = """# Harness Adapters
 
@@ -1624,7 +1709,9 @@ Harness adapters provide uniform execution wrappers around diverse agent runtime
 
     files["harnesses/__init__.py"] = '"""Harness adapters and benchmark runners."""\n'
 
-    files["harnesses/runner.py"] = r'''"""Benchmark execution runner for autonomous agent harnesses.
+    files[
+        "harnesses/runner.py"
+    ] = r'''"""Benchmark execution runner for autonomous agent harnesses.
 
 tags: [benchmarks, runner, harness]
 """
@@ -1739,7 +1826,9 @@ Tools to measure, model, and analyze token consumption and cost efficiency acros
 
     files["telemetry/__init__.py"] = '"""Telemetry and cost calculation utilities."""\n'
 
-    files["telemetry/cost_calculator.py"] = r'''"""Calculate token costs and context headroom savings across LLM pricing tiers.
+    files[
+        "telemetry/cost_calculator.py"
+    ] = r'''"""Calculate token costs and context headroom savings across LLM pricing tiers.
 
 tags: [telemetry, cost, pricing, headroom]
 """
@@ -1873,7 +1962,9 @@ Published benchmark results, framework evaluations, and empirical studies.
 - [`template_evaluation_report.md`](./template_evaluation_report.md) - Standard report template.
 """
 
-    files["reports/template_evaluation_report.md"] = """# Research Report: [Evaluation Title]
+    files[
+        "reports/template_evaluation_report.md"
+    ] = """# Research Report: [Evaluation Title]
 
 - **Date:** [YYYY-MM-DD]
 - **Author:** [Author / Organization]
@@ -1904,7 +1995,9 @@ Published benchmark results, framework evaluations, and empirical studies.
 
     files["tests/__init__.py"] = '"""Test suite for ai-research-and-benchmarks."""\n'
 
-    files["tests/test_benchmarks.py"] = r'''"""Unit tests for benchmark suite runner and cost calculator."""
+    files[
+        "tests/test_benchmarks.py"
+    ] = r'''"""Unit tests for benchmark suite runner and cost calculator."""
 
 import json
 import unittest
@@ -1952,7 +2045,6 @@ if __name__ == "__main__":
     unittest.main()
 '''
 
-
     return files
 
 
@@ -1960,8 +2052,9 @@ if __name__ == "__main__":
 # Repo 4: security-standards
 # -----------------------------------------------------------------------------
 
-def _build_security_standards_files() -> Dict[str, str]:
-    files: Dict[str, str] = {}
+
+def _build_security_standards_files() -> dict[str, str]:
+    files: dict[str, str] = {}
 
     files["LICENSE"] = MIT_LICENSE_TEMPLATE
     files[".gitignore"] = COMMON_GITIGNORE
@@ -2061,7 +2154,9 @@ Canonical normative standards categorized by operational and architectural domai
 
     files["tools/__init__.py"] = '"""Security standards validation tools."""\n'
 
-    files["tools/validator.py"] = '''"""CLI validator for security standards markdown structure and YAML frontmatter."""
+    files[
+        "tools/validator.py"
+    ] = '''"""CLI validator for security standards markdown structure and YAML frontmatter."""
 
 from __future__ import annotations
 
@@ -2124,7 +2219,9 @@ if __name__ == "__main__":
 
     files["tests/__init__.py"] = '"""Unit tests for security standards."""\n'
 
-    files["tests/test_standards.py"] = '''"""Unit tests verifying security standards structure."""
+    files[
+        "tests/test_standards.py"
+    ] = '''"""Unit tests verifying security standards structure."""
 
 import sys
 import unittest
@@ -2162,8 +2259,9 @@ if __name__ == "__main__":
 # Repo 5: industry-references
 # -----------------------------------------------------------------------------
 
-def _build_industry_references_files() -> Dict[str, str]:
-    files: Dict[str, str] = {}
+
+def _build_industry_references_files() -> dict[str, str]:
+    files: dict[str, str] = {}
 
     files["LICENSE"] = MIT_LICENSE_TEMPLATE
     files[".gitignore"] = COMMON_GITIGNORE
@@ -2260,7 +2358,9 @@ Structured catalogs and guide pages for industry frameworks.
 
     files["tools/__init__.py"] = '"""Industry references validation tools."""\n'
 
-    files["tools/validator.py"] = '''"""CLI validator for industry reference json catalogs and markdown guides."""
+    files[
+        "tools/validator.py"
+    ] = '''"""CLI validator for industry reference json catalogs and markdown guides."""
 
 from __future__ import annotations
 
@@ -2311,7 +2411,9 @@ if __name__ == "__main__":
 
     files["tests/__init__.py"] = '"""Unit tests for industry references."""\n'
 
-    files["tests/test_references.py"] = '''"""Unit tests verifying industry references structure and JSON catalogs."""
+    files[
+        "tests/test_references.py"
+    ] = '''"""Unit tests verifying industry references structure and JSON catalogs."""
 
 import json
 import unittest
@@ -2347,8 +2449,9 @@ if __name__ == "__main__":
 # Repo 6: ai-harness-core (generic wiki harness template)
 # -----------------------------------------------------------------------------
 
-def _build_ai_harness_core_files() -> Dict[str, str]:
-    files: Dict[str, str] = {}
+
+def _build_ai_harness_core_files() -> dict[str, str]:
+    files: dict[str, str] = {}
 
     files["LICENSE"] = MIT_LICENSE_TEMPLATE
     files[".gitignore"] = COMMON_GITIGNORE
@@ -2424,14 +2527,15 @@ def _build_ai_harness_core_files() -> Dict[str, str]:
 # Repo Scaffold Registry & Core Engine
 # -----------------------------------------------------------------------------
 
+
 @dataclass
 class RepoDefinition:
     name: str
     description: str
-    builder: Callable[[], Dict[str, str]]
+    builder: Callable[[], dict[str, str]]
 
 
-REPO_REGISTRY: Dict[str, RepoDefinition] = {
+REPO_REGISTRY: dict[str, RepoDefinition] = {
     "agent-skills-and-tools": RepoDefinition(
         name="agent-skills-and-tools",
         description="Public repository of reusable agent skills, schemas, and supporting tool integrations.",
@@ -2465,7 +2569,7 @@ REPO_REGISTRY: Dict[str, RepoDefinition] = {
 }
 
 
-def get_repo_definitions() -> Dict[str, RepoDefinition]:
+def get_repo_definitions() -> dict[str, RepoDefinition]:
     """Return all available repository definitions."""
     return dict(REPO_REGISTRY)
 
@@ -2476,10 +2580,12 @@ def scaffold_repo(
     overwrite: bool = False,
     dry_run: bool = False,
     init_git: bool = False,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Scaffold a single repository into target_dir / repo_name."""
     if repo_name not in REPO_REGISTRY:
-        raise ValueError(f"Unknown repository '{repo_name}'. Available: {list(REPO_REGISTRY.keys())}")
+        raise ValueError(
+            f"Unknown repository '{repo_name}'. Available: {list(REPO_REGISTRY.keys())}"
+        )
 
     defn = REPO_REGISTRY[repo_name]
     repo_root = target_dir / repo_name
@@ -2493,7 +2599,7 @@ def scaffold_repo(
                 f"Destination directory '{repo_root}' already exists and contains files. Use --overwrite to replace."
             )
 
-    created_files: List[str] = []
+    created_files: list[str] = []
     total_bytes = 0
 
     if not dry_run:
@@ -2510,14 +2616,14 @@ def scaffold_repo(
 
     if init_git and not dry_run:
         try:
-            subprocess.run(
+            subprocess.run(  # nosec B607, B603
                 ["git", "init"],
                 cwd=repo_root,
                 capture_output=True,
                 check=False,
                 timeout=10,
             )
-        except Exception:
+        except Exception:  # noqa: S110,BLE001  # nosec B110
             pass
 
     return {
@@ -2535,9 +2641,9 @@ def scaffold_all_repos(
     overwrite: bool = False,
     dry_run: bool = False,
     init_git: bool = False,
-) -> List[Dict[str, Any]]:
+) -> list[dict[str, Any]]:
     """Scaffold all 3 ecosystem repositories."""
-    results: List[Dict[str, Any]] = []
+    results: list[dict[str, Any]] = []
     for repo_name in REPO_REGISTRY:
         res = scaffold_repo(
             repo_name=repo_name,
@@ -2550,19 +2656,21 @@ def scaffold_all_repos(
     return results
 
 
-def main(argv: List[str] | None = None) -> int:
+def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description=__doc__,
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     parser.add_argument(
-        "--repo", "-r",
+        "--repo",
+        "-r",
         choices=["all", *REPO_REGISTRY.keys()],
         default="all",
         help="Specific repository to scaffold, or 'all' (default: all)",
     )
     parser.add_argument(
-        "--output-dir", "-o",
+        "--output-dir",
+        "-o",
         default=None,
         help=(
             "Destination directory (default: scratch/scaffolded-repos relative to repo root). "
@@ -2575,7 +2683,8 @@ def main(argv: List[str] | None = None) -> int:
         help="Override git repository root",
     )
     parser.add_argument(
-        "--overwrite", "-f",
+        "--overwrite",
+        "-f",
         action="store_true",
         help="Overwrite existing files in destination directory",
     )
@@ -2585,7 +2694,8 @@ def main(argv: List[str] | None = None) -> int:
         help="Print planned operations without writing any files",
     )
     parser.add_argument(
-        "--list", "-l",
+        "--list",
+        "-l",
         action="store_true",
         help="List available repository scaffold definitions and exit",
     )
@@ -2631,7 +2741,7 @@ def main(argv: List[str] | None = None) -> int:
                 init_git=args.init_git,
             )
             results = [res]
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001
         print(f"error: {exc}", file=sys.stderr)
         return 2
 
@@ -2644,7 +2754,9 @@ def main(argv: List[str] | None = None) -> int:
         for res in results:
             print(f"  Repository: {res['repo_name']}")
             print(f"    Path:       {res['target_path']}")
-            print(f"    Files:      {res['file_count']} files ({res['total_bytes']} bytes)")
+            print(
+                f"    Files:      {res['file_count']} files ({res['total_bytes']} bytes)"
+            )
             for f in res["files"]:
                 print(f"      + {f}")
             print()

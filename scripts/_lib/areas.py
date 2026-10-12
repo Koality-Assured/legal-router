@@ -39,7 +39,9 @@ def parse_areas_yaml(text: str) -> dict[str, list[dict[str, str]]]:
             continue
 
         if current_section is None:
-            raise AreasYamlError(f"line {lineno}: unexpected content before a section: {raw!r}")
+            raise AreasYamlError(
+                f"line {lineno}: unexpected content before a section: {raw!r}"
+            )
 
         if stripped.startswith("- "):
             flush_item()
@@ -111,7 +113,9 @@ def check_areas_consistency(repo_root: Path) -> list[str]:
         return [str(exc)]
     disk = top_level_agent_dirs(repo_root)
     for missing in sorted(disk - ids):
-        errors.append(f"top-level {missing}/ has AGENTS.md but is missing from routing/areas.yaml")
+        errors.append(
+            f"top-level {missing}/ has AGENTS.md but is missing from routing/areas.yaml"
+        )
     for extra in sorted(ids - disk):
         folder = repo_root / extra
         if not folder.is_dir():
@@ -119,5 +123,7 @@ def check_areas_consistency(repo_root: Path) -> list[str]:
         elif not (folder / "AGENTS.md").is_file():
             errors.append(f"routing/areas.yaml id {extra!r} has no {extra}/AGENTS.md")
         else:
-            errors.append(f"routing/areas.yaml id {extra!r} is not a top-level AGENTS.md area")
+            errors.append(
+                f"routing/areas.yaml id {extra!r} is not a top-level AGENTS.md area"
+            )
     return errors

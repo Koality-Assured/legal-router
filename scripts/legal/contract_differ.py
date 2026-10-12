@@ -21,23 +21,46 @@ from typing import Any
 
 _LIB = Path(__file__).resolve().parents[1] / "_lib"
 sys.path.insert(0, str(_LIB))
-from paths import REPO_ROOT as ROOT  # noqa: E402
 
 ADVISORY_STAMP = "ADVISORY WORK PRODUCT - REQUIRES LICENSED ATTORNEY REVIEW"
 FIXTURE_DIR = Path(__file__).resolve().parent / "fixtures" / "contracts"
 
-HEADING_RE = re.compile(r"^(#{2,3}|Article\s+\d+[.:]?|Section\s+\d+[.:]?)\s+(.*)$", re.IGNORECASE)
+HEADING_RE = re.compile(
+    r"^(#{2,3}|Article\s+\d+[.:]?|Section\s+\d+[.:]?)\s+(.*)$", re.IGNORECASE
+)
 NUMBERED_RE = re.compile(r"^(\d+(?:\.\d+)*)[.)]\s+(.*)$")
 
 TAXONOMY: list[tuple[str, tuple[str, ...]]] = [
     ("indemnity", ("indemnif", "hold harmless", "defend")),
-    ("limitation_of_liability", ("limitation of liability", "liability cap", "consequential damage", "liability shall not exceed")),
+    (
+        "limitation_of_liability",
+        (
+            "limitation of liability",
+            "liability cap",
+            "consequential damage",
+            "liability shall not exceed",
+        ),
+    ),
     ("governing_law", ("governing law", "jurisdiction", "venue", "choice of law")),
-    ("ip_assignment", ("intellectual property", "work made for hire", "assignment of", "moral rights")),
+    (
+        "ip_assignment",
+        (
+            "intellectual property",
+            "work made for hire",
+            "assignment of",
+            "moral rights",
+        ),
+    ),
     ("confidentiality", ("confidential", "non-disclosure", "nondisclosure")),
     ("termination", ("terminat", "expiration of this")),
-    ("sla_credits", ("service level", "service credit", "uptime", "availability credit")),
-    ("data_protection", ("personal data", "gdpr", "data processing", "data protection", "hipaa", "phi")),
+    (
+        "sla_credits",
+        ("service level", "service credit", "uptime", "availability credit"),
+    ),
+    (
+        "data_protection",
+        ("personal data", "gdpr", "data processing", "data protection", "hipaa", "phi"),
+    ),
     ("insurance", ("insurance", "cyber liability", "policy limits")),
     ("payment", ("fees", "invoices", "payment terms", "late interest")),
     ("definitions", ("definitions", "means", "interpreted")),
@@ -125,9 +148,7 @@ def _skip_line(stripped: str) -> bool:
         return False
     if stripped.startswith("<!--") or "ADVISORY WORK PRODUCT" in stripped:
         return True
-    if stripped.startswith("# ") and not stripped.startswith("## "):
-        return True
-    return False
+    return bool(stripped.startswith("# ") and not stripped.startswith("## "))
 
 
 def extract_clauses(text: str) -> list[dict[str, Any]]:
@@ -191,7 +212,11 @@ def round_trip(text: str) -> dict[str, Any]:
     headings_second = [c["heading"] for c in second]
     labels_first = [c["label"] for c in first]
     labels_second = [c["label"] for c in second]
-    ok = headings_first == headings_second and labels_first == labels_second and len(first) > 0
+    ok = (
+        headings_first == headings_second
+        and labels_first == labels_second
+        and len(first) > 0
+    )
     return advisory_envelope(
         {
             "ok": ok,
@@ -211,8 +236,16 @@ def detect_liability_deviations(clause_text: str) -> dict[str, Any]:
     deviations: list[dict[str, Any]] = []
 
     # 1. Consequential damages waiver check
-    consequential_needles = ("consequential", "indirect", "punitive", "special", "incidental")
-    has_consequential_waiver = any(needle in lowered for needle in consequential_needles)
+    consequential_needles = (
+        "consequential",
+        "indirect",
+        "punitive",
+        "special",
+        "incidental",
+    )
+    has_consequential_waiver = any(
+        needle in lowered for needle in consequential_needles
+    )
     if not has_consequential_waiver:
         deviations.append(
             {
@@ -245,7 +278,12 @@ def detect_liability_deviations(clause_text: str) -> dict[str, Any]:
         )
 
     # 3. Aggregate liability cap presence
-    cap_markers = ("aggregate liability", "maximum liability", "liability shall not exceed", "total fees paid")
+    cap_markers = (
+        "aggregate liability",
+        "maximum liability",
+        "liability shall not exceed",
+        "total fees paid",
+    )
     has_aggregate_cap = any(marker in lowered for marker in cap_markers)
     if not has_aggregate_cap and not is_uncapped:
         deviations.append(
@@ -258,8 +296,14 @@ def detect_liability_deviations(clause_text: str) -> dict[str, Any]:
         )
 
     # 4. Mutuality check
-    unilateral_customer = "customer's liability shall" in lowered and "provider's liability" not in lowered
-    unilateral_provider = "provider's liability shall" in lowered and "customer's liability" not in lowered
+    unilateral_customer = (
+        "customer's liability shall" in lowered
+        and "provider's liability" not in lowered
+    )
+    unilateral_provider = (
+        "provider's liability shall" in lowered
+        and "customer's liability" not in lowered
+    )
     is_mutual = not (unilateral_customer or unilateral_provider)
     if not is_mutual:
         deviations.append(
@@ -307,10 +351,26 @@ def detect_indemnity_deviations(clause_text: str) -> dict[str, Any]:
     deviations: list[dict[str, Any]] = []
 
     # 1. Mutuality check
-    has_provider_indemnity = any(p in lowered for p in ("provider shall defend", "vendor shall defend", "provider shall indemnify"))
-    has_customer_indemnity = any(c in lowered for c in ("customer shall defend", "customer shall indemnify", "client shall defend"))
+    has_provider_indemnity = any(
+        p in lowered
+        for p in (
+            "provider shall defend",
+            "vendor shall defend",
+            "provider shall indemnify",
+        )
+    )
+    has_customer_indemnity = any(
+        c in lowered
+        for c in (
+            "customer shall defend",
+            "customer shall indemnify",
+            "client shall defend",
+        )
+    )
     is_mutual = has_provider_indemnity and has_customer_indemnity
-    if (has_provider_indemnity and not has_customer_indemnity) or (has_customer_indemnity and not has_provider_indemnity):
+    if (has_provider_indemnity and not has_customer_indemnity) or (
+        has_customer_indemnity and not has_provider_indemnity
+    ):
         deviations.append(
             {
                 "code": "unilateral_indemnity",
@@ -321,8 +381,18 @@ def detect_indemnity_deviations(clause_text: str) -> dict[str, Any]:
         )
 
     # 2. Scope: IP infringement vs general breach of contract
-    covers_ip = any(needle in lowered for needle in ("intellectual property", "infring", "patent", "copyright"))
-    covers_breach = any(needle in lowered for needle in ("breach of this agreement", "breach of any representation", "breach of warranty"))
+    covers_ip = any(
+        needle in lowered
+        for needle in ("intellectual property", "infring", "patent", "copyright")
+    )
+    covers_breach = any(
+        needle in lowered
+        for needle in (
+            "breach of this agreement",
+            "breach of any representation",
+            "breach of warranty",
+        )
+    )
     if covers_breach:
         deviations.append(
             {
@@ -337,8 +407,19 @@ def detect_indemnity_deviations(clause_text: str) -> dict[str, Any]:
         )
 
     # 3. Procedural defense protections (Notice, Defense Control, Settlement Consent)
-    has_prompt_notice = any(n in lowered for n in ("prompt written notice", "prompt notice", "promptly notify"))
-    has_sole_control = any(c in lowered for c in ("sole control", "exclusive control", "sole right to defend", "control of defense"))
+    has_prompt_notice = any(
+        n in lowered
+        for n in ("prompt written notice", "prompt notice", "promptly notify")
+    )
+    has_sole_control = any(
+        c in lowered
+        for c in (
+            "sole control",
+            "exclusive control",
+            "sole right to defend",
+            "control of defense",
+        )
+    )
     has_settlement_consent = "settle" in lowered and "consent" in lowered
 
     procedural = {
@@ -426,7 +507,9 @@ def diff_against_playbook(
         if not matched_clauses:
             missing_dev = {
                 "code": f"missing_{label}_clause",
-                "severity": "high" if label in {"limitation_of_liability", "indemnity"} else "medium",
+                "severity": "high"
+                if label in {"limitation_of_liability", "indemnity"}
+                else "medium",
                 "description": f"Standard playbook clause for '{label}' was not found in the contract.",
                 "recommendation": f"Add standard '{label}' clause from contract playbook.",
             }
@@ -466,7 +549,9 @@ def diff_against_playbook(
         )
         overall_deviations.extend(dev_report.get("deviations", []))
 
-    critical_count = sum(1 for d in overall_deviations if d.get("severity") == "critical")
+    critical_count = sum(
+        1 for d in overall_deviations if d.get("severity") == "critical"
+    )
     high_count = sum(1 for d in overall_deviations if d.get("severity") == "high")
     contract_risk = "low"
     if critical_count > 0:
@@ -532,12 +617,19 @@ def diff_contracts(
         materiality = "low"
         if label in {"limitation_of_liability", "indemnity"}:
             materiality = "high"
-        elif label in {"sla_credits", "confidentiality", "termination", "ip_assignment"}:
+        elif label in {
+            "sla_credits",
+            "confidentiality",
+            "termination",
+            "ip_assignment",
+        }:
             materiality = "medium"
 
         # Check for specific material risk shifts between left and right
         if label == "limitation_of_liability" and left_dev and right_dev:
-            if left_dev.get("has_consequential_waiver") and not right_dev.get("has_consequential_waiver"):
+            if left_dev.get("has_consequential_waiver") and not right_dev.get(
+                "has_consequential_waiver"
+            ):
                 material_shifts.append(
                     {
                         "label": label,
@@ -556,7 +648,7 @@ def diff_contracts(
                     }
                 )
 
-        if label == "indemnity" and left_dev and right_dev:
+        if label == "indemnity" and left_dev and right_dev:  # noqa: SIM102
             if left_dev.get("is_mutual") and not right_dev.get("is_mutual"):
                 material_shifts.append(
                     {
@@ -574,7 +666,9 @@ def diff_contracts(
                 "left_headings": [c["heading"] for c in left_by_label.get(label, [])],
                 "right_headings": [c["heading"] for c in right_by_label.get(label, [])],
                 "left_deviations": left_dev.get("deviations", []) if left_dev else [],
-                "right_deviations": right_dev.get("deviations", []) if right_dev else [],
+                "right_deviations": right_dev.get("deviations", [])
+                if right_dev
+                else [],
                 "unified_diff": diff,
             }
         )
@@ -597,7 +691,11 @@ def main(argv: list[str] | None = None) -> int:
         description=__doc__,
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
-    parser.add_argument("--extract", type=Path, help="Extract clauses and check deviations for one contract")
+    parser.add_argument(
+        "--extract",
+        type=Path,
+        help="Extract clauses and check deviations for one contract",
+    )
     parser.add_argument("--left", type=Path, help="Left/base contract for diff")
     parser.add_argument("--right", type=Path, help="Right/updated contract for diff")
     parser.add_argument(
@@ -605,9 +703,18 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="Compare contract (--left or --extract) against standard contract playbook clauses",
     )
-    parser.add_argument("--round-trip", dest="round_trip_path", type=Path, help="Round-trip a contract fixture")
+    parser.add_argument(
+        "--round-trip",
+        dest="round_trip_path",
+        type=Path,
+        help="Round-trip a contract fixture",
+    )
     parser.add_argument("--json", action="store_true", help="JSON output")
-    parser.add_argument("--dry-run", action="store_true", help="Round-trip bundled fixtures and test playbook")
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Round-trip bundled fixtures and test playbook",
+    )
     args = parser.parse_args(argv)
 
     try:
@@ -623,8 +730,12 @@ def main(argv: list[str] | None = None) -> int:
             first_fixture = next(FIXTURE_DIR.glob("*.md"), None)
             playbook_report = None
             if first_fixture:
-                playbook_report = diff_against_playbook(first_fixture.read_text(encoding="utf-8-sig"))
-            payload = advisory_envelope({"ok": ok, "fixtures": reports, "playbook_sample": playbook_report})
+                playbook_report = diff_against_playbook(
+                    first_fixture.read_text(encoding="utf-8-sig")
+                )
+            payload = advisory_envelope(
+                {"ok": ok, "fixtures": reports, "playbook_sample": playbook_report}
+            )
             print(json.dumps(payload, indent=2))
             return 0 if ok else 1
 
@@ -633,7 +744,10 @@ def main(argv: list[str] | None = None) -> int:
         elif args.playbook:
             target_path = args.left or args.extract
             if not target_path:
-                print("error: --playbook requires --left or --extract specifying the contract", file=sys.stderr)
+                print(
+                    "error: --playbook requires --left or --extract specifying the contract",
+                    file=sys.stderr,
+                )
                 return 2
             report = diff_against_playbook(target_path.read_text(encoding="utf-8-sig"))
         elif args.left and args.right:
@@ -650,9 +764,14 @@ def main(argv: list[str] | None = None) -> int:
                 for c in clauses
                 if c["label"] in {"limitation_of_liability", "indemnity"}
             ]
-            report = advisory_envelope({"ok": True, "clauses": clauses, "deviations": deviations})
+            report = advisory_envelope(
+                {"ok": True, "clauses": clauses, "deviations": deviations}
+            )
         else:
-            print("error: pass --extract, --left/--right, --playbook, --round-trip, or --dry-run", file=sys.stderr)
+            print(
+                "error: pass --extract, --left/--right, --playbook, --round-trip, or --dry-run",
+                file=sys.stderr,
+            )
             return 2
     except (FileNotFoundError, PermissionError, json.JSONDecodeError) as exc:
         print(f"error: {exc}", file=sys.stderr)

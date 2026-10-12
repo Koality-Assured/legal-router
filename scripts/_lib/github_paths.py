@@ -7,7 +7,7 @@ Never returns ``file://`` or local filesystem paths — only https GitHub URLs.
 from __future__ import annotations
 
 import re
-import subprocess
+import subprocess  # nosec B404
 from pathlib import Path
 from urllib.parse import quote
 
@@ -55,9 +55,7 @@ class GithubPathError(ValueError):
 def validate_ref(ref: str, *, allow_non_main: bool = False) -> str:
     """Validate git ref for URL embedding. Default artifacts use ``main`` only."""
     if not ref or not REF_SAFE_RE.fullmatch(ref):
-        raise GithubPathError(
-            f"ref refused (quotes/whitespace/unsafe chars): {ref!r}"
-        )
+        raise GithubPathError(f"ref refused (quotes/whitespace/unsafe chars): {ref!r}")
     if ref != DEFAULT_REF and not allow_non_main:
         raise GithubPathError(
             f"ref must be {DEFAULT_REF!r} unless --allow-ref is set (got {ref!r})"
@@ -74,8 +72,7 @@ def parse_github_origin(remote_url: str) -> tuple[str, str]:
         match = pattern.match(url)
         if match:
             owner, repo = match.group(1), match.group(2)
-            if repo.endswith(".git"):
-                repo = repo[:-4]
+            repo = repo.removesuffix(".git")
             return owner, repo
     raise GithubPathError(
         f"origin is not a github.com remote (got {url!r}); "
@@ -86,7 +83,7 @@ def parse_github_origin(remote_url: str) -> tuple[str, str]:
 def discover_github_repo(root: Path) -> tuple[str, str]:
     """Read ``git remote get-url origin`` under root → (owner, repo)."""
     try:
-        proc = subprocess.run(
+        proc = subprocess.run(  # nosec B607, B603
             ["git", "remote", "get-url", "origin"],
             cwd=root,
             capture_output=True,
@@ -100,7 +97,9 @@ def discover_github_repo(root: Path) -> tuple[str, str]:
         raise GithubPathError(f"failed to read git remote: {exc}") from exc
     if proc.returncode != 0:
         err = (proc.stderr or proc.stdout or "").strip()
-        raise GithubPathError(f"git remote get-url origin failed: {err or proc.returncode}")
+        raise GithubPathError(
+            f"git remote get-url origin failed: {err or proc.returncode}"
+        )
     return parse_github_origin((proc.stdout or "").strip())
 
 
@@ -115,9 +114,7 @@ def _to_repo_relative(path: str | Path, root: Path) -> Path:
     try:
         rel = candidate.relative_to(root)
     except ValueError as exc:
-        raise GithubPathError(
-            f"path is outside repo root ({root}): {path}"
-        ) from exc
+        raise GithubPathError(f"path is outside repo root ({root}): {path}") from exc
     return rel
 
 
@@ -266,7 +263,7 @@ def rewrite_repo_hrefs(
         new = _rewrite_one_href(
             url, root=root, from_file=from_file, owner_repo=owner_repo, ref=ref
         )
-        return f'{match.group("prefix")}{match.group("q")}{new}{match.group("q")}'
+        return f"{match.group('prefix')}{match.group('q')}{new}{match.group('q')}"
 
     def md_sub(match: re.Match[str]) -> str:
         label, url = match.group(1), match.group(2).strip()

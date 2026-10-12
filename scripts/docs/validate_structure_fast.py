@@ -20,15 +20,17 @@ import yaml
 
 _LIB = Path(__file__).resolve().parents[1] / "_lib"
 sys.path.insert(0, str(_LIB))
-from paths import REPO_ROOT as ROOT  # noqa: E402
+from paths import REPO_ROOT as ROOT
 
-DEFAULT_EXCLUDES = frozenset({
-    "scratch",
-    "node_modules",
-    ".git",
-    "results",
-    "change-history",
-})
+DEFAULT_EXCLUDES = frozenset(
+    {
+        "scratch",
+        "node_modules",
+        ".git",
+        "results",
+        "change-history",
+    }
+)
 
 DOC_KINDS_REQUIRED_FIELDS: dict[str, tuple[str, ...]] = {
     "requirement": ("canonical_id", "purpose"),
@@ -45,10 +47,21 @@ SKILL_REQUIRED_FIELDS = ("name", "description", "owner_agent", "rank", "isolatio
 AGENT_REQUIRED_FIELDS = ("name", "description")
 
 FENCE_PATTERN = re.compile(r"^(?:\x60{3,}|~{3,})")
-LINK_PATTERN = re.compile(r"\[(?:[^\]\\]|\\.)*\]\((<[^>]+>|[^)\s]+)(?:[ \t]+[\"'][^\"']*[\"'])?\)")
+LINK_PATTERN = re.compile(
+    r"\[(?:[^\]\\]|\\.)*\]\((<[^>]+>|[^)\s]+)(?:[ \t]+[\"'][^\"']*[\"'])?\)"
+)
 REF_LINK_PATTERN = re.compile(r"^\s*\[(?:[^\]\\]|\\.)*\]:\s*(<[^>]+>|\S+)")
 HEADING_PATTERN = re.compile(r"^(#{1,6})\s+(.+)$")
-EXTERNAL_SCHEMES = ("http://", "https://", "mailto:", "ftp://", "ftps://", "//", "javascript:", "data:")
+EXTERNAL_SCHEMES = (
+    "http://",
+    "https://",
+    "mailto:",
+    "ftp://",
+    "ftps://",
+    "//",
+    "javascript:",
+    "data:",
+)
 
 
 def slugify(text: str) -> str:
@@ -125,8 +138,7 @@ def parse_yaml_frontmatter(text: str) -> tuple[dict[str, Any] | None, str | None
         return None, "unclosed YAML frontmatter (missing closing ---)", text
     raw = text[3:end]
     body = text[end + 4 :]
-    if body.startswith("\n"):
-        body = body[1:]
+    body = body.removeprefix("\n")
     try:
         data = yaml.safe_load(raw)
         if data is None:
@@ -171,18 +183,28 @@ def validate_file_frontmatter(
         req_fields = DOC_KINDS_REQUIRED_FIELDS.get(str(doc_kind))
         if req_fields:
             for field in req_fields:
-                if field not in fm or fm[field] is None or (isinstance(fm[field], str) and not fm[field].strip()):
-                    errors.append(f"{rel_path}: doc_kind '{doc_kind}' missing required tag '{field}'")
+                if (
+                    field not in fm
+                    or fm[field] is None
+                    or (isinstance(fm[field], str) and not fm[field].strip())
+                ):
+                    errors.append(
+                        f"{rel_path}: doc_kind '{doc_kind}' missing required tag '{field}'"
+                    )
     else:
         # Check SKILL.md and AGENT.md
         if path.name == "SKILL.md" and "ai-tooling" in parts and "skills" in parts:
             for field in SKILL_REQUIRED_FIELDS:
                 if field not in fm or fm[field] is None:
-                    errors.append(f"{rel_path}: SKILL.md frontmatter missing required field '{field}'")
+                    errors.append(
+                        f"{rel_path}: SKILL.md frontmatter missing required field '{field}'"
+                    )
         elif path.name == "AGENT.md" and "ai-tooling" in parts and "agents" in parts:
             for field in AGENT_REQUIRED_FIELDS:
                 if field not in fm or fm[field] is None:
-                    errors.append(f"{rel_path}: AGENT.md frontmatter missing required field '{field}'")
+                    errors.append(
+                        f"{rel_path}: AGENT.md frontmatter missing required field '{field}'"
+                    )
 
     return errors
 
@@ -194,7 +216,9 @@ def validate_file_h1(rel_path: str, h1s: list[tuple[int, str]]) -> list[str]:
         errors.append(f"{rel_path}: missing top-level H1 heading")
     elif len(h1s) > 1:
         lines_str = ", ".join(f"L{line_no} ({title!r})" for line_no, title in h1s)
-        errors.append(f"{rel_path}: multiple ({len(h1s)}) H1 headings found: {lines_str}")
+        errors.append(
+            f"{rel_path}: multiple ({len(h1s)}) H1 headings found: {lines_str}"
+        )
     return errors
 
 
@@ -258,12 +282,14 @@ def validate_relative_links(
     errors: list[str] = []
 
     for line_no, href in links:
-        if not href or any(href.lower().startswith(scheme) for scheme in EXTERNAL_SCHEMES):
+        if not href or any(
+            href.lower().startswith(scheme) for scheme in EXTERNAL_SCHEMES
+        ):
             continue
 
         # Strip query params
         href_clean = href.split("?")[0]
-        path_part, sep, anchor = href_clean.partition("#")
+        path_part, _sep, anchor = href_clean.partition("#")
         path_part = path_part.strip()
         anchor = anchor.strip()
 
@@ -279,9 +305,7 @@ def validate_relative_links(
             else:
                 candidate = (path.parent / unquoted_path).resolve()
 
-            if candidate.is_file():
-                target_file = candidate
-            elif candidate.is_dir():
+            if candidate.is_file() or candidate.is_dir():
                 target_file = candidate
             else:
                 errors.append(
@@ -290,7 +314,12 @@ def validate_relative_links(
                 continue
 
         # Check anchor if target is a markdown file
-        if anchor and target_file and target_file.is_file() and target_file.suffix == ".md":
+        if (
+            anchor
+            and target_file
+            and target_file.is_file()
+            and target_file.suffix == ".md"
+        ):
             if target_file not in headings_cache:
                 try:
                     t = target_file.read_text(encoding="utf-8-sig")
@@ -342,7 +371,17 @@ def validate_all_structure(
     warnings: list[str] = []
 
     headings_cache: dict[Path, set[str]] = {}
-    file_data: list[tuple[Path, str, str, dict[str, Any] | None, str | None, list[tuple[int, str]], list[tuple[int, str]]]] = []
+    file_data: list[
+        tuple[
+            Path,
+            str,
+            str,
+            dict[str, Any] | None,
+            str | None,
+            list[tuple[int, str]],
+            list[tuple[int, str]],
+        ]
+    ] = []
 
     # First pass: read files, extract frontmatter, headings, links
     for path in files:
@@ -376,7 +415,9 @@ def validate_all_structure(
 
         # 3. Relative links
         if check_links:
-            link_errs = validate_relative_links(path, rel_path, links, headings_cache, repo_root)
+            link_errs = validate_relative_links(
+                path, rel_path, links, headings_cache, repo_root
+            )
             errors.extend(link_errs)
 
     return errors, warnings
@@ -438,7 +479,9 @@ def main(argv: list[str] | None = None) -> int:
 
     t0 = time.perf_counter()
     files = discover_markdown_files(target_path, repo_root=repo_root)
-    errors, warnings = validate_all_structure(files, repo_root=repo_root, check_links=args.check_links)
+    errors, warnings = validate_all_structure(
+        files, repo_root=repo_root, check_links=args.check_links
+    )
     duration_ms = (time.perf_counter() - t0) * 1000
 
     payload = {
@@ -452,7 +495,9 @@ def main(argv: list[str] | None = None) -> int:
     if args.json:
         print(json.dumps(payload, indent=2))
     elif errors:
-        print(f"FAIL ({len(errors)} error{'s' if len(errors) != 1 else ''} in {len(files)} files, {duration_ms:.1f}ms):")
+        print(
+            f"FAIL ({len(errors)} error{'s' if len(errors) != 1 else ''} in {len(files)} files, {duration_ms:.1f}ms):"
+        )
         for e in errors:
             print(f"  - {e}")
         for w in warnings:

@@ -8,15 +8,16 @@ from __future__ import annotations
 
 import argparse
 import dataclasses
-import hashlib
 import datetime as dt
+import hashlib
 import json
 import os
-from pathlib import Path
 import re
 import shutil
 import sys
-from typing import Any, Callable
+from collections.abc import Callable
+from pathlib import Path
+from typing import Any
 
 _SYNC = Path(__file__).resolve().parent
 _LIB = Path(__file__).resolve().parents[1] / "_lib"
@@ -25,13 +26,16 @@ for _p in (_SYNC, _LIB):
         sys.path.insert(0, str(_p))
 
 try:
-    from paths import REPO_ROOT as DEFAULT_ROOT, resolve_repo_root
+    from paths import REPO_ROOT as DEFAULT_ROOT
+    from paths import resolve_repo_root
 except ImportError:
     DEFAULT_ROOT = Path(__file__).resolve().parents[2]
+
     def resolve_repo_root(override: str | Path | None = None) -> Path:
         return Path(override).resolve() if override else DEFAULT_ROOT
 
-from _harness_template import (  # noqa: E402
+
+from _harness_template import (
     HARNESS_TEMPLATE_MODE,
     WIKI_TEMPLATE_ALLOWED_DOT_DIRS,
     harness_template_dir_may_contain_kept,
@@ -40,7 +44,6 @@ from _harness_template import (  # noqa: E402
     harness_template_sanitize_file_content,
     is_harness_template_rel_kept,
 )
-
 
 DEFAULT_REPO_MAPPINGS: dict[str, dict[str, str]] = {
     "agent-skills-and-tools": {
@@ -147,10 +150,16 @@ def _mask_secret(val: str, prefix_len: int = 4, suffix_len: int = 4) -> str:
     """Mask a secret string preserving only a short prefix and suffix."""
     if len(val) <= prefix_len + suffix_len:
         return "*" * len(val)
-    return val[:prefix_len] + "*" * (len(val) - prefix_len - suffix_len) + val[-suffix_len:]
+    return (
+        val[:prefix_len]
+        + "*" * (len(val) - prefix_len - suffix_len)
+        + val[-suffix_len:]
+    )
 
 
-def build_default_rules(custom_usernames: list[str] | None = None) -> list[RedactionRule]:
+def build_default_rules(
+    custom_usernames: list[str] | None = None,
+) -> list[RedactionRule]:
     """Construct the standard suite of sanitization and redaction rules."""
     rules: list[RedactionRule] = [
         # 1. API Keys & Credentials
@@ -158,7 +167,9 @@ def build_default_rules(custom_usernames: list[str] | None = None) -> list[Redac
             name="openai_api_key",
             description="OpenAI API secret keys",
             # Skip sk-EXAMPLE_* fixtures so dest A2A secret-leak tests stay valid Python.
-            pattern=re.compile(r"\bsk-(?!ant-)(?!EXAMPLE)(?:proj-|live-)?[a-zA-Z0-9_-]{20,}\b"),
+            pattern=re.compile(
+                r"\bsk-(?!ant-)(?!EXAMPLE)(?:proj-|live-)?[a-zA-Z0-9_-]{20,}\b"
+            ),
             replacement="[REDACTED_OPENAI_KEY]",
         ),
         RedactionRule(
@@ -170,7 +181,9 @@ def build_default_rules(custom_usernames: list[str] | None = None) -> list[Redac
         RedactionRule(
             name="github_token",
             description="GitHub Personal Access and OAuth Tokens",
-            pattern=re.compile(r"\b(?:ghp|gho|ghu|ghs|ghr|github_pat)_[a-zA-Z0-9_]{20,}\b"),
+            pattern=re.compile(
+                r"\b(?:ghp|gho|ghu|ghs|ghr|github_pat)_[a-zA-Z0-9_]{20,}\b"
+            ),
             replacement="[REDACTED_GITHUB_TOKEN]",
         ),
         RedactionRule(
@@ -182,7 +195,9 @@ def build_default_rules(custom_usernames: list[str] | None = None) -> list[Redac
         RedactionRule(
             name="aws_secret_key",
             description="AWS Secret Access Key assignments",
-            pattern=re.compile(r"(?i)\b(aws_secret_access_key|aws_secret_key)\s*[:=]\s*['\"]?([a-zA-Z0-9/+=]{40})['\"]?"),
+            pattern=re.compile(
+                r"(?i)\b(aws_secret_access_key|aws_secret_key)\s*[:=]\s*['\"]?([a-zA-Z0-9/+=]{40})['\"]?"
+            ),
             replacement=lambda m: f'{m.group(1)} = "[REDACTED_AWS_SECRET]"',
         ),
         RedactionRule(
@@ -194,7 +209,9 @@ def build_default_rules(custom_usernames: list[str] | None = None) -> list[Redac
         RedactionRule(
             name="jwt_token",
             description="JSON Web Tokens (JWT)",
-            pattern=re.compile(r"\beyJ[a-zA-Z0-9_-]{10,}\.eyJ[a-zA-Z0-9_-]{10,}\.[a-zA-Z0-9_-]{10,}\b"),
+            pattern=re.compile(
+                r"\beyJ[a-zA-Z0-9_-]{10,}\.eyJ[a-zA-Z0-9_-]{10,}\.[a-zA-Z0-9_-]{10,}\b"
+            ),
             replacement="[REDACTED_JWT_TOKEN]",
         ),
         RedactionRule(
@@ -206,7 +223,9 @@ def build_default_rules(custom_usernames: list[str] | None = None) -> list[Redac
         RedactionRule(
             name="private_key_block",
             description="PEM / OpenSSH Private Key certificates and blocks",
-            pattern=re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH |DSA |PGP )?PRIVATE KEY-----[\s\S]*?-----END (?:RSA |EC |OPENSSH |DSA |PGP )?PRIVATE KEY-----"),
+            pattern=re.compile(
+                r"-----BEGIN (?:RSA |EC |OPENSSH |DSA |PGP )?PRIVATE KEY-----[\s\S]*?-----END (?:RSA |EC |OPENSSH |DSA |PGP )?PRIVATE KEY-----"
+            ),
             replacement="[REDACTED_PRIVATE_KEY_BLOCK]",
         ),
         RedactionRule(
@@ -215,7 +234,6 @@ def build_default_rules(custom_usernames: list[str] | None = None) -> list[Redac
             pattern=re.compile(r"https?://(?:[^:\s@]+):(?:[^@\s]+)@([a-zA-Z0-9.-]+)"),
             replacement=lambda m: f"https://{m.group(1)}",
         ),
-
         # 2. Proprietary & Local File Paths
         RedactionRule(
             name="windows_user_home_path",
@@ -244,33 +262,42 @@ def build_default_rules(custom_usernames: list[str] | None = None) -> list[Redac
         RedactionRule(
             name="gemini_appdata_path",
             description="Antigravity and Gemini app data paths",
-            pattern=re.compile(r"(?i)(?:[a-zA-Z]:[/\\]Users[/\\][^/\\]+[/\\]|\~[/\\])?\.gemini[/\\]antigravity[a-zA-Z0-9_\-\\\/\.]*"),
+            pattern=re.compile(
+                r"(?i)(?:[a-zA-Z]:[/\\]Users[/\\][^/\\]+[/\\]|\~[/\\])?\.gemini[/\\]antigravity[a-zA-Z0-9_\-\\\/\.]*"
+            ),
             replacement="[REDACTED_APPDATA_PATH]",
         ),
         RedactionRule(
             name="internal_repo_root_abs_path",
             description="Absolute internal repo root directory paths",
-            pattern=re.compile(r"(?i)[a-zA-Z]:[\\/](?:Code|Projects|repos|dev)[\\/]ai-router[\\/]"),
+            pattern=re.compile(
+                r"(?i)[a-zA-Z]:[\\/](?:Code|Projects|repos|dev)[\\/]ai-router[\\/]"
+            ),
             replacement="[REPO_ROOT]/",
         ),
         RedactionRule(
             name="google_drive_test_folder",
             description="Google Drive test folder ID and URL",
-            pattern=re.compile(r"https?://drive\.google\.com/drive/folders/1noGxOG_[a-zA-Z0-9_-]+|1noGxOG_[a-zA-Z0-9_-]+"),
+            pattern=re.compile(
+                r"https?://drive\.google\.com/drive/folders/1noGxOG_[a-zA-Z0-9_-]+|1noGxOG_[a-zA-Z0-9_-]+"
+            ),
             replacement="[REDACTED_GOOGLE_DRIVE_TEST_FOLDER]",
         ),
-
         # 3. Internal Identities & Domains
         RedactionRule(
             name="internal_git_identity",
             description="Git author or committer configuration lines with internal emails",
-            pattern=re.compile(r"(?i)\b(author|committer|user\.email)\s*[:=]\s*['\"]?[a-zA-Z0-9_.+-]+@(?:internal\.corp|corp\.internal|local\.lan)['\"]?"),
+            pattern=re.compile(
+                r"(?i)\b(author|committer|user\.email)\s*[:=]\s*['\"]?[a-zA-Z0-9_.+-]+@(?:internal\.corp|corp\.internal|local\.lan)['\"]?"
+            ),
             replacement=lambda m: f'{m.group(1)} = "developer@example.com"',
         ),
         RedactionRule(
             name="internal_email_domain",
             description="Internal corporate email addresses",
-            pattern=re.compile(r"\b[a-zA-Z0-9_.+-]+@(?:internal\.corp|corp\.internal|local\.lan|corp\.example\.com|internal\.example\.com)\b"),
+            pattern=re.compile(
+                r"\b[a-zA-Z0-9_.+-]+@(?:internal\.corp|corp\.internal|local\.lan|corp\.example\.com|internal\.example\.com)\b"
+            ),
             replacement="[REDACTED_INTERNAL_EMAIL]",
         ),
     ]
@@ -298,10 +325,18 @@ def build_default_rules(custom_usernames: list[str] | None = None) -> list[Redac
 class RedactionEngine:
     """Engine responsible for inspecting text and performing rule-based redactions."""
 
-    def __init__(self, rules: list[RedactionRule] | None = None, usernames: list[str] | None = None) -> None:
-        self.rules: list[RedactionRule] = rules if rules is not None else build_default_rules(usernames)
+    def __init__(
+        self,
+        rules: list[RedactionRule] | None = None,
+        usernames: list[str] | None = None,
+    ) -> None:
+        self.rules: list[RedactionRule] = (
+            rules if rules is not None else build_default_rules(usernames)
+        )
 
-    def redact_text(self, text: str, file_rel_path: str = "") -> tuple[str, list[RedactionAuditEntry]]:
+    def redact_text(
+        self, text: str, file_rel_path: str = ""
+    ) -> tuple[str, list[RedactionAuditEntry]]:
         """Redact sensitive patterns from text and record audit logs."""
         audit_entries: list[RedactionAuditEntry] = []
         current_text = text
@@ -335,7 +370,9 @@ class RedactionEngine:
                         rule=rule.name,
                         match_fingerprint=f"sha256:{digest}",
                         match_length=len(matched_str),
-                        replacement=repl_str if len(repl_str) <= 60 else repl_str[:50] + "...",
+                        replacement=repl_str
+                        if len(repl_str) <= 60
+                        else repl_str[:50] + "...",
                     )
                 )
 
@@ -453,8 +490,14 @@ class SyncEngine:
             root_path = Path(root)
             try:
                 src_resolved = src_dir.resolve()
-                if dest_resolved == src_resolved or src_resolved in dest_resolved.parents:
-                    if root_path.resolve() == dest_resolved or dest_resolved in root_path.resolve().parents:
+                if (  # noqa: SIM102
+                    dest_resolved == src_resolved
+                    or src_resolved in dest_resolved.parents
+                ):
+                    if (
+                        root_path.resolve() == dest_resolved
+                        or dest_resolved in root_path.resolve().parents
+                    ):
                         dirs[:] = []
                         continue
             except OSError:
@@ -466,7 +509,10 @@ class SyncEngine:
 
             pruned: list[str] = []
             for d in dirs:
-                if mode == HARNESS_TEMPLATE_MODE and d in WIKI_TEMPLATE_ALLOWED_DOT_DIRS:
+                if (
+                    mode == HARNESS_TEMPLATE_MODE
+                    and d in WIKI_TEMPLATE_ALLOWED_DOT_DIRS
+                ):
                     pass
                 else:
                     if d in EXCLUDED_NAMES:
@@ -481,7 +527,9 @@ class SyncEngine:
             dirs[:] = pruned
 
             for f in files:
-                if f in EXCLUDED_NAMES or any(f.endswith(ext) for ext in EXCLUDED_EXTENSIONS):
+                if f in EXCLUDED_NAMES or any(
+                    f.endswith(ext) for ext in EXCLUDED_EXTENSIONS
+                ):
                     continue
                 src_file = root_path / f
                 if mode == HARNESS_TEMPLATE_MODE:
@@ -510,7 +558,7 @@ class SyncEngine:
                 existing_text = dest_file.read_text(encoding="utf-8")
                 if existing_text == sanitized_text:
                     content_changed = False
-            except Exception:
+            except Exception:  # noqa: BLE001
                 content_changed = True
 
         if content_changed:
@@ -539,7 +587,7 @@ class SyncEngine:
 
         if is_binary:
             content_changed = True
-            if dest_file.exists():
+            if dest_file.exists():  # noqa: SIM102
                 if src_file.read_bytes() == dest_file.read_bytes():
                     content_changed = False
             if content_changed:
@@ -572,10 +620,12 @@ class SyncEngine:
         mapping = self.mappings[repo_name]
         subpaths = mapping.get("subpaths")
         if not subpaths:
-            subpaths = [{
-                "source_subpath": mapping.get("source_subpath", ""),
-                "dest_subpath": mapping.get("dest_subpath", ""),
-            }]
+            subpaths = [
+                {
+                    "source_subpath": mapping.get("source_subpath", ""),
+                    "dest_subpath": mapping.get("dest_subpath", ""),
+                }
+            ]
 
         primary_src = self.source_root / subpaths[0]["source_subpath"]
         primary_dst = self._resolve_dest_path(repo_name, subpaths[0]["dest_subpath"])
@@ -608,7 +658,9 @@ class SyncEngine:
         if mapping.get("mode") == HARNESS_TEMPLATE_MODE:
             if not self.dry_run:
                 harness_template_prune_dest_leftovers(primary_dst)
-            for rel, content in harness_template_post_copy_files(primary_dst, source_root=primary_src).items():
+            for rel, content in harness_template_post_copy_files(
+                primary_dst, source_root=primary_src
+            ).items():
                 dest_file = primary_dst / rel
                 result.files_scanned += 1
                 self._sync_text_payload(dest_file, content, rel, result)
@@ -617,7 +669,7 @@ class SyncEngine:
 
     def sync_all(self, repo_filter: str | None = None) -> SyncReport:
         """Run synchronization across selected or all repositories."""
-        now_utc = dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+        now_utc = dt.datetime.now(dt.UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
         report = SyncReport(
             timestamp_utc=now_utc,
             source_root=str(self.source_root),
@@ -659,7 +711,9 @@ class SyncEngine:
 
         return report
 
-    def validate_sources(self, repo_filter: str | None = None) -> tuple[bool, list[str]]:
+    def validate_sources(
+        self, repo_filter: str | None = None
+    ) -> tuple[bool, list[str]]:
         """Validate that source directories are healthy and report any unredacted items."""
         violations: list[str] = []
         target_repos = [repo_filter] if repo_filter else list(self.mappings.keys())
@@ -671,13 +725,20 @@ class SyncEngine:
             mapping = self.mappings[repo]
             subpaths = mapping.get("subpaths")
             if not subpaths:
-                subpaths = [{"source_subpath": mapping["source_subpath"], "dest_subpath": mapping["dest_subpath"]}]
+                subpaths = [
+                    {
+                        "source_subpath": mapping["source_subpath"],
+                        "dest_subpath": mapping["dest_subpath"],
+                    }
+                ]
 
             for sub in subpaths:
                 src_dir = self.source_root / sub["source_subpath"]
                 if not src_dir.exists():
                     if not sub.get("optional"):
-                        violations.append(f"Source directory missing for {repo}: {src_dir}")
+                        violations.append(
+                            f"Source directory missing for {repo}: {src_dir}"
+                        )
                     continue
 
                 for p in self._walk_source_files(src_dir, mapping):
@@ -780,10 +841,16 @@ def check_downstream_source_coverage(
             continue
 
         for child in sorted(root_dir.iterdir()):
-            if not child.is_dir() or child.name.startswith(".") or child.name == "__pycache__":
+            if (
+                not child.is_dir()
+                or child.name.startswith(".")
+                or child.name == "__pycache__"
+            ):
                 continue
             rel_path = child.relative_to(source_root).as_posix()
-            if rel_path in INTERNAL_ONLY_DOMAINS or any(rel_path.startswith(d + "/") for d in INTERNAL_ONLY_DOMAINS):
+            if rel_path in INTERNAL_ONLY_DOMAINS or any(
+                rel_path.startswith(d + "/") for d in INTERNAL_ONLY_DOMAINS
+            ):
                 continue
             if (
                 rel_path in mapped_sources
@@ -802,7 +869,7 @@ def format_text_report(report: SyncReport) -> str:
     """Format human-readable sync and audit summary."""
     lines: list[str] = [
         "=" * 70,
-        f"Multi-Repo Synchronization & Redaction Report",
+        "Multi-Repo Synchronization & Redaction Report",
         f"Timestamp: {report.timestamp_utc}",
         f"Source:    {report.source_root}",
         f"Dest:      {report.dest_root}",
@@ -839,12 +906,14 @@ def format_text_report(report: SyncReport) -> str:
         all_audits.extend(res.audit_log)
 
     if all_audits:
-        lines.extend([
-            "",
-            "=" * 70,
-            f"Redaction Audit Log ({len(all_audits)} events):",
-            "-" * 70,
-        ])
+        lines.extend(
+            [
+                "",
+                "=" * 70,
+                f"Redaction Audit Log ({len(all_audits)} events):",
+                "-" * 70,
+            ]
+        )
         for entry in all_audits[:30]:
             lines.append(
                 f"  - {entry['file']}:{entry['line']} [{entry['rule']}]\n"
@@ -854,10 +923,12 @@ def format_text_report(report: SyncReport) -> str:
         if len(all_audits) > 30:
             lines.append(f"  ... and {len(all_audits) - 30} more redaction events.")
     else:
-        lines.extend([
-            "",
-            "No sensitive patterns detected or redacted.",
-        ])
+        lines.extend(
+            [
+                "",
+                "No sensitive patterns detected or redacted.",
+            ]
+        )
 
     lines.append("=" * 70)
     return "\n".join(lines)
@@ -922,7 +993,9 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     source_root = resolve_repo_root(args.source)
-    dest_root = args.dest.resolve() if args.dest else (source_root / "scratch" / "exports")
+    dest_root = (
+        args.dest.resolve() if args.dest else (source_root / "scratch" / "exports")
+    )
 
     if args.check_coverage:
         is_ok, covered, unmapped = check_downstream_source_coverage(source_root)
@@ -938,9 +1011,13 @@ def main(argv: list[str] | None = None) -> int:
             print(json.dumps(out, indent=2))
         else:
             if is_ok:
-                print(f"OK: All {len(covered)} source domains are mapped downstream or declared internal.")
+                print(
+                    f"OK: All {len(covered)} source domains are mapped downstream or declared internal."
+                )
             else:
-                print(f"COVERAGE FAILED: Found {len(unmapped)} unmapped source domain(s):")
+                print(
+                    f"COVERAGE FAILED: Found {len(unmapped)} unmapped source domain(s):"
+                )
                 for u in unmapped:
                     print(f"  ! Unmapped: {u}")
         return 0 if is_ok else 1
@@ -965,22 +1042,31 @@ def main(argv: list[str] | None = None) -> int:
             print(json.dumps(out, indent=2))
         else:
             if is_clean:
-                print("OK: All source repositories validated clean with zero sensitive leaks.")
+                print(
+                    "OK: All source repositories validated clean with zero sensitive leaks."
+                )
             else:
-                print(f"VALIDATION FAILED: Found {len(violations)} sensitive pattern(s):")
+                print(
+                    f"VALIDATION FAILED: Found {len(violations)} sensitive pattern(s):"
+                )
                 for v in violations:
                     print(f"  ! {v}")
         return 0 if is_clean else 1
 
     if not args.dest and not args.dry_run:
         # Default destination required if not dry run
-        print("Note: No --dest specified. Defaulting destination to scratch/exports/ under repo root.", file=sys.stderr)
+        print(
+            "Note: No --dest specified. Defaulting destination to scratch/exports/ under repo root.",
+            file=sys.stderr,
+        )
 
     report = engine.sync_all(args.repo)
 
     if args.report_file:
         args.report_file.parent.mkdir(parents=True, exist_ok=True)
-        args.report_file.write_text(json.dumps(report.to_dict(), indent=2), encoding="utf-8")
+        args.report_file.write_text(
+            json.dumps(report.to_dict(), indent=2), encoding="utf-8"
+        )
 
     if args.json:
         print(json.dumps(report.to_dict(), indent=2))

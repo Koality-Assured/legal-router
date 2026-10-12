@@ -24,8 +24,7 @@ for _p in (_SYNC, _LIB):
     if str(_p) not in sys.path:
         sys.path.insert(0, str(_p))
 
-from paths import resolve_repo_root  # noqa: E402
-from _harness_core_protocol import (  # noqa: E402
+from _harness_core_protocol import (
     CORE_REMOTE_NAME,
     CORE_REPO_NAME,
     CORE_SOURCE_CHOICES,
@@ -39,16 +38,17 @@ from _harness_core_protocol import (  # noqa: E402
     default_visibility,
     detect_instance_leakage,
     domain_overlay_files,
-    refuse_public_game_dev,
     ensure_initial_commit,
     git_init_if_needed,
     github_https_url,
     instance_corpus_rels,
+    refuse_public_game_dev,
     run_git,
     validate_org,
     validate_repo_name,
 )
-from sync_public_repos import SyncEngine  # noqa: E402
+from paths import resolve_repo_root
+from sync_public_repos import SyncEngine
 
 
 def _resolve_exported_core(dest_root: Path) -> Path:
@@ -112,9 +112,7 @@ def scaffold_harness(
     if core_source not in CORE_SOURCE_CHOICES:
         raise ValueError(f"invalid --core-source {core_source!r}")
     vis = default_visibility(domain, visibility)
-    refuse_public_game_dev(
-        domain, vis, allow_public_game_dev=allow_public_game_dev
-    )
+    refuse_public_game_dev(domain, vis, allow_public_game_dev=allow_public_game_dev)
     origin_url = github_https_url(org, name)
     core_url = core_remote_url(DEFAULT_ORG)
     overlays = domain_overlay_files(domain=domain, name=name, org=org, visibility=vis)
@@ -205,9 +203,7 @@ def scaffold_harness(
         payload["actions"].append("git-init")
         configure_remotes(target, origin_url=origin_url, core_url=core_url)
         payload["actions"].append("configure-remotes")
-        ensure_initial_commit(
-            target, f"chore: scaffold {name} from ai-harness-core"
-        )
+        ensure_initial_commit(target, f"chore: scaffold {name} from ai-harness-core")
         payload["actions"].append("initial-commit")
         payload["committed"] = True
         return payload
@@ -221,9 +217,15 @@ def main(argv: list[str] | None = None) -> int:
         description=__doc__,
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
-    parser.add_argument("--name", required=True, help="Spoke repository name (kebab-case)")
-    parser.add_argument("--target", required=True, type=Path, help="Destination directory")
-    parser.add_argument("--org", default=DEFAULT_ORG, help=f"GitHub org (default {DEFAULT_ORG})")
+    parser.add_argument(
+        "--name", required=True, help="Spoke repository name (kebab-case)"
+    )
+    parser.add_argument(
+        "--target", required=True, type=Path, help="Destination directory"
+    )
+    parser.add_argument(
+        "--org", default=DEFAULT_ORG, help=f"GitHub org (default {DEFAULT_ORG})"
+    )
     parser.add_argument(
         "--visibility",
         choices=VISIBILITY_CHOICES,
@@ -263,7 +265,9 @@ def main(argv: list[str] | None = None) -> int:
         dest="source",
         help="Fed instance root used only for --core-source export",
     )
-    parser.add_argument("--dry-run", action="store_true", help="Plan only; write nothing")
+    parser.add_argument(
+        "--dry-run", action="store_true", help="Plan only; write nothing"
+    )
     parser.add_argument("--json", action="store_true", help="Print JSON summary")
     args = parser.parse_args(argv)
 

@@ -42,7 +42,9 @@ def check_required_skill_v2_contracts(
     errors: list[str] = []
     version = "" if schema_version is None else str(schema_version).strip()
     if not version:
-        errors.append(f"{prefix}schema_version missing (expected '{REQUIRED_SKILL_SCHEMA_VERSION}')")
+        errors.append(
+            f"{prefix}schema_version missing (expected '{REQUIRED_SKILL_SCHEMA_VERSION}')"
+        )
     elif version != REQUIRED_SKILL_SCHEMA_VERSION:
         errors.append(
             f"{prefix}schema_version {version!r} != {REQUIRED_SKILL_SCHEMA_VERSION!r}"
@@ -62,11 +64,15 @@ def check_required_skill_v2_contracts(
         if inputs is None or not isinstance(inputs, list) or not inputs:
             errors.append(f"{prefix}Schema V2 contracts.inputs must be non-empty")
         elif not all(isinstance(item, str) and item.strip() for item in inputs):
-            errors.append(f"{prefix}Schema V2 contracts.inputs items must be non-empty strings")
+            errors.append(
+                f"{prefix}Schema V2 contracts.inputs items must be non-empty strings"
+            )
         if outputs is None or not isinstance(outputs, list) or not outputs:
             errors.append(f"{prefix}Schema V2 contracts.outputs must be non-empty")
         elif not all(isinstance(item, str) and item.strip() for item in outputs):
-            errors.append(f"{prefix}Schema V2 contracts.outputs items must be non-empty strings")
+            errors.append(
+                f"{prefix}Schema V2 contracts.outputs items must be non-empty strings"
+            )
     return errors
 
 
@@ -81,21 +87,19 @@ def parse_frontmatter(text: str) -> tuple[dict[str, Any], str]:
     if not text.startswith("---"):
         return {}, text
     rest = text[3:]
-    if rest.startswith("\n"):
-        rest = rest[1:]
+    rest = rest.removeprefix("\n")
     end = rest.find("\n---")
     if end == -1:
         return {}, text
     raw = rest[:end]
     body = rest[end + 4 :]
-    if body.startswith("\n"):
-        body = body[1:]
+    body = body.removeprefix("\n")
     if yaml is not None:
         try:
             parsed = yaml.safe_load(raw)
             if isinstance(parsed, dict):
                 return parsed, body
-        except Exception:
+        except Exception:  # noqa: S110,BLE001  # nosec B110
             pass
     return _parse_simple_yaml(raw), body
 
@@ -155,7 +159,10 @@ def _parse_simple_yaml(raw: str) -> dict[str, Any]:
         first = next_content(pos)
         if first is None or indentation(lines[first]) < indent:
             return {}, pos
-        is_list = lines[first].lstrip().startswith("- ") and indentation(lines[first]) == indent
+        is_list = (
+            lines[first].lstrip().startswith("- ")
+            and indentation(lines[first]) == indent
+        )
         result: Any = [] if is_list else {}
         pos = first
         while pos < len(lines):
@@ -189,9 +196,16 @@ def _parse_simple_yaml(raw: str) -> dict[str, Any]:
                     pos = next_pos
             else:
                 child = next_content(pos)
-                child_is_root_list = child is not None and lines[child].lstrip().startswith("- ")
-                if child is None or indentation(lines[child]) < current_indent or (
-                    indentation(lines[child]) == current_indent and not child_is_root_list
+                child_is_root_list = child is not None and lines[
+                    child
+                ].lstrip().startswith("- ")
+                if (
+                    child is None
+                    or indentation(lines[child]) < current_indent
+                    or (
+                        indentation(lines[child]) == current_indent
+                        and not child_is_root_list
+                    )
                 ):
                     result[key] = {}
                 else:
@@ -226,13 +240,15 @@ def agent_paths(root: Path) -> list[Path]:
     agents = root / "ai-tooling" / "agents"
     out = []
     for path in sorted(agents.glob("*/AGENT.md")):
-        out.append(path)
+        out.append(path)  # noqa: PERF402
     return out
 
 
 def agent_ids(root: Path) -> set[str]:
     agents = root / "ai-tooling" / "agents"
-    return {p.name for p in agents.iterdir() if p.is_dir() and (p / "AGENT.md").exists()}
+    return {
+        p.name for p in agents.iterdir() if p.is_dir() and (p / "AGENT.md").exists()
+    }
 
 
 def load_skill_record(path: Path) -> dict[str, Any]:
@@ -262,7 +278,9 @@ def load_skill_record(path: Path) -> dict[str, Any]:
         dependencies = {
             "required_skills": [str(s) for s in deps_raw.get("required_skills", [])],
             "delegated_skills": [str(s) for s in deps_raw.get("delegated_skills", [])],
-            "in_session_skills": [str(s) for s in deps_raw.get("in_session_skills", [])],
+            "in_session_skills": [
+                str(s) for s in deps_raw.get("in_session_skills", [])
+            ],
         }
     else:
         dependencies = {
@@ -271,7 +289,9 @@ def load_skill_record(path: Path) -> dict[str, Any]:
             "in_session_skills": [],
         }
 
-    contracts = fields.get("contracts", {}) if isinstance(fields.get("contracts"), dict) else {}
+    contracts = (
+        fields.get("contracts", {}) if isinstance(fields.get("contracts"), dict) else {}
+    )
 
     topics_raw = fields.get("topics", [])
     if isinstance(topics_raw, str):
@@ -283,7 +303,9 @@ def load_skill_record(path: Path) -> dict[str, Any]:
 
     hints_raw = fields.get("routing_hints", [])
     if isinstance(hints_raw, str):
-        routing_hints = [h.strip() for h in hints_raw.strip("[]").split(",") if h.strip()]
+        routing_hints = [
+            h.strip() for h in hints_raw.strip("[]").split(",") if h.strip()
+        ]
     elif isinstance(hints_raw, list):
         routing_hints = [str(h) for h in hints_raw]
     else:
@@ -316,19 +338,21 @@ def load_agent_record(path: Path) -> dict[str, Any]:
     name = str(fields.get("name", agent_id))
     desc = str(fields.get("description", ""))
     model_tier = str(fields.get("model_tier", "standard"))
-    
+
     caps = fields.get("capabilities", [])
     capabilities = [str(c) for c in caps] if isinstance(caps, list) else []
-    
+
     tools = fields.get("allowed_tools", [])
     allowed_tools = [str(t) for t in tools] if isinstance(tools, list) else []
-    
+
     targets = fields.get("delegation_targets", [])
     delegation_targets = [str(t) for t in targets] if isinstance(targets, list) else []
-    
+
     modes = fields.get("isolation_modes", [])
-    isolation_modes = [str(m) for m in modes] if isinstance(modes, list) else ["mutate", "read-only"]
-    
+    isolation_modes = (
+        [str(m) for m in modes] if isinstance(modes, list) else ["mutate", "read-only"]
+    )
+
     return {
         "agent_id": agent_id,
         "name": name,
@@ -341,4 +365,3 @@ def load_agent_record(path: Path) -> dict[str, Any]:
         "isolation_modes": isolation_modes,
         "body": body,
     }
-

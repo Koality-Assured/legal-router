@@ -10,13 +10,12 @@ from __future__ import annotations
 
 import io
 import json
-import os
 import sys
 import tempfile
 import threading
 import unittest
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 _SCRIPTS = Path(__file__).resolve().parents[1]
 _CLI = _SCRIPTS / "cli"
@@ -25,13 +24,13 @@ for _p in (str(_CLI), str(_SCRIPTS), str(_LIB)):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from cli.registry import (  # noqa: E402
+from cli.registry import (
     HarnessRegistry,
     infer_harness_domain,
     inspect_harness,
     slugify_id,
 )
-from cli.schema_adapter import (  # noqa: E402
+from cli.schema_adapter import (
     load_dynamic_agents,
     load_dynamic_areas,
     resolve_harness_root,
@@ -60,7 +59,9 @@ class TestHarnessRegistryCore(unittest.TestCase):
         repo_dir.mkdir()
         (repo_dir / ".git").mkdir()
 
-        rec = self.registry.register(repo_dir, name="My Test Repo", domain="Test Domain")
+        rec = self.registry.register(
+            repo_dir, name="My Test Repo", domain="Test Domain"
+        )
         self.assertEqual(rec["id"], "my-test-repo")
         self.assertEqual(rec["name"], "My Test Repo")
         self.assertEqual(rec["domain"], "Test Domain")
@@ -104,7 +105,10 @@ class TestHarnessRegistryCore(unittest.TestCase):
 
         with self.assertRaises(ValueError) as ctx:
             self.registry.register(plain_dir)
-        self.assertIn("does not appear to be a git repository or domain harness", str(ctx.exception))
+        self.assertIn(
+            "does not appear to be a git repository or domain harness",
+            str(ctx.exception),
+        )
 
         # With force=True, registration succeeds
         rec = self.registry.register(plain_dir, force=True)
@@ -205,10 +209,12 @@ class TestHarnessRegistryCore(unittest.TestCase):
                 (p / ".git").mkdir(exist_ok=True)
                 self.registry.register(p, name=f"Worker {idx}")
                 self.registry.switch(f"worker-{idx}")
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001
                 errors.append(e)
 
-        threads = [threading.Thread(target=worker, args=(i,)) for i in range(num_threads)]
+        threads = [
+            threading.Thread(target=worker, args=(i,)) for i in range(num_threads)
+        ]
         for t in threads:
             t.start()
         for t in threads:
@@ -245,8 +251,12 @@ class TestSiblingDiscoveryAndInspection(unittest.TestCase):
         r.mkdir()
         (r / ".git").mkdir()
 
-        import subprocess
-        with patch("subprocess.run", side_effect=subprocess.TimeoutExpired(cmd="git", timeout=3)):
+        import subprocess  # nosec B404
+
+        with patch(
+            "subprocess.run",
+            side_effect=subprocess.TimeoutExpired(cmd="git", timeout=3),
+        ):
             info = inspect_harness(r)
         self.assertEqual(info["branch"], "(timeout)")
         self.assertEqual(info["status"], "(timeout)")
@@ -255,7 +265,9 @@ class TestSiblingDiscoveryAndInspection(unittest.TestCase):
         # Known domains
         ai_dir = self.base_dir / "ai-router"
         ai_dir.mkdir()
-        self.assertEqual(infer_harness_domain(ai_dir), "General Orchestrator & AI Router")
+        self.assertEqual(
+            infer_harness_domain(ai_dir), "General Orchestrator & AI Router"
+        )
 
         # Inferred from config
         custom_dir = self.base_dir / "custom-harness"
@@ -269,8 +281,12 @@ class TestSiblingDiscoveryAndInspection(unittest.TestCase):
         # Inferred from AGENTS.md
         doc_dir = self.base_dir / "doc-harness"
         doc_dir.mkdir()
-        (doc_dir / "AGENTS.md").write_text("# Documentation Engine Guidelines\n", encoding="utf-8")
-        self.assertEqual(infer_harness_domain(doc_dir), "Documentation Engine Guidelines")
+        (doc_dir / "AGENTS.md").write_text(
+            "# Documentation Engine Guidelines\n", encoding="utf-8"
+        )
+        self.assertEqual(
+            infer_harness_domain(doc_dir), "Documentation Engine Guidelines"
+        )
 
     def test_scan_siblings_discovers_repositories(self) -> None:
         # Create sibling repos
@@ -279,7 +295,9 @@ class TestSiblingDiscoveryAndInspection(unittest.TestCase):
         r1.mkdir()
         (r1 / ".git").mkdir()
         (r1 / "routing").mkdir()
-        (r1 / "routing" / "areas.yaml").write_text("areas:\n  - id: canvas\n", encoding="utf-8")
+        (r1 / "routing" / "areas.yaml").write_text(
+            "areas:\n  - id: canvas\n", encoding="utf-8"
+        )
 
         # 2. Valid router repo (has .git and config/harness.config.json)
         r2 = self.base_dir / "legal-router"
@@ -299,7 +317,9 @@ class TestSiblingDiscoveryAndInspection(unittest.TestCase):
         r4.mkdir()
         (r4 / ".git").mkdir()
 
-        discovered = self.registry.scan_siblings(parent_dir=self.base_dir, auto_register=True)
+        discovered = self.registry.scan_siblings(
+            parent_dir=self.base_dir, auto_register=True
+        )
         self.assertEqual(len(discovered), 2)
         ids = {d["id"] for d in discovered}
         self.assertIn("art-router", ids)

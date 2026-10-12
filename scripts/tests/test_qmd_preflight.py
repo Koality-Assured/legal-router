@@ -15,9 +15,9 @@ from unittest.mock import patch
 _QMD = Path(__file__).resolve().parents[1] / "qmd"
 sys.path.insert(0, str(_QMD))
 
-import qmd_preflight  # noqa: E402
-import refresh_qmd_index  # noqa: E402
-import setup_qmd_collections  # noqa: E402
+import qmd_preflight
+import refresh_qmd_index
+import setup_qmd_collections
 
 
 class QmdPreflightTests(unittest.TestCase):
@@ -60,27 +60,38 @@ class QmdPreflightTests(unittest.TestCase):
             )
             colls = setup_qmd_collections.resolve_collections(tmp_root)
             self.assertEqual(len(colls), 1)
-            self.assertEqual(colls[0], ("custom-docs", "custom-docs", "Custom documentation area"))
+            self.assertEqual(
+                colls[0], ("custom-docs", "custom-docs", "Custom documentation area")
+            )
 
     def test_local_qmd_config_generation_uses_relative_paths(self) -> None:
-        colls = [("docs", "docs", "Decisions and standards"), ("routing", "routing", "Area maps")]
+        colls = [
+            ("docs", "docs", "Decisions and standards"),
+            ("routing", "routing", "Area maps"),
+        ]
         config = setup_qmd_collections.generate_local_qmd_config(colls)
         self.assertIn("docs", config["collections"])
         self.assertEqual(config["collections"]["docs"]["path"], "docs")
         self.assertEqual(config["collections"]["docs"]["ignore"], ["**/README.md"])
-        self.assertEqual(config["collections"]["docs"]["context"][""], "Decisions and standards")
+        self.assertEqual(
+            config["collections"]["docs"]["context"][""], "Decisions and standards"
+        )
 
     def test_index_observations_only_stat_existing_file(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             present = Path(tmp) / "index.sqlite"
             present.write_bytes(b"sqlite placeholder")
-            observations = qmd_preflight.index_observations([present, Path(tmp) / "missing.sqlite"])
+            observations = qmd_preflight.index_observations(
+                [present, Path(tmp) / "missing.sqlite"]
+            )
         self.assertTrue(observations[0]["exists"])
         self.assertEqual(observations[0]["bytes"], 18)
         self.assertFalse(observations[1]["exists"])
 
     def test_classification_distinguishes_reuse_inaccessible_and_missing(self) -> None:
-        indexes = [{"path": "index.sqlite", "exists": True, "bytes": 1, "readable": True}]
+        indexes = [
+            {"path": "index.sqlite", "exists": True, "bytes": 1, "readable": True}
+        ]
         self.assertEqual(
             qmd_preflight.classify(indexes=indexes, qmd="qmd", probe={"ok": True}),
             "healthy_reusable",
@@ -89,33 +100,47 @@ class QmdPreflightTests(unittest.TestCase):
             qmd_preflight.classify(
                 indexes=indexes,
                 qmd="qmd",
-                probe={"ok": False, "diagnostic_tail": "SqliteError: unable to open database file"},
+                probe={
+                    "ok": False,
+                    "diagnostic_tail": "SqliteError: unable to open database file",
+                },
             ),
             "inaccessible_sandbox_or_permissions",
         )
-        self.assertEqual(qmd_preflight.classify(indexes=[], qmd="qmd", probe=None), "missing")
+        self.assertEqual(
+            qmd_preflight.classify(indexes=[], qmd="qmd", probe=None), "missing"
+        )
 
     def test_hook_inspection_reports_lines_not_values(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             config = Path(tmp) / "index.yml"
-            config.write_text("collections: {}\nhooks:\n  after: redact-me\n", encoding="utf-8")
+            config.write_text(
+                "collections: {}\nhooks:\n  after: redact-me\n", encoding="utf-8"
+            )
             result = qmd_preflight.inspect_qmd_hooks([config])
         self.assertEqual(result["potential_hooks"], [str(config)])
         self.assertEqual(result["config"][0]["hook_lines"], [2])
         self.assertNotIn("redact-me", str(result))
 
     def test_config_access_error_is_not_treated_as_reusable(self) -> None:
-        indexes = [{"path": "index.sqlite", "exists": True, "bytes": 1, "readable": True}]
+        indexes = [
+            {"path": "index.sqlite", "exists": True, "bytes": 1, "readable": True}
+        ]
         self.assertEqual(
-            qmd_preflight.classify(indexes=indexes, qmd="qmd", probe=None, config_errors=True),
+            qmd_preflight.classify(
+                indexes=indexes, qmd="qmd", probe=None, config_errors=True
+            ),
             "inaccessible_sandbox_or_permissions",
         )
 
     def test_default_report_never_probes_or_mutates(self) -> None:
-        with patch.object(qmd_preflight, "resolve_qmd", return_value="qmd") as resolver, patch.object(
-            qmd_preflight, "probe_status"
-        ) as probe:
-            report = qmd_preflight.build_report(probe_cli=False, inspect_hooks=False, timeout=1)
+        with (
+            patch.object(qmd_preflight, "resolve_qmd", return_value="qmd") as resolver,
+            patch.object(qmd_preflight, "probe_status") as probe,
+        ):
+            report = qmd_preflight.build_report(
+                probe_cli=False, inspect_hooks=False, timeout=1
+            )
         resolver.assert_called_once()
         probe.assert_not_called()
         self.assertEqual(report["mutating_commands_run"], [])
@@ -133,9 +158,10 @@ class QmdPreflightTests(unittest.TestCase):
         resolve.assert_not_called()
 
     def test_refresh_dry_run_never_calls_update_or_embed(self) -> None:
-        with patch.object(refresh_qmd_index, "resolve_qmd", return_value="qmd"), patch.object(
-            refresh_qmd_index, "run"
-        ) as run:
+        with (
+            patch.object(refresh_qmd_index, "resolve_qmd", return_value="qmd"),
+            patch.object(refresh_qmd_index, "run") as run,
+        ):
             rc = refresh_qmd_index.main(["--dry-run"])
         self.assertEqual(rc, 0)
         self.assertEqual(run.call_count, 2)

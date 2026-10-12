@@ -12,13 +12,13 @@ from __future__ import annotations
 
 import argparse
 import shutil
-import subprocess
+import subprocess  # nosec B404
 import sys
 from pathlib import Path
 
 _LIB = Path(__file__).resolve().parents[1] / "_lib"
 sys.path.insert(0, str(_LIB))
-from paths import REPO_ROOT as ROOT  # noqa: E402
+from paths import REPO_ROOT as ROOT
 
 CLI2_PACKAGE = "markdownlint-cli2@0.23.2"
 DEFAULT_CONFIG_NAME = ".markdownlint-cli2.jsonc"
@@ -66,7 +66,7 @@ def build_command(
 def format_command(cmd: list[str]) -> str:
     parts: list[str] = []
     for part in cmd:
-        if any(c in part for c in (' ', '*', '#', '?')):
+        if any(c in part for c in (" ", "*", "#", "?")):
             parts.append(f'"{part}"')
         else:
             parts.append(part)
@@ -134,7 +134,9 @@ def main(argv: list[str] | None = None) -> int:
     node = resolve_node()
     npx = resolve_npx()
     npx_for_cmd = npx or "npx"
-    cmd = build_command(npx=npx_for_cmd, globs=globs, fix=args.fix, config_path=config_path)
+    cmd = build_command(
+        npx=npx_for_cmd, globs=globs, fix=args.fix, config_path=config_path
+    )
 
     if args.dry_run:
         print("cwd:", ROOT.as_posix())
@@ -147,7 +149,9 @@ def main(argv: list[str] | None = None) -> int:
             print("config: (none — file not present)")
         print("command:", format_command(cmd))
         if node is None or npx is None:
-            missing = [name for name, found in (("node", node), ("npx", npx)) if found is None]
+            missing = [
+                name for name, found in (("node", node), ("npx", npx)) if found is None
+            ]
             print(
                 f"note: missing {' and '.join(missing)} on PATH "
                 "(would fail if not --dry-run)",
@@ -156,7 +160,9 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     if node is None or npx is None:
-        missing = [name for name, found in (("node", node), ("npx", npx)) if found is None]
+        missing = [
+            name for name, found in (("node", node), ("npx", npx)) if found is None
+        ]
         print(
             f"error: missing {' and '.join(missing)} on PATH; "
             "install Node.js (includes npx) to run markdownlint-cli2",
@@ -166,7 +172,7 @@ def main(argv: list[str] | None = None) -> int:
 
     print("+", format_command(cmd))
     try:
-        completed = subprocess.run(cmd, cwd=ROOT, check=False)
+        completed = subprocess.run(cmd, cwd=ROOT, check=False)  # nosec B603
     except OSError as exc:
         print(f"error: failed to run npx/markdownlint-cli2: {exc}", file=sys.stderr)
         return 2

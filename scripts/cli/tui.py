@@ -12,7 +12,6 @@ from __future__ import annotations
 import os
 import shutil
 import sys
-from pathlib import Path
 from typing import Any
 
 from cli.registry import HarnessRegistry, get_registry
@@ -52,7 +51,9 @@ class TerminalUI:
         return f"\033[2m{text}\033[0m" if self.use_color else text
 
 
-def format_harnesses_table(harnesses: list[dict[str, Any]], ui: TerminalUI | None = None) -> str:
+def format_harnesses_table(
+    harnesses: list[dict[str, Any]], ui: TerminalUI | None = None
+) -> str:
     """Render a formatted ASCII/ANSI table of registered domain harnesses."""
     ui = ui or TerminalUI()
     lines: list[str] = []
@@ -61,7 +62,11 @@ def format_harnesses_table(harnesses: list[dict[str, Any]], ui: TerminalUI | Non
     lines.append(ui.bold(header))
 
     if not harnesses:
-        lines.append(ui.yellow("\n  (No harnesses registered yet. Run 'harness scan' or 'harness register <path>').\n"))
+        lines.append(
+            ui.yellow(
+                "\n  (No harnesses registered yet. Run 'harness scan' or 'harness register <path>').\n"
+            )
+        )
         return "\n".join(lines)
 
     # Columns: Index | Active | ID / Name | Branch | Status | Worktrees | Domain | Path
@@ -71,7 +76,9 @@ def format_harnesses_table(harnesses: list[dict[str, Any]], ui: TerminalUI | Non
         f"{'Status':<8} {'WkTrs':<7} {'Domain'}"
     )
     lines.append(ui.bold(hdr_line))
-    lines.append("  " + "-" * (min(100, shutil.get_terminal_size((100, 20)).columns - 4)))
+    lines.append(
+        "  " + "-" * (min(100, shutil.get_terminal_size((100, 20)).columns - 4))
+    )
 
     for idx, h in enumerate(harnesses, start=1):
         is_active = h.get("is_active", False)
@@ -170,7 +177,9 @@ def run_switcher_tui(registry: HarnessRegistry | None = None) -> int:
                 selected = harnesses[val - 1]
                 target_id = selected["id"]
                 reg.switch(target_id)
-                print(f"\n{ui.green('✓')} Active harness switched to: {ui.bold(target_id)} ({selected.get('path')})")
+                print(
+                    f"\n{ui.green('✓')} Active harness switched to: {ui.bold(target_id)} ({selected.get('path')})"
+                )
                 try:
                     input("\nPress Enter to return to menu (or 'q' to exit)...")
                 except (EOFError, KeyboardInterrupt):

@@ -16,15 +16,15 @@ from pathlib import Path
 _LIB = Path(__file__).resolve().parents[1] / "_lib"
 sys.path.insert(0, str(_LIB))
 
-from github_paths import (  # noqa: E402
+from github_paths import (
     GithubPathError,
     github_https_url,
     parse_github_origin,
     rewrite_repo_hrefs,
     validate_ref,
 )
-from md_to_html import format_inline  # noqa: E402
-from safe_href import is_safe_href, neutralize_href  # noqa: E402
+from md_to_html import format_inline
+from safe_href import is_safe_href, neutralize_href
 
 
 class SafeHrefTests(unittest.TestCase):
@@ -89,13 +89,21 @@ class GithubPathsTests(unittest.TestCase):
 
     def test_rewrite_neutralizes_and_skips_code(self) -> None:
         root = Path(__file__).resolve().parents[2]
-        from_file = root / "results" / "reports" / "executive" / "t" / "2026-08-21" / "index.html"
+        from_file = (
+            root
+            / "results"
+            / "reports"
+            / "executive"
+            / "t"
+            / "2026-08-21"
+            / "index.html"
+        )
         html = (
             '<a href="javascript:alert(1)">bad</a>'
             '<a href="//evil.example/x">proto</a>'
             '<pre><a href="../escape.md">in pre</a></pre>'
             '<a href="https://cdn.example/x.css">cdn</a>'
-            '<code>[link](../x.md)</code>'
+            "<code>[link](../x.md)</code>"
         )
         out = rewrite_repo_hrefs(
             html,
@@ -105,7 +113,7 @@ class GithubPathsTests(unittest.TestCase):
         )
         self.assertIn('href="#"', out)
         self.assertIn("cdn.example", out)
-        self.assertIn("<pre><a href=\"../escape.md\">in pre</a></pre>", out)
+        self.assertIn('<pre><a href="../escape.md">in pre</a></pre>', out)
         self.assertIn("<code>[link](../x.md)</code>", out)
 
     def test_rewrite_outside_becomes_hash(self) -> None:

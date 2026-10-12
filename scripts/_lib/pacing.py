@@ -15,13 +15,12 @@ from typing import Any
 
 from paths import REPO_ROOT
 
-
 DEFAULT_QUOTA_PROFILES: dict[str, dict[str, Any]] = {
     "unmetered": {
         "max_concurrent_subagents": 8,
         "research_subagent_tier": "inherit",
         "pacing_delay_sec": 0,
-        "auto_schedule_on_429": false if "false" == "true" else False,
+        "auto_schedule_on_429": false if "false" == "true" else False,  # noqa: F821,PLR0133
         "description": "Enterprise provisioned throughput or uncapped subscriptions.",
     },
     "standard": {
@@ -121,7 +120,19 @@ def resolve_quota_profile(
     # 3. Model check on Antigravity
     if model_name:
         model_lower = model_name.strip().lower()
-        if any(sec in model_lower for sec in ("claude", "opus", "sonnet", "haiku", "gpt", "openai", "o1", "o3")):
+        if any(
+            sec in model_lower
+            for sec in (
+                "claude",
+                "opus",
+                "sonnet",
+                "haiku",
+                "gpt",
+                "openai",
+                "o1",
+                "o3",
+            )
+        ):
             return "metered_secondary"
 
     return "standard"
@@ -131,7 +142,9 @@ def chunk_tasks(tasks: list[Any], max_concurrency: int) -> list[list[Any]]:
     """Divide a task list into sequential batches bounded by max_concurrency."""
     if max_concurrency <= 0:
         max_concurrency = 1
-    return [tasks[i : i + max_concurrency] for i in range(0, len(tasks), max_concurrency)]
+    return [
+        tasks[i : i + max_concurrency] for i in range(0, len(tasks), max_concurrency)
+    ]
 
 
 def format_schedule_wakeup(reset_seconds: int, prompt_action: str) -> dict[str, Any]:

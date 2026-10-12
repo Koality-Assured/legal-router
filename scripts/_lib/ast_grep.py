@@ -5,14 +5,13 @@ from __future__ import annotations
 import json
 import os
 import shutil
-import subprocess
+import subprocess  # nosec B404
 import sys
 from pathlib import Path
 
 DEFAULT_TIMEOUT_SEC = 60
 INSTALL_HINT = (
-    "install with: python -m pip install ast-grep-cli "
-    'or npm install -g @ast-grep/cli'
+    "install with: python -m pip install ast-grep-cli or npm install -g @ast-grep/cli"
 )
 
 
@@ -77,7 +76,7 @@ def run_ast_grep(
     exe = binary or find_ast_grep()
     cmd = [str(exe), *args]
     try:
-        proc = subprocess.run(
+        proc = subprocess.run(  # noqa: PLW1510
             cmd,
             cwd=cwd,
             input=stdin,
@@ -86,10 +85,12 @@ def run_ast_grep(
             encoding="utf-8",
             errors="replace",
             timeout=timeout,
-            shell=False,
+            shell=False,  # nosec B603
         )
     except subprocess.TimeoutExpired as exc:
-        raise AstGrepError(f"ast-grep timed out after {timeout}s: {' '.join(cmd[:6])}") from exc
+        raise AstGrepError(
+            f"ast-grep timed out after {timeout}s: {' '.join(cmd[:6])}"
+        ) from exc
 
     stdout = (proc.stdout or "").strip()
     stderr = (proc.stderr or "").strip()
@@ -109,5 +110,7 @@ def run_ast_grep(
     except json.JSONDecodeError as exc:
         if proc.returncode != 0:
             detail = stderr[-800:] or stdout[-800:] or f"exit {proc.returncode}"
-            raise AstGrepError(f"ast-grep failed ({proc.returncode}): {detail}") from exc
+            raise AstGrepError(
+                f"ast-grep failed ({proc.returncode}): {detail}"
+            ) from exc
         raise AstGrepError(f"ast-grep JSON parse failed: {exc}") from exc

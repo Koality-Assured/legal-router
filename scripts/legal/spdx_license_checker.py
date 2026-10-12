@@ -11,7 +11,6 @@ evaluates compatibility matrices between licenses, and flags copyleft risks.
 from __future__ import annotations
 
 import argparse
-import itertools
 import json
 import re
 import sys
@@ -20,7 +19,6 @@ from typing import Any
 
 _LIB = Path(__file__).resolve().parents[1] / "_lib"
 sys.path.insert(0, str(_LIB))
-from paths import REPO_ROOT as ROOT  # noqa: E402
 
 ADVISORY_STAMP = "ADVISORY WORK PRODUCT - REQUIRES LICENSED ATTORNEY REVIEW"
 FIXTURE_DIR = Path(__file__).resolve().parent / "fixtures" / "sbom"
@@ -179,13 +177,18 @@ def advisory_envelope(payload: dict[str, Any]) -> dict[str, Any]:
 
 def tokenize_expression(expr: str) -> list[str]:
     """Extract individual license IDs from a compound SPDX license expression."""
-    return [tok for tok in ID_RE.findall(expr) if tok.upper() not in {"AND", "OR", "WITH"}]
+    return [
+        tok for tok in ID_RE.findall(expr) if tok.upper() not in {"AND", "OR", "WITH"}
+    ]
 
 
 def normalize_gnu(license_id: str) -> tuple[str, str | None]:
     """Normalize deprecated bare GNU identifiers to SPDX standard -only format."""
     if license_id in BARE_GNU:
-        return f"{license_id}-only", f"{license_id} is deprecated; SPDX requires -only or -or-later"
+        return (
+            f"{license_id}-only",
+            f"{license_id} is deprecated; SPDX requires -only or -or-later",
+        )
     return license_id, None
 
 
@@ -210,11 +213,13 @@ def get_copyleft_category(license_id: str) -> str:
     """Return specific copyleft category: permissive, weak_copyleft, strong_copyleft, network_copyleft, proprietary, or unknown."""
     normalized, _ = normalize_gnu(license_id)
     lowered = normalized.lower()
-    if normalized in NETWORK_COPYLEFT_LICENSES or lowered.startswith("agpl-") or lowered.startswith("sspl-"):
+    if normalized in NETWORK_COPYLEFT_LICENSES or lowered.startswith(
+        ("agpl-", "sspl-")
+    ):
         return "network_copyleft"
     if normalized in STRONG_COPYLEFT_LICENSES or lowered.startswith("gpl-"):
         return "strong_copyleft"
-    if normalized in WEAK_COPYLEFT_LICENSES or lowered.startswith("lgpl-") or lowered.startswith("mpl-"):
+    if normalized in WEAK_COPYLEFT_LICENSES or lowered.startswith(("lgpl-", "mpl-")):
         return "weak_copyleft"
     if normalized in PERMISSIVE_LICENSES:
         return "permissive"
@@ -270,9 +275,15 @@ def evaluate_compatibility(license_ids: list[str]) -> dict[str, Any]:
                 highest_severity = "high"
 
     # 2. Check general category incompatibilities (Proprietary + Copyleft)
-    has_proprietary = any(get_copyleft_category(lid) == "proprietary" for lid in distinct_ids)
-    strong_copyleft_items = [lid for lid in distinct_ids if get_copyleft_category(lid) == "strong_copyleft"]
-    network_copyleft_items = [lid for lid in distinct_ids if get_copyleft_category(lid) == "network_copyleft"]
+    has_proprietary = any(
+        get_copyleft_category(lid) == "proprietary" for lid in distinct_ids
+    )
+    strong_copyleft_items = [
+        lid for lid in distinct_ids if get_copyleft_category(lid) == "strong_copyleft"
+    ]
+    network_copyleft_items = [
+        lid for lid in distinct_ids if get_copyleft_category(lid) == "network_copyleft"
+    ]
 
     if has_proprietary and network_copyleft_items:
         conflicts.append(
@@ -313,13 +324,21 @@ def evaluate_compatibility(license_ids: list[str]) -> dict[str, Any]:
 
     recommendations: list[str] = []
     if highest_severity == "critical":
-        recommendations.append("Immediate legal escalation required: severe license conflict or viral copyleft risk.")
+        recommendations.append(
+            "Immediate legal escalation required: severe license conflict or viral copyleft risk."
+        )
     elif highest_severity == "high":
-        recommendations.append("Legal review required: incompatible license combination in distributed components.")
+        recommendations.append(
+            "Legal review required: incompatible license combination in distributed components."
+        )
     elif copyleft_summary["weak_copyleft_count"] > 0:
-        recommendations.append("Ensure weak copyleft components (e.g. LGPL) are dynamically linked to avoid derivative work claims.")
+        recommendations.append(
+            "Ensure weak copyleft components (e.g. LGPL) are dynamically linked to avoid derivative work claims."
+        )
     else:
-        recommendations.append("No copyleft conflicts detected; standard attribution notices required.")
+        recommendations.append(
+            "No copyleft conflicts detected; standard attribution notices required."
+        )
 
     return {
         "compatible": len(conflicts) == 0,
@@ -344,7 +363,12 @@ def validate_license_list(
             expr = dep
         elif isinstance(dep, dict):
             pkg_name = dep.get("name") or dep.get("package") or "unnamed"
-            expr = dep.get("license") or dep.get("licenseDeclared") or dep.get("id") or "UNKNOWN"
+            expr = (
+                dep.get("license")
+                or dep.get("licenseDeclared")
+                or dep.get("id")
+                or "UNKNOWN"
+            )
         else:
             continue
 
@@ -479,8 +503,10 @@ def analyze_expression(expr: str, *, package: str | None = None) -> dict[str, An
         flags.append("contains_strong_copyleft")
     if any(item.lower().startswith("agpl-") for item in normalized_ids):
         flags.append("network_copyleft_agpl")
-    if re.search(r"\bAND\b", expr, re.I) and "strong_copyleft" in families and (
-        "permissive" in families or "proprietary" in families
+    if (
+        re.search(r"\bAND\b", expr, re.IGNORECASE)
+        and "strong_copyleft" in families
+        and ("permissive" in families or "proprietary" in families)
     ):
         flags.append("and_combines_copyleft_with_other")
     if "proprietary" in families and "strong_copyleft" in families:
@@ -504,7 +530,11 @@ def _spdx_packages(data: dict[str, Any]) -> list[tuple[str, str]]:
     found: list[tuple[str, str]] = []
     for pkg in data.get("packages") or []:
         name = pkg.get("name") or pkg.get("SPDXID") or "unknown"
-        expr = pkg.get("licenseDeclared") or pkg.get("licenseConcluded") or pkg.get("license")
+        expr = (
+            pkg.get("licenseDeclared")
+            or pkg.get("licenseConcluded")
+            or pkg.get("license")
+        )
         if expr:
             found.append((str(name), str(expr)))
     for pkg in data.get("packages") or []:
@@ -526,7 +556,11 @@ def _cyclonedx_components(data: dict[str, Any]) -> list[tuple[str, str]]:
         for entry in licenses:
             license_obj = entry.get("license") if isinstance(entry, dict) else None
             if isinstance(license_obj, dict):
-                expr = license_obj.get("id") or license_obj.get("name") or license_obj.get("expression")
+                expr = (
+                    license_obj.get("id")
+                    or license_obj.get("name")
+                    or license_obj.get("expression")
+                )
             elif isinstance(entry, dict):
                 expr = entry.get("expression")
             else:
@@ -538,7 +572,11 @@ def _cyclonedx_components(data: dict[str, Any]) -> list[tuple[str, str]]:
 
 def scan_document(data: dict[str, Any], *, source: str) -> dict[str, Any]:
     """Scan parsed SBOM JSON document (SPDX or CycloneDX) for licensing heuristics."""
-    if data.get("bomFormat") == "CycloneDX" or "components" in data and "packages" not in data:
+    if (
+        data.get("bomFormat") == "CycloneDX"
+        or "components" in data
+        and "packages" not in data
+    ):
         pairs = _cyclonedx_components(data)
         fmt = "cyclonedx"
     else:
@@ -567,7 +605,7 @@ def scan_path(path: Path) -> dict[str, Any]:
     """Load and scan an SBOM file from disk."""
     data = json.loads(path.read_text(encoding="utf-8-sig"))
     if not isinstance(data, dict):
-        raise ValueError(f"{path} is not a JSON object")
+        raise ValueError(f"{path} is not a JSON object")  # noqa: TRY004
     return scan_document(data, source=path.as_posix())
 
 
@@ -618,7 +656,10 @@ def main(argv: list[str] | None = None) -> int:
             else:
                 deps = json.loads(args.dependencies)
             if not isinstance(deps, list):
-                print("error: dependencies must be a JSON array of strings or objects", file=sys.stderr)
+                print(
+                    "error: dependencies must be a JSON array of strings or objects",
+                    file=sys.stderr,
+                )
                 return 2
             report = validate_license_list(deps)
         elif args.dry_run and not args.sbom:
@@ -632,7 +673,10 @@ def main(argv: list[str] | None = None) -> int:
         elif args.sbom:
             report = scan_path(args.sbom)
         else:
-            print("error: pass --sbom, --expression, --dependencies, or --dry-run", file=sys.stderr)
+            print(
+                "error: pass --sbom, --expression, --dependencies, or --dry-run",
+                file=sys.stderr,
+            )
             return 2
     except (FileNotFoundError, PermissionError, json.JSONDecodeError) as exc:
         print(f"error: {exc}", file=sys.stderr)

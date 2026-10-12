@@ -36,7 +36,7 @@ def is_safe_href(href: str) -> bool:
     if h.startswith("/"):
         return False
     # Other URI schemes (ftp:, etc.)
-    if re.match(r"^[a-z][a-z0-9+.-]*:", lower):
+    if re.match(r"^[a-z][a-z0-9+.-]*:", lower):  # noqa: SIM103
         return False
     # Relative: ./ ../ or bare path
     return True

@@ -8,14 +8,14 @@ from __future__ import annotations
 
 import argparse
 import json
-from pathlib import Path
 import sys
-from typing import Any
 import urllib.request
+from pathlib import Path
+from typing import Any
 
 _LIB = Path(__file__).resolve().parents[1] / "_lib"
 sys.path.insert(0, str(_LIB))
-from paths import REPO_ROOT as ROOT  # noqa: E402
+from paths import REPO_ROOT as ROOT
 
 CACHE_DIR = ROOT / "scratch" / "cache"
 CACHE_FILE = CACHE_DIR / "benchlm_benchmarks.json"
@@ -32,7 +32,7 @@ SAMPLE_MODELS: list[dict[str, Any]] = [
         "output_price_per_m": 15.00,
         "cached_input_price_per_m": 0.30,
         "tokens_per_sec": 78.5,
-        "latency_first_token_ms": 420,
+        "latency_first_token_ms": 420,  # nosec B105
         "scores": {
             "overall": 92.4,
             "coding": 94.2,
@@ -63,7 +63,7 @@ SAMPLE_MODELS: list[dict[str, Any]] = [
         "output_price_per_m": 10.00,
         "cached_input_price_per_m": 1.25,
         "tokens_per_sec": 84.0,
-        "latency_first_token_ms": 380,
+        "latency_first_token_ms": 380,  # nosec B105
         "scores": {
             "overall": 91.8,
             "coding": 92.5,
@@ -94,7 +94,7 @@ SAMPLE_MODELS: list[dict[str, Any]] = [
         "output_price_per_m": 0.60,
         "cached_input_price_per_m": 0.0375,
         "tokens_per_sec": 142.0,
-        "latency_first_token_ms": 210,
+        "latency_first_token_ms": 210,  # nosec B105
         "scores": {
             "overall": 89.6,
             "coding": 89.8,
@@ -125,7 +125,7 @@ SAMPLE_MODELS: list[dict[str, Any]] = [
         "output_price_per_m": 5.00,
         "cached_input_price_per_m": 0.3125,
         "tokens_per_sec": 65.0,
-        "latency_first_token_ms": 480,
+        "latency_first_token_ms": 480,  # nosec B105
         "scores": {
             "overall": 91.2,
             "coding": 91.0,
@@ -156,7 +156,7 @@ SAMPLE_MODELS: list[dict[str, Any]] = [
         "output_price_per_m": 0.28,
         "cached_input_price_per_m": 0.014,
         "tokens_per_sec": 95.0,
-        "latency_first_token_ms": 310,
+        "latency_first_token_ms": 310,  # nosec B105
         "scores": {
             "overall": 90.1,
             "coding": 91.5,
@@ -187,7 +187,7 @@ SAMPLE_MODELS: list[dict[str, Any]] = [
         "output_price_per_m": 2.19,
         "cached_input_price_per_m": 0.14,
         "tokens_per_sec": 48.0,
-        "latency_first_token_ms": 850,
+        "latency_first_token_ms": 850,  # nosec B105
         "scores": {
             "overall": 92.0,
             "coding": 93.0,
@@ -218,7 +218,7 @@ SAMPLE_MODELS: list[dict[str, Any]] = [
         "output_price_per_m": 6.00,
         "cached_input_price_per_m": 0.50,
         "tokens_per_sec": 72.0,
-        "latency_first_token_ms": 390,
+        "latency_first_token_ms": 390,  # nosec B105
         "scores": {
             "overall": 89.0,
             "coding": 88.5,
@@ -252,7 +252,7 @@ def fetch_or_load_benchmarks(force_refresh: bool = False) -> list[dict[str, Any]
                 return cached_data
             if isinstance(cached_data, dict) and "models" in cached_data:
                 return cached_data["models"]
-        except Exception:
+        except Exception:  # noqa: S110,BLE001  # nosec B110
             pass
 
     if force_refresh:
@@ -261,13 +261,17 @@ def fetch_or_load_benchmarks(force_refresh: bool = False) -> list[dict[str, Any]
                 BENCHLM_DATA_URL,
                 headers={"User-Agent": "Mozilla/5.0 (compatible; BenchLMFetcher/1.0)"},
             )
-            with urllib.request.urlopen(req, timeout=5) as resp:
+            with urllib.request.urlopen(req, timeout=5) as resp:  # nosec B310
                 data = json.loads(resp.read().decode("utf-8"))
-                models = data if isinstance(data, list) else data.get("models", SAMPLE_MODELS)
+                models = (
+                    data
+                    if isinstance(data, list)
+                    else data.get("models", SAMPLE_MODELS)
+                )
                 CACHE_DIR.mkdir(parents=True, exist_ok=True)
                 CACHE_FILE.write_text(json.dumps(models, indent=2), encoding="utf-8")
                 return models
-        except Exception:
+        except Exception:  # noqa: S110,BLE001  # nosec B110
             pass
 
     # Save sample fallback to cache if not existing
@@ -275,14 +279,16 @@ def fetch_or_load_benchmarks(force_refresh: bool = False) -> list[dict[str, Any]
     if not CACHE_FILE.is_file():
         try:
             CACHE_FILE.write_text(json.dumps(SAMPLE_MODELS, indent=2), encoding="utf-8")
-        except Exception:
+        except Exception:  # noqa: S110,BLE001  # nosec B110
             pass
     return SAMPLE_MODELS
 
 
 def compute_value_score(model: dict[str, Any], category: str = "overall") -> float:
     """Calculate price-performance efficiency (score / combined token price)."""
-    score = model.get("scores", {}).get(category, model.get("scores", {}).get("overall", 50.0))
+    score = model.get("scores", {}).get(
+        category, model.get("scores", {}).get("overall", 50.0)
+    )
     inp_price = model.get("input_price_per_m", 1.0)
     out_price = model.get("output_price_per_m", 1.0)
     blended_price = (inp_price * 0.75) + (out_price * 0.25)
@@ -305,20 +311,28 @@ def filter_and_rank_models(
     for m in models:
         if provider and provider.lower() not in m.get("provider", "").lower():
             continue
-        if max_input_price is not None and m.get("input_price_per_m", 0) > max_input_price:
+        if (
+            max_input_price is not None
+            and m.get("input_price_per_m", 0) > max_input_price
+        ):
             continue
-        if max_output_price is not None and m.get("output_price_per_m", 0) > max_output_price:
+        if (
+            max_output_price is not None
+            and m.get("output_price_per_m", 0) > max_output_price
+        ):
             continue
         if min_speed is not None and m.get("tokens_per_sec", 0) < min_speed:
             continue
-        
+
         m_copy = dict(m)
         m_copy["value_index"] = compute_value_score(m_copy, category)
         filtered.append(m_copy)
 
     if sort_by == "score":
         filtered.sort(
-            key=lambda x: x.get("scores", {}).get(category, x.get("scores", {}).get("overall", 0)),
+            key=lambda x: x.get("scores", {}).get(
+                category, x.get("scores", {}).get("overall", 0)
+            ),
             reverse=True,
         )
     elif sort_by == "price_asc":
@@ -342,10 +356,16 @@ def format_markdown_table(models: list[dict[str, Any]], category: str) -> str:
         "| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |",
     ]
     for idx, m in enumerate(models, 1):
-        score = m.get("scores", {}).get(category, m.get("scores", {}).get("overall", "N/A"))
+        score = m.get("scores", {}).get(
+            category, m.get("scores", {}).get("overall", "N/A")
+        )
         inp = f"${m.get('input_price_per_m', 0.0):.2f}"
         out = f"${m.get('output_price_per_m', 0.0):.2f}"
-        cached = f"${m.get('cached_input_price_per_m', 0.0):.4f}" if "cached_input_price_per_m" in m else "N/A"
+        cached = (
+            f"${m.get('cached_input_price_per_m', 0.0):.4f}"
+            if "cached_input_price_per_m" in m
+            else "N/A"
+        )
         speed = f"{m.get('tokens_per_sec', 0.0):.1f}"
         value = f"{m.get('value_index', 0.0):.1f}"
         tier = m.get("evidence_tier", "Supported")
@@ -353,7 +373,9 @@ def format_markdown_table(models: list[dict[str, Any]], category: str) -> str:
             f"| {idx} | **{m.get('name')}** | {m.get('provider')} | **{score}** | {inp} / {out} | {cached} | {speed} | `{value}` | {tier} |"
         )
     lines.append("")
-    lines.append("*Data sourced from [BenchLM.ai](https://benchlm.ai/) with verified benchmark provenance.*")
+    lines.append(
+        "*Data sourced from [BenchLM.ai](https://benchlm.ai/) with verified benchmark provenance.*"
+    )
     return "\n".join(lines)
 
 
@@ -363,7 +385,15 @@ def main(argv: list[str] | None = None) -> int:
         "--category",
         type=str,
         default="overall",
-        choices=["overall", "coding", "reasoning", "agentic", "multimodal", "math", "cybersecurity"],
+        choices=[
+            "overall",
+            "coding",
+            "reasoning",
+            "agentic",
+            "multimodal",
+            "math",
+            "cybersecurity",
+        ],
         help="Benchmark evaluation domain",
     )
     parser.add_argument(

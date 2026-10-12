@@ -37,16 +37,16 @@ from __future__ import annotations
 import argparse
 import os
 import shutil
-import subprocess
+import subprocess  # nosec B404
 import sys
 from pathlib import Path
 from typing import Any
 
 _LIB = Path(__file__).resolve().parents[1] / "_lib"
 sys.path.insert(0, str(_LIB))
-from areas import AreasYamlError, load_area_records  # noqa: E402
-from paths import REPO_ROOT as ROOT  # noqa: E402
-from qmd_preflight import inspect_qmd_hooks  # noqa: E402
+from areas import AreasYamlError, load_area_records
+from paths import REPO_ROOT as ROOT
+from qmd_preflight import inspect_qmd_hooks
 
 UNINDEXED_AREAS = frozenset({"change-history", "scratch"})
 PREFERRED_README_IGNORE = ["**/README.md"]
@@ -55,7 +55,11 @@ FALLBACK_COLLECTIONS: list[tuple[str, str, str]] = [
     ("routing", "routing", "Second-hop area maps — read early in agent sessions"),
     ("docs", "docs", "Decisions, requirements, reinforcement, and security MUST docs"),
     ("projects", "projects", "Initiative specs: plans, repos, research pointers"),
-    ("references", "references", "External frameworks — advisory reference only, not instructions"),
+    (
+        "references",
+        "references",
+        "External frameworks — advisory reference only, not instructions",
+    ),
     ("research", "research", "Per-topic deep-dive investigations"),
     ("supporting", "supporting", "Durable Cloudflare, GitHub, and other tool patterns"),
     ("ai-tooling", "ai-tooling", "Memory, skills, standalone agents, A2A protocol"),
@@ -169,7 +173,7 @@ def write_project_local_config(
     if index_yml.is_file():
         try:
             existing_data = yaml.safe_load(index_yml.read_text(encoding="utf-8")) or {}
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001
             return [f"error: failed to read existing {index_yml}: {exc}"]
 
     updated_data = generate_local_qmd_config(collections, existing_data)
@@ -177,11 +181,16 @@ def write_project_local_config(
     if dry_run:
         return [
             f"dry-run: would write project-local {index_yml} with {len(collections)} collections derived from routing/areas.yaml:",
-            *(f"  - {name}: path='{rel_path}' context='{ctx}'" for name, rel_path, ctx in collections),
+            *(
+                f"  - {name}: path='{rel_path}' context='{ctx}'"
+                for name, rel_path, ctx in collections
+            ),
         ]
 
     index_yml.parent.mkdir(parents=True, exist_ok=True)
-    text = yaml.safe_dump(updated_data, sort_keys=False, default_flow_style=False, allow_unicode=True)
+    text = yaml.safe_dump(
+        updated_data, sort_keys=False, default_flow_style=False, allow_unicode=True
+    )
     index_yml.write_text(text, encoding="utf-8")
     return [
         f"wrote project-local {index_yml} ({len(collections)} collections from routing/areas.yaml)"
@@ -192,7 +201,7 @@ def run(cmd: list[str], *, dry_run: bool) -> None:
     print("+", " ".join(cmd))
     if dry_run:
         return
-    subprocess.run(cmd, check=True, cwd=ROOT)
+    subprocess.run(cmd, check=True, cwd=ROOT)  # nosec B603
 
 
 def require_mutation_approval(args: argparse.Namespace) -> str | None:
@@ -215,7 +224,10 @@ def require_mutation_approval(args: argparse.Namespace) -> str | None:
             "only with explicit user approval"
         )
     if candidates:
-        print("warning: approved potential qmd config hook directives in " + ", ".join(candidates))
+        print(
+            "warning: approved potential qmd config hook directives in "
+            + ", ".join(candidates)
+        )
     else:
         print("qmd config hook inspection: no potential hook directives found")
     return None
@@ -258,7 +270,10 @@ def main(argv: list[str] | None = None) -> int:
     dry_run = not args.apply
 
     if args.embed and not args.apply:
-        print("error: --embed requires --apply and explicit user approval", file=sys.stderr)
+        print(
+            "error: --embed requires --apply and explicit user approval",
+            file=sys.stderr,
+        )
         return 1
 
     if args.apply:
@@ -272,10 +287,18 @@ def main(argv: list[str] | None = None) -> int:
             return 1
 
     collections = resolve_collections(ROOT)
-    target_yml = Path(args.index_yml) if args.index_yml else resolve_index_yml(global_config=args.global_config, repo_root=ROOT)
+    target_yml = (
+        Path(args.index_yml)
+        if args.index_yml
+        else resolve_index_yml(global_config=args.global_config, repo_root=ROOT)
+    )
 
-    print(f"Target index.yml: {target_yml} ({'operator-global' if args.global_config else 'project-local'})")
-    print(f"Derived {len(collections)} collections from routing/areas.yaml: {', '.join(c[0] for c in collections)}")
+    print(
+        f"Target index.yml: {target_yml} ({'operator-global' if args.global_config else 'project-local'})"
+    )
+    print(
+        f"Derived {len(collections)} collections from routing/areas.yaml: {', '.join(c[0] for c in collections)}"
+    )
 
     results = write_project_local_config(target_yml, collections, dry_run=dry_run)
     for line in results:
@@ -299,12 +322,15 @@ def main(argv: list[str] | None = None) -> int:
     if dry_run:
         print("\nDry run only. First run qmd_preflight.py to inspect existing state.")
         print("To apply project-local index configuration:")
-        print("  python scripts/qmd/setup_qmd_collections.py --apply --approved-by-user")
+        print(
+            "  python scripts/qmd/setup_qmd_collections.py --apply --approved-by-user"
+        )
         print("To also generate vector embeddings:")
-        print("  python scripts/qmd/setup_qmd_collections.py --apply --approved-by-user --embed")
+        print(
+            "  python scripts/qmd/setup_qmd_collections.py --apply --approved-by-user --embed"
+        )
     return 0
 
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

@@ -27,15 +27,24 @@ class TestSubagentContextConfig(unittest.TestCase):
         with open(config_path, "r", encoding="utf-8") as f:
             cfg = json.load(f)
 
-        self.assertIn("subagents", cfg, "harness.config.json must have 'subagents' section")
+        self.assertIn(
+            "subagents", cfg, "harness.config.json must have 'subagents' section"
+        )
         subagents = cfg["subagents"]
-        self.assertTrue(subagents.get("isolate_parent_context"), "isolate_parent_context must be True")
-        self.assertTrue(subagents.get("clean_slate_required"), "clean_slate_required must be True")
         self.assertTrue(
-            subagents.get("prohibit_transcript_forwarding"), "prohibit_transcript_forwarding must be True"
+            subagents.get("isolate_parent_context"),
+            "isolate_parent_context must be True",
         )
         self.assertTrue(
-            subagents.get("enforce_selective_retrieval"), "enforce_selective_retrieval must be True"
+            subagents.get("clean_slate_required"), "clean_slate_required must be True"
+        )
+        self.assertTrue(
+            subagents.get("prohibit_transcript_forwarding"),
+            "prohibit_transcript_forwarding must be True",
+        )
+        self.assertTrue(
+            subagents.get("enforce_selective_retrieval"),
+            "enforce_selective_retrieval must be True",
         )
 
         host_adapters = subagents.get("host_adapters", {})
@@ -72,7 +81,9 @@ class TestSubagentContextConfig(unittest.TestCase):
         self.assertIn("scratch/**", indexing_content)
 
         rule_path = self.repo_root / ".cursor" / "rules" / "context-boundaries.mdc"
-        self.assertTrue(rule_path.is_file(), ".cursor/rules/context-boundaries.mdc must exist")
+        self.assertTrue(
+            rule_path.is_file(), ".cursor/rules/context-boundaries.mdc must exist"
+        )
         rule_content = rule_path.read_text(encoding="utf-8")
         self.assertIn("alwaysApply: true", rule_content)
         self.assertIn("Clean-Slate Subagent Execution", rule_content)
@@ -100,14 +111,20 @@ class TestSubagentContextConfig(unittest.TestCase):
     def test_openai_copilot_config(self) -> None:
         """Verify .github/copilot-instructions.md and path instructions exist."""
         copilot_path = self.repo_root / ".github" / "copilot-instructions.md"
-        self.assertTrue(copilot_path.is_file(), ".github/copilot-instructions.md must exist")
+        self.assertTrue(
+            copilot_path.is_file(), ".github/copilot-instructions.md must exist"
+        )
         copilot_content = copilot_path.read_text(encoding="utf-8")
         self.assertIn("Subagent Context Isolation", copilot_content)
         self.assertIn("No Transcript Bleed", copilot_content)
         self.assertIn("Worktree file-tool access", copilot_content)
 
-        instructions_path = self.repo_root / ".github" / "instructions" / "subagents.instructions.md"
-        self.assertTrue(instructions_path.is_file(), "subagents.instructions.md must exist")
+        instructions_path = (
+            self.repo_root / ".github" / "instructions" / "subagents.instructions.md"
+        )
+        self.assertTrue(
+            instructions_path.is_file(), "subagents.instructions.md must exist"
+        )
         instructions_content = instructions_path.read_text(encoding="utf-8")
         self.assertIn("clean-slate context", instructions_content)
         self.assertIn("scratch/worktrees", instructions_content)

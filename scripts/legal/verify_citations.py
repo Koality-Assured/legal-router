@@ -24,12 +24,13 @@ from typing import Any
 
 _LIB = Path(__file__).resolve().parents[1] / "_lib"
 sys.path.insert(0, str(_LIB))
-from paths import REPO_ROOT as ROOT  # noqa: E402
 
 ADVISORY_STAMP = "ADVISORY WORK PRODUCT - REQUIRES LICENSED ATTORNEY REVIEW"
-FIXTURE_SUITE = Path(__file__).resolve().parent / "fixtures" / "citations" / "citation-suite.json"
+FIXTURE_SUITE = (
+    Path(__file__).resolve().parent / "fixtures" / "citations" / "citation-suite.json"
+)
 COURTLISTENER_LOOKUP = "https://www.courtlistener.com/api/rest/v4/citation-lookup/"
-TOKEN_ENV = "COURTLISTENER_API_TOKEN"
+TOKEN_ENV = "COURTLISTENER_API_TOKEN"  # nosec B105
 
 KNOWN_REPORTERS = {
     # Federal Courts (SCOTUS, Appellate, District, Bankruptcy, Claims)
@@ -396,7 +397,9 @@ def parse_citations_ast(text: str) -> list[CitationASTNode]:
             year_match = re.search(r"(1[7-9]\d{2}|20\d{2})", parenthetical)
             if year_match:
                 year = int(year_match.group(1))
-                court_part = parenthetical[: year_match.start()].strip().rstrip(",").strip()
+                court_part = (
+                    parenthetical[: year_match.start()].strip().rstrip(",").strip()
+                )
                 court = court_part if court_part else None
             else:
                 court = parenthetical
@@ -605,7 +608,7 @@ def verify_text(text: str, *, suite: dict[str, Any] | None = None) -> dict[str, 
     unmatched_expected = []
     for item in suite.get("items", []):
         expected_text = _normalize_space(item.get("text", ""))
-        if expected_text and expected_text in text:
+        if expected_text and expected_text in text:  # noqa: SIM102
             if not any(row["text"] == expected_text for row in results):
                 unmatched_expected.append(item.get("id") or expected_text)
 
@@ -615,8 +618,12 @@ def verify_text(text: str, *, suite: dict[str, Any] | None = None) -> dict[str, 
             "ok": not unmatched_expected,
             "citation_count": len(results),
             "hallucinated_count": len(hallucinated),
-            "unverified_count": sum(1 for row in results if row["status"] == "unverified"),
-            "valid_fixture_count": sum(1 for row in results if row["status"] == "valid_fixture"),
+            "unverified_count": sum(
+                1 for row in results if row["status"] == "unverified"
+            ),
+            "valid_fixture_count": sum(
+                1 for row in results if row["status"] == "valid_fixture"
+            ),
             "unmatched_fixture_items": unmatched_expected,
             "citations": results,
         }
@@ -638,13 +645,19 @@ def verify_suite(path: Path | None = None) -> dict[str, Any]:
         expected = item.get("expected")
         parsed = parse_citations(text)
         if expected == "unparsed":
-            status = "unparsed" if not parsed else classify_parsed(parsed[0], known_texts)
+            status = (
+                "unparsed" if not parsed else classify_parsed(parsed[0], known_texts)
+            )
             if parsed:
-                failures.append(f"{item.get('id')}: expected unparsed, parsed {parsed[0]['text']}")
+                failures.append(
+                    f"{item.get('id')}: expected unparsed, parsed {parsed[0]['text']}"
+                )
         elif not parsed:
             status = "unparsed"
             if expected != "unparsed":
-                failures.append(f"{item.get('id')}: expected {expected}, parsed nothing")
+                failures.append(
+                    f"{item.get('id')}: expected {expected}, parsed nothing"
+                )
         else:
             status = classify_parsed(parsed[0], known_texts)
             if status != expected:
@@ -689,7 +702,7 @@ def live_lookup(text: str, token: str) -> dict[str, Any]:
         },
     )
     try:
-        with urllib.request.urlopen(request, timeout=20) as response:
+        with urllib.request.urlopen(request, timeout=20) as response:  # nosec B310
             payload = json.loads(response.read().decode("utf-8"))
     except urllib.error.HTTPError as exc:
         return advisory_envelope(
@@ -701,7 +714,9 @@ def live_lookup(text: str, token: str) -> dict[str, Any]:
             }
         )
     except urllib.error.URLError:
-        return advisory_envelope({"ok": False, "live": True, "error": "courtlistener_unreachable"})
+        return advisory_envelope(
+            {"ok": False, "live": True, "error": "courtlistener_unreachable"}
+        )
     return advisory_envelope({"ok": True, "live": True, "hits": payload})
 
 
@@ -719,7 +734,9 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--suite", type=Path, help="Citation fixture JSON")
     parser.add_argument("--text", help="Raw text containing citations")
     parser.add_argument("--file", type=Path, help="Read citations from a text file")
-    parser.add_argument("--ast", action="store_true", help="Include AST validation details in output")
+    parser.add_argument(
+        "--ast", action="store_true", help="Include AST validation details in output"
+    )
     parser.add_argument("--json", action="store_true", help="JSON output")
     parser.add_argument(
         "--dry-run",
@@ -753,7 +770,9 @@ def main(argv: list[str] | None = None) -> int:
             source = args.text or ""
             if args.file:
                 source = args.file.read_text(encoding="utf-8-sig")
-            report = verify_text(source, suite=load_suite(args.suite) if args.suite else None)
+            report = verify_text(
+                source, suite=load_suite(args.suite) if args.suite else None
+            )
             if args.ast:
                 ast_nodes = parse_citations_ast(source)
                 report["ast_nodes"] = [
@@ -774,7 +793,9 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps(report, indent=2))
     else:
         print(report["advisory"])
-        print(f"ok={report.get('ok')} citations={report.get('citation_count', report.get('item_count'))}")
+        print(
+            f"ok={report.get('ok')} citations={report.get('citation_count', report.get('item_count'))}"
+        )
         if report.get("failures"):
             for failure in report["failures"]:
                 print(f"FAIL {failure}")

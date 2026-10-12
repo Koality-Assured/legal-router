@@ -13,14 +13,19 @@ from typing import Any
 
 _LIB = Path(__file__).resolve().parents[1] / "_lib"
 sys.path.insert(0, str(_LIB))
-from areas import (  # noqa: E402
+from areas import (
     AreasYamlError,
     check_areas_consistency,
     load_area_records,
     load_nested_defaults,
 )
-from md import agent_paths, load_agent_record, load_skill_record, parse_frontmatter, skill_paths  # noqa: E402
-from paths import REPO_ROOT as ROOT  # noqa: E402
+from md import (
+    agent_paths,
+    load_agent_record,
+    load_skill_record,
+    skill_paths,
+)
+from paths import REPO_ROOT as ROOT
 
 GENERATOR = "scripts/routing/generate_routing_index.py"
 AREA_MAP = ROOT / "routing" / "area-map.md"
@@ -29,7 +34,7 @@ AGENT_DISPATCH = ROOT / "routing" / "agent-dispatch.md"
 
 
 def _utc_now() -> str:
-    return dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    return dt.datetime.now(dt.UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
 def _md_cell(value: str) -> str:
@@ -57,8 +62,10 @@ def render_area_map(repo_root: Path, *, now: str) -> str:
         "",
         "# Area map",
         "",
-        "Generated from [`areas.yaml`](./areas.yaml). Do not hand-edit — run "
-        f"`python {GENERATOR}`.",
+        (
+            "Generated from [`areas.yaml`](./areas.yaml). Do not hand-edit — run "
+            f"`python {GENERATOR}`."
+        ),
         "",
         "Match [`skill-dispatch.md`](./skill-dispatch.md) first. Use this table only when no skill row applies.",
         "",
@@ -95,7 +102,9 @@ def render_area_map(repo_root: Path, *, now: str) -> str:
         for row in nested:
             path = row.get("path", "")
             shown = path if path.endswith("/") else f"{path}/"
-            lines.append(f"| `{shown}` | {_agent_cell(row.get('default_agent', '—'))} |")
+            lines.append(
+                f"| `{shown}` | {_agent_cell(row.get('default_agent', '—'))} |"
+            )
     lines.append("")
     return "\n".join(lines)
 
@@ -137,14 +146,18 @@ def write_skill_dispatch(*, now: str, rows: list[dict[str, Any]] | None = None) 
         "",
         "# Skill dispatch",
         "",
-        "Generated from `ai-tooling/skills/**/SKILL.md` frontmatter. Do not hand-edit — run "
-        f"`python {GENERATOR}`.",
+        (
+            "Generated from `ai-tooling/skills/**/SKILL.md` frontmatter. Do not hand-edit — run "
+            f"`python {GENERATOR}`."
+        ),
         "",
         "| Skill | Owner agent | Rank | Isolation | When |",
         "| --- | --- | --- | --- | --- |",
     ]
     for row in rows:
-        link_target = skill_link_map.get(row["name"], f"../ai-tooling/skills/{row['name']}/SKILL.md")
+        link_target = skill_link_map.get(
+            row["name"], f"../ai-tooling/skills/{row['name']}/SKILL.md"
+        )
         skill_link = f"[`{row['name']}`]({link_target})"
         lines.append(
             f"| {skill_link} | {_agent_cell(row['owner_agent'])} | `{row['rank']}` | "
@@ -160,8 +173,23 @@ def write_skill_dispatch(*, now: str, rows: list[dict[str, Any]] | None = None) 
         ins_list = deps.get("in_session_skills", [])
         prereqs_list = row.get("prerequisites", [])
         fail_policy = row.get("on_failure")
-        if req_list or del_list or ins_list or prereqs_list or (fail_policy and fail_policy != "abort_and_rollback"):
-            composite_rows.append((row, req_list, del_list, ins_list, prereqs_list, fail_policy or "abort_and_rollback"))
+        if (
+            req_list
+            or del_list
+            or ins_list
+            or prereqs_list
+            or (fail_policy and fail_policy != "abort_and_rollback")
+        ):
+            composite_rows.append(
+                (
+                    row,
+                    req_list,
+                    del_list,
+                    ins_list,
+                    prereqs_list,
+                    fail_policy or "abort_and_rollback",
+                )
+            )
 
     if composite_rows:
         lines.extend(
@@ -174,24 +202,37 @@ def write_skill_dispatch(*, now: str, rows: list[dict[str, Any]] | None = None) 
             ]
         )
         for row, req_list, del_list, ins_list, prereqs_list, fail_str in composite_rows:
-            link_target = skill_link_map.get(row["name"], f"../ai-tooling/skills/{row['name']}/SKILL.md")
+            link_target = skill_link_map.get(
+                row["name"], f"../ai-tooling/skills/{row['name']}/SKILL.md"
+            )
             skill_link = f"[`{row['name']}`]({link_target})"
             req_str = (
-                ", ".join(f"[`{s}`]({skill_link_map.get(s, f'../ai-tooling/skills/{s}/SKILL.md')})" for s in req_list)
+                ", ".join(
+                    f"[`{s}`]({skill_link_map.get(s, f'../ai-tooling/skills/{s}/SKILL.md')})"
+                    for s in req_list
+                )
                 if req_list
                 else "—"
             )
             del_str = (
-                ", ".join(f"[`{s}`]({skill_link_map.get(s, f'../ai-tooling/skills/{s}/SKILL.md')})" for s in del_list)
+                ", ".join(
+                    f"[`{s}`]({skill_link_map.get(s, f'../ai-tooling/skills/{s}/SKILL.md')})"
+                    for s in del_list
+                )
                 if del_list
                 else "—"
             )
             ins_str = (
-                ", ".join(f"[`{s}`]({skill_link_map.get(s, f'../ai-tooling/skills/{s}/SKILL.md')})" for s in ins_list)
+                ", ".join(
+                    f"[`{s}`]({skill_link_map.get(s, f'../ai-tooling/skills/{s}/SKILL.md')})"
+                    for s in ins_list
+                )
                 if ins_list
                 else "—"
             )
-            prereqs_str = ", ".join(f"`{p}`" for p in prereqs_list) if prereqs_list else "—"
+            prereqs_str = (
+                ", ".join(f"`{p}`" for p in prereqs_list) if prereqs_list else "—"
+            )
 
             lines.append(
                 f"| {skill_link} | {req_str} | {del_str} | {ins_str} | {prereqs_str} | `{fail_str}` |"
@@ -210,7 +251,9 @@ def collect_agent_rows() -> list[dict[str, Any]]:
     return rows
 
 
-def render_agent_dispatch(repo_root: Path, *, now: str, rows: list[dict[str, Any]] | None = None) -> str:
+def render_agent_dispatch(
+    repo_root: Path, *, now: str, rows: list[dict[str, Any]] | None = None
+) -> str:
     """Return agent-dispatch.md generated from ``repo_root/ai-tooling/agents/*/AGENT.md``."""
     if rows is None:
         rows = [load_agent_record(p) for p in agent_paths(repo_root)]
@@ -226,8 +269,10 @@ def render_agent_dispatch(repo_root: Path, *, now: str, rows: list[dict[str, Any
         "",
         "# Agent dispatch (specialist catalogue)",
         "",
-        "Generated from `ai-tooling/agents/*/AGENT.md` frontmatter. Do not hand-edit — run "
-        f"`python {GENERATOR}`.",
+        (
+            "Generated from `ai-tooling/agents/*/AGENT.md` frontmatter. Do not hand-edit — run "
+            f"`python {GENERATOR}`."
+        ),
         "",
         "## Specialist agents",
         "",
@@ -237,7 +282,9 @@ def render_agent_dispatch(repo_root: Path, *, now: str, rows: list[dict[str, Any
     for row in rows:
         agent_id = row["agent_id"]
         agent_link = f"[`{agent_id}`](../ai-tooling/agents/{agent_id}/AGENT.md)"
-        modes = ", ".join(f"`{m}`" for m in row.get("isolation_modes", ["mutate", "read-only"]))
+        modes = ", ".join(
+            f"`{m}`" for m in row.get("isolation_modes", ["mutate", "read-only"])
+        )
         lines.append(
             f"| {agent_link} | {_md_cell(row['name'])} | `{row['model_tier']}` | {modes} | {_md_cell(row['description'])} |"
         )
@@ -260,7 +307,11 @@ def render_agent_dispatch(repo_root: Path, *, now: str, rows: list[dict[str, Any
         tools = ", ".join(f"`{t}`" for t in row.get("allowed_tools", [])[:5])
         if len(row.get("allowed_tools", [])) > 5:
             tools += f" (+{len(row['allowed_tools']) - 5} more)"
-        targets = ", ".join(f"`{t}`" for t in row.get("delegation_targets", [])) if row.get("delegation_targets") else "—"
+        targets = (
+            ", ".join(f"`{t}`" for t in row.get("delegation_targets", []))
+            if row.get("delegation_targets")
+            else "—"
+        )
 
         lines.append(
             f"| {agent_link} | {_md_cell(caps or '—')} | {tools or '—'} | {_md_cell(targets)} |"
@@ -284,7 +335,9 @@ def main() -> int:
         print(f"error: {exc}", file=sys.stderr)
         return 2
     if mismatches:
-        print("error: routing/areas.yaml does not match on-disk areas:", file=sys.stderr)
+        print(
+            "error: routing/areas.yaml does not match on-disk areas:", file=sys.stderr
+        )
         for msg in mismatches:
             print(f"  - {msg}", file=sys.stderr)
         return 2
@@ -295,7 +348,9 @@ def main() -> int:
     n_agents = write_agent_dispatch(now=now)
     n_areas = len(load_area_records(ROOT))
     n_nested = len(load_nested_defaults(ROOT))
-    print(f"wrote {AREA_MAP.relative_to(ROOT).as_posix()} ({n_areas} areas, {n_nested} nested defaults)")
+    print(
+        f"wrote {AREA_MAP.relative_to(ROOT).as_posix()} ({n_areas} areas, {n_nested} nested defaults)"
+    )
     print(f"wrote {SKILL_DISPATCH.relative_to(ROOT).as_posix()} ({n_skills} skills)")
     print(f"wrote {AGENT_DISPATCH.relative_to(ROOT).as_posix()} ({n_agents} agents)")
     return 0
@@ -303,4 +358,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

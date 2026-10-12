@@ -9,21 +9,21 @@ from __future__ import annotations
 import argparse
 import json
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 _LIB = Path(__file__).resolve().parents[1] / "_lib"
 sys.path.insert(0, str(_LIB))
-from ast_grep import AstGrepError, find_ast_grep, run_ast_grep  # noqa: E402
-from paths import REPO_ROOT as ROOT  # noqa: E402
+from ast_grep import AstGrepError, find_ast_grep, run_ast_grep
+from paths import REPO_ROOT as ROOT
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from extract_ast_facts import (  # noqa: E402
+from extract_ast_facts import (
     extract_agent_cards,
     extract_scripts,
     extract_skills_frontmatter,
 )
-from validate_headroom_compression import (  # noqa: E402
+from validate_headroom_compression import (
     CHARS_PER_TOKEN,
     _ensure_headroom_import,
     est_tokens,
@@ -53,7 +53,7 @@ MAX_GOLD_FACTS = 8
 
 
 def utc_now() -> str:
-    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    return datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
 def facts_for_file(all_facts: list[dict], rel: str) -> list[dict]:
@@ -137,7 +137,10 @@ def retrieval_rows(root: Path, facts: list[dict]) -> tuple[list[dict], list[str]
 
 
 def headroom_structural_fixture(gold: list[str]) -> dict:
-    rows = [{"id": i, "title": f"Result {i}", "snippet": "boilerplate field " * 20} for i in range(100)]
+    rows = [
+        {"id": i, "title": f"Result {i}", "snippet": "boilerplate field " * 20}
+        for i in range(100)
+    ]
     for i, fact in enumerate(gold):
         rows.append(
             {
@@ -157,7 +160,10 @@ def headroom_structural_fixture(gold: list[str]) -> dict:
                 {
                     "id": "c1",
                     "type": "function",
-                    "function": {"name": "search", "arguments": '{"q":"STRUCTURAL_KEEP"}'},
+                    "function": {
+                        "name": "search",
+                        "arguments": '{"q":"STRUCTURAL_KEEP"}',
+                    },
                 }
             ],
         },
@@ -175,7 +181,10 @@ def run_headroom_oracle(gold: list[str]) -> dict:
     result = compress(fixture["messages"], model="gpt-4o")
     after = messages_text(result.messages)
     fetched = gold_hits(after, gold)
-    ok = fetched["gold_found"] == fetched["gold_total"] and direct["gold_found"] == direct["gold_total"]
+    ok = (
+        fetched["gold_found"] == fetched["gold_total"]
+        and direct["gold_found"] == direct["gold_total"]
+    )
     return {
         "id": "ast_structural_survival",
         "ok": ok,
@@ -196,10 +205,10 @@ def run_headroom_oracle(gold: list[str]) -> dict:
 
 
 def run_cli_health(root: Path) -> dict:
-    import subprocess
+    import subprocess  # nosec B404
 
     exe = find_ast_grep()
-    ver = subprocess.run(
+    ver = subprocess.run(  # noqa: PLW1510
         [str(exe), "--version"],
         cwd=root,
         capture_output=True,
@@ -207,7 +216,7 @@ def run_cli_health(root: Path) -> dict:
         encoding="utf-8",
         errors="replace",
         timeout=30,
-        shell=False,
+        shell=False,  # nosec B603
     )
     version = (ver.stdout or ver.stderr or "").strip()
     sgconfig = root / "sgconfig.yml"
@@ -305,7 +314,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     args = parser.parse_args(argv)
 
-    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    today = datetime.now(UTC).strftime("%Y-%m-%d")
     out_rel = args.out or f"results/cost-layers/ast-grep/{today}"
     out_dir = ROOT / out_rel
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -323,7 +332,9 @@ def main(argv: list[str] | None = None) -> int:
             failed.append("cli")
             findings.append("CLI health failed (version, sgconfig.yml, or scan).")
         else:
-            findings.append(f"CLI ok: {health.get('version')} ; scan matched {health.get('scan_matches')} nodes.")
+            findings.append(
+                f"CLI ok: {health.get('version')} ; scan matched {health.get('scan_matches')} nodes."
+            )
 
     retrieval: list[dict] = []
     gold: list[str] = []
@@ -367,7 +378,9 @@ def main(argv: list[str] | None = None) -> int:
                 headroom_row = run_headroom_oracle(gold)
                 if not headroom_row["ok"]:
                     failed.append("headroom")
-                    missing = (headroom_row.get("compressed_accuracy") or {}).get("missing") or []
+                    missing = (headroom_row.get("compressed_accuracy") or {}).get(
+                        "missing"
+                    ) or []
                     findings.append(f"Headroom dropped structural facts: {missing}.")
                 else:
                     findings.append(
@@ -392,9 +405,16 @@ def main(argv: list[str] | None = None) -> int:
         "failed": failed,
         "pass": not failed,
     }
-    (out_dir / "summary.json").write_text(json.dumps(payload, indent=2), encoding="utf-8")
+    (out_dir / "summary.json").write_text(
+        json.dumps(payload, indent=2), encoding="utf-8"
+    )
     write_report(out_dir, payload)
-    summary = {"out": str(out_dir), "failed": failed, "findings": findings, "pass": not failed}
+    summary = {
+        "out": str(out_dir),
+        "failed": failed,
+        "findings": findings,
+        "pass": not failed,
+    }
     print(json.dumps(summary, indent=2))
     return 0 if not failed else 1
 

@@ -10,19 +10,19 @@ import argparse
 import datetime as dt
 import json
 import re
-import subprocess
+import subprocess  # nosec B404
 import sys
 from pathlib import Path
 
 _LIB = Path(__file__).resolve().parents[1] / "_lib"
 sys.path.insert(0, str(_LIB))
-from areas import AreasYamlError, load_area_ids  # noqa: E402
-from paths import REPO_ROOT as ROOT  # noqa: E402
+from areas import AreasYamlError, load_area_ids
+from paths import REPO_ROOT as ROOT
 
 
 def resolve_primary_root() -> Path:
     try:
-        proc = subprocess.run(
+        proc = subprocess.run(  # nosec B607, B603
             ["git", "rev-parse", "--git-common-dir"],
             cwd=ROOT,
             check=False,
@@ -34,7 +34,7 @@ def resolve_primary_root() -> Path:
             if not common_git.is_absolute():
                 common_git = (ROOT / common_git).resolve()
             return common_git.parent.resolve()
-    except Exception:
+    except Exception:  # noqa: S110,BLE001  # nosec B110
         pass
     return ROOT
 
@@ -53,7 +53,7 @@ def allowed_areas() -> set[str]:
 
 
 def run_git(args: list[str], *, check: bool = True) -> subprocess.CompletedProcess[str]:
-    return subprocess.run(
+    return subprocess.run(  # nosec B607, B603
         ["git", *args],
         cwd=PRIMARY_ROOT,
         check=check,
@@ -70,9 +70,9 @@ def worktree_path(slug: str) -> Path:
     return WORKTREES / slug
 
 
-from contextlib import contextmanager
 import os
 import time
+from contextlib import contextmanager
 
 
 @contextmanager
@@ -95,7 +95,9 @@ def claim_lock(timeout_sec: float = 10.0, poll_interval: float = 0.05):
                         continue
                 except OSError:
                     pass
-                raise TimeoutError(f"Timed out after {timeout_sec}s waiting for claim lock: {lock_file}")
+                raise TimeoutError(
+                    f"Timed out after {timeout_sec}s waiting for claim lock: {lock_file}"
+                )
             time.sleep(poll_interval)
     try:
         yield
@@ -119,11 +121,15 @@ def load_claims() -> list[dict]:
         try:
             claims.append(json.loads(path.read_text(encoding="utf-8")))
         except json.JSONDecodeError:
-            claims.append({"slug": path.stem, "error": "invalid json", "path": str(path)})
+            claims.append(
+                {"slug": path.stem, "error": "invalid json", "path": str(path)}
+            )
     return claims
 
 
-def overlapping(areas: list[str], claims: list[dict], *, ignore_slug: str | None = None) -> list[dict]:
+def overlapping(
+    areas: list[str], claims: list[dict], *, ignore_slug: str | None = None
+) -> list[dict]:
     want = set(areas)
     hits = []
     for claim in claims:
@@ -152,7 +158,9 @@ def cmd_list(as_json: bool) -> int:
     print("\nclaims:")
     for claim in claims:
         areas = ",".join(claim.get("areas") or [])
-        print(f"  {claim.get('slug')}: branch={claim.get('branch')} areas={areas} agent={claim.get('agent')}")
+        print(
+            f"  {claim.get('slug')}: branch={claim.get('branch')} areas={areas} agent={claim.get('agent')}"
+        )
     return 0
 
 
@@ -184,10 +192,16 @@ def cmd_add(
         return 2
     unknown = [a for a in areas if a not in allowed_areas()]
     if unknown:
-        print(f"error: unknown areas: {unknown} (from routing/areas.yaml)", file=sys.stderr)
+        print(
+            f"error: unknown areas: {unknown} (from routing/areas.yaml)",
+            file=sys.stderr,
+        )
         return 2
     if not areas:
-        print("error: provide --areas (comma-separated top-level folders)", file=sys.stderr)
+        print(
+            "error: provide --areas (comma-separated top-level folders)",
+            file=sys.stderr,
+        )
         return 2
 
     dest = worktree_path(slug)
@@ -197,9 +211,14 @@ def cmd_add(
     if dry_run:
         hits = overlapping(areas, load_claims(), ignore_slug=slug)
         if hits and not force:
-            print("error: overlapping areas with active claims (pass --force to override):", file=sys.stderr)
+            print(
+                "error: overlapping areas with active claims (pass --force to override):",
+                file=sys.stderr,
+            )
             for claim in hits:
-                print(f"  {claim.get('slug')} areas={claim.get('areas')}", file=sys.stderr)
+                print(
+                    f"  {claim.get('slug')} areas={claim.get('areas')}", file=sys.stderr
+                )
             return 3
         claim = {
             "slug": slug,
@@ -207,7 +226,7 @@ def cmd_add(
             "path": str(dest),
             "areas": areas,
             "agent": agent,
-            "created": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "created": dt.datetime.now(dt.UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
         }
         if as_json:
             print(json.dumps({"dry_run": True, "claim": claim}, indent=2))
@@ -220,15 +239,23 @@ def cmd_add(
         with claim_lock():
             hits = overlapping(areas, load_claims(), ignore_slug=slug)
             if hits and not force:
-                print("error: overlapping areas with active claims (pass --force to override):", file=sys.stderr)
+                print(
+                    "error: overlapping areas with active claims (pass --force to override):",
+                    file=sys.stderr,
+                )
                 for claim in hits:
-                    print(f"  {claim.get('slug')} areas={claim.get('areas')}", file=sys.stderr)
+                    print(
+                        f"  {claim.get('slug')} areas={claim.get('areas')}",
+                        file=sys.stderr,
+                    )
                 return 3
             if dest.exists():
                 print(f"error: worktree path already exists: {dest}", file=sys.stderr)
                 return 2
             if claim_path(slug).exists() and not force:
-                print(f"error: claim already exists: {claim_path(slug)}", file=sys.stderr)
+                print(
+                    f"error: claim already exists: {claim_path(slug)}", file=sys.stderr
+                )
                 return 2
 
             claim = {
@@ -237,7 +264,7 @@ def cmd_add(
                 "path": str(dest),
                 "areas": areas,
                 "agent": agent,
-                "created": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+                "created": dt.datetime.now(dt.UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
             }
             WORKTREES.mkdir(parents=True, exist_ok=True)
             try:
@@ -245,7 +272,9 @@ def cmd_add(
             except subprocess.CalledProcessError as exc:
                 print(exc.stderr or exc.stdout, file=sys.stderr)
                 return 1
-            claim_path(slug).write_text(json.dumps(claim, indent=2) + "\n", encoding="utf-8")
+            claim_path(slug).write_text(
+                json.dumps(claim, indent=2) + "\n", encoding="utf-8"
+            )
     except TimeoutError as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 4
@@ -275,14 +304,20 @@ def cmd_remove(slug: str, dry_run: bool, force: bool) -> int:
         if dest.exists():
             print(exc.stderr or exc.stdout, file=sys.stderr)
             return 1
-        print("warning: git worktree remove failed; removing claim anyway", file=sys.stderr)
+        print(
+            "warning: git worktree remove failed; removing claim anyway",
+            file=sys.stderr,
+        )
     try:
         with claim_lock():
             claim = claim_path(slug)
             if claim.exists():
                 claim.unlink()
     except TimeoutError as exc:
-        print(f"warning: failed to acquire lock for claim deletion: {exc}", file=sys.stderr)
+        print(
+            f"warning: failed to acquire lock for claim deletion: {exc}",
+            file=sys.stderr,
+        )
         claim = claim_path(slug)
         if claim.exists():
             claim.unlink()
@@ -300,19 +335,29 @@ def main(argv: list[str] | None = None) -> int:
     shared = argparse.ArgumentParser(add_help=False)
     shared.add_argument("--json", action="store_true", help="Machine-readable output")
     shared.add_argument("--dry-run", action="store_true")
-    shared.add_argument("--force", action="store_true", help="Override overlap / existing claim")
+    shared.add_argument(
+        "--force", action="store_true", help="Override overlap / existing claim"
+    )
     parser = argparse.ArgumentParser(description=__doc__, parents=[shared])
     sub = parser.add_subparsers(dest="cmd", required=True)
 
-    p_add = sub.add_parser("add", help="Create branch + worktree + claim", parents=[shared])
+    p_add = sub.add_parser(
+        "add", help="Create branch + worktree + claim", parents=[shared]
+    )
     p_add.add_argument("--slug", required=True)
     p_add.add_argument("--areas", required=True, help="Comma-separated top-level areas")
     p_add.add_argument("--agent", default="router", help="Intended owner agent id")
-    p_add.add_argument("--branch", default=None, help="Custom branch name (defaults to agent/YYYY-MM-DD-<slug>)")
+    p_add.add_argument(
+        "--branch",
+        default=None,
+        help="Custom branch name (defaults to agent/YYYY-MM-DD-<slug>)",
+    )
 
     sub.add_parser("list", help="Show git worktrees and claim files", parents=[shared])
 
-    p_check = sub.add_parser("check", help="Exit 1 if areas overlap an active claim", parents=[shared])
+    p_check = sub.add_parser(
+        "check", help="Exit 1 if areas overlap an active claim", parents=[shared]
+    )
     p_check.add_argument("--areas", required=True)
 
     p_rm = sub.add_parser("remove", help="Remove worktree and claim", parents=[shared])

@@ -16,7 +16,7 @@ sys.path.insert(0, str(_SCRIPTS))
 sys.path.insert(0, str(_SCRIPTS / "cost-layers"))
 sys.path.insert(0, str(_SCRIPTS / "_lib"))
 
-from validate_prompt_caching import check_prompt_head, validate_all_prompts  # noqa: E402
+from validate_prompt_caching import check_prompt_head
 
 
 class TestValidatePromptCaching(unittest.TestCase):
@@ -67,7 +67,9 @@ System working directory: C:\\Users\\developer\\code\\repo
             violations = check_prompt_head(f, dirty_text)
             self.assertTrue(len(violations) >= 1)
             violation_types = [v["violation"] for v in violations]
-            self.assertTrue(any("user-specific" in vt.lower() for vt in violation_types))
+            self.assertTrue(
+                any("user-specific" in vt.lower() for vt in violation_types)
+            )
 
 
 if __name__ == "__main__":

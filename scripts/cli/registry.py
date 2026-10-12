@@ -15,7 +15,7 @@ import os
 import re
 import secrets
 import shutil
-import subprocess
+import subprocess  # nosec B404
 import sys
 import threading
 import time
@@ -57,17 +57,23 @@ def _enforce_private_permissions(path: Path) -> None:
         user = os.environ.get("USERNAME")
         if user:
             try:
-                subprocess.run(
-                    ["icacls", str(path), "/inheritance:r", "/grant:r", f"{user}:(R,W)"],
+                subprocess.run(  # nosec B607, B603
+                    [
+                        "icacls",
+                        str(path),
+                        "/inheritance:r",
+                        "/grant:r",
+                        f"{user}:(R,W)",
+                    ],
                     capture_output=True,
                     check=False,
                 )
-            except Exception:
+            except Exception:  # noqa: S110,BLE001  # nosec B110
                 pass
     else:
         try:
             os.chmod(path, 0o600)
-        except Exception:
+        except Exception:  # noqa: S110,BLE001  # nosec B110
             pass
 
 
@@ -78,7 +84,7 @@ def _enforce_private_dir_permissions(path: Path) -> None:
     if os.name != "nt":
         try:
             os.chmod(path, 0o700)
-        except Exception:
+        except Exception:  # noqa: S110,BLE001  # nosec B110
             pass
 
 
@@ -91,9 +97,28 @@ def get_config_path() -> Path:
 
 
 RESERVED_SLUGS = {
-    "con", "prn", "aux", "nul",
-    "com1", "com2", "com3", "com4", "com5", "com6", "com7", "com8", "com9",
-    "lpt1", "lpt2", "lpt3", "lpt4", "lpt5", "lpt6", "lpt7", "lpt8", "lpt9",
+    "con",
+    "prn",
+    "aux",
+    "nul",
+    "com1",
+    "com2",
+    "com3",
+    "com4",
+    "com5",
+    "com6",
+    "com7",
+    "com8",
+    "com9",
+    "lpt1",
+    "lpt2",
+    "lpt3",
+    "lpt4",
+    "lpt5",
+    "lpt6",
+    "lpt7",
+    "lpt8",
+    "lpt9",
 }
 
 
@@ -124,7 +149,7 @@ def infer_harness_domain(repo_root: Path) -> str:
                     return str(cfg["domain"])
                 if cfg.get("description"):
                     return str(cfg["description"])
-        except Exception:
+        except Exception:  # noqa: S110,BLE001  # nosec B110
             pass
 
     # Inspect README or AGENTS title
@@ -136,7 +161,7 @@ def infer_harness_domain(repo_root: Path) -> str:
                     title = line[2:].strip()
                     if title:
                         return title
-        except Exception:
+        except Exception:  # noqa: S110,BLE001  # nosec B110
             pass
 
     # Fallback to humanized directory name
@@ -170,7 +195,7 @@ def inspect_harness(repo_path: Path) -> dict[str, Any]:
     if info["is_git"]:
         # Query branch
         try:
-            proc = subprocess.run(
+            proc = subprocess.run(  # nosec B607, B603
                 ["git", "branch", "--show-current"],
                 cwd=resolved,
                 capture_output=True,
@@ -184,7 +209,7 @@ def inspect_harness(repo_path: Path) -> dict[str, Any]:
                 info["branch"] = branch
             else:
                 # Detached HEAD check
-                proc_head = subprocess.run(
+                proc_head = subprocess.run(  # nosec B607, B603
                     ["git", "rev-parse", "--short", "HEAD"],
                     cwd=resolved,
                     capture_output=True,
@@ -197,12 +222,12 @@ def inspect_harness(repo_path: Path) -> dict[str, Any]:
                 info["branch"] = f"detached({commit})" if commit else "(unknown)"
         except subprocess.TimeoutExpired:
             info["branch"] = "(timeout)"
-        except Exception:
+        except Exception:  # noqa: BLE001
             info["branch"] = "(error)"
 
         # Query git cleanliness
         try:
-            proc_status = subprocess.run(
+            proc_status = subprocess.run(  # nosec B607, B603
                 ["git", "status", "--porcelain"],
                 cwd=resolved,
                 capture_output=True,
@@ -214,7 +239,7 @@ def inspect_harness(repo_path: Path) -> dict[str, Any]:
             info["status"] = "DIRTY" if proc_status.stdout.strip() else "CLEAN"
         except subprocess.TimeoutExpired:
             info["status"] = "(timeout)"
-        except Exception:
+        except Exception:  # noqa: BLE001
             info["status"] = "UNKNOWN"
 
     # Count claims & worktrees
@@ -223,9 +248,13 @@ def inspect_harness(repo_path: Path) -> dict[str, Any]:
         try:
             claims = list(claims_dir.glob("*.claim.json"))
             info["claims_count"] = len(claims)
-            wts = [d for d in claims_dir.iterdir() if d.is_dir() and not d.name.startswith(".")]
+            wts = [
+                d
+                for d in claims_dir.iterdir()
+                if d.is_dir() and not d.name.startswith(".")
+            ]
             info["worktrees_count"] = len(wts)
-        except Exception:
+        except Exception:  # noqa: S110,BLE001  # nosec B110
             pass
 
     # Count areas
@@ -233,7 +262,7 @@ def inspect_harness(repo_path: Path) -> dict[str, Any]:
         try:
             areas = load_area_ids(resolved)
             info["areas_count"] = len(areas)
-        except Exception:
+        except Exception:  # noqa: S110,BLE001  # nosec B110
             pass
 
     return info
@@ -268,15 +297,15 @@ class HarnessRegistry:
                     return self._default_data()
                 data = json.loads(raw)
                 if not isinstance(data, dict):
-                    raise ValueError("Registry JSON root must be an object")
+                    raise ValueError("Registry JSON root must be an object")  # noqa: TRY004
                 if "harnesses" not in data or not isinstance(data["harnesses"], dict):
                     data["harnesses"] = {}
                 if "active_harness" not in data:
                     data["active_harness"] = None
                 return data
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001
                 # Corrupted registry recovery
-                ts = dt.datetime.now(dt.timezone.utc).strftime("%Y%m%d_%H%M%S")
+                ts = dt.datetime.now(dt.UTC).strftime("%Y%m%d_%H%M%S")
                 backup_path = self.path.with_name(f"{self.path.name}.corrupted.{ts}")
                 try:
                     shutil.copy2(self.path, backup_path)
@@ -285,7 +314,7 @@ class HarnessRegistry:
                         f"Backed up to {backup_path.name} and initialized clean registry.",
                         file=sys.stderr,
                     )
-                except Exception:
+                except Exception:  # noqa: S110,BLE001  # nosec B110
                     pass
                 fresh = self._default_data()
                 self._save(fresh)
@@ -296,7 +325,9 @@ class HarnessRegistry:
             self.path.parent.mkdir(parents=True, exist_ok=True)
             _enforce_private_dir_permissions(self.path.parent)
 
-            tmp_path = self.path.with_name(f"{self.path.name}.tmp.{os.getpid()}.{secrets.token_hex(4)}")
+            tmp_path = self.path.with_name(
+                f"{self.path.name}.tmp.{os.getpid()}.{secrets.token_hex(4)}"
+            )
             payload = json.dumps(data, indent=2)
             try:
                 tmp_path.write_text(payload, encoding="utf-8")
@@ -318,7 +349,7 @@ class HarnessRegistry:
                 if tmp_path.exists():
                     try:
                         tmp_path.unlink()
-                    except Exception:
+                    except Exception:  # noqa: S110,BLE001  # nosec B110
                         pass
 
     def register(
@@ -332,9 +363,13 @@ class HarnessRegistry:
         """Register a local repository checkout as a known domain harness."""
         resolved = Path(path).resolve()
         if not resolved.exists():
-            raise FileNotFoundError(f"Cannot register harness: directory '{resolved}' does not exist.")
+            raise FileNotFoundError(
+                f"Cannot register harness: directory '{resolved}' does not exist."
+            )
         if not resolved.is_dir():
-            raise NotADirectoryError(f"Cannot register harness: '{resolved}' is not a directory.")
+            raise NotADirectoryError(
+                f"Cannot register harness: '{resolved}' is not a directory."
+            )
 
         # Check repository markers
         is_git = (resolved / ".git").exists()
@@ -357,7 +392,9 @@ class HarnessRegistry:
             resolved_str = str(resolved).lower() if os.name == "nt" else str(resolved)
             for hid, hdata in harnesses.items():
                 target_str = str(Path(hdata.get("path", "")).resolve())
-                if (target_str.lower() if os.name == "nt" else target_str) == resolved_str:
+                if (
+                    target_str.lower() if os.name == "nt" else target_str
+                ) == resolved_str:
                     existing_id = hid
                     break
 
@@ -370,7 +407,7 @@ class HarnessRegistry:
                     counter += 1
                 hid = f"{hid}-{counter}"
 
-            now_iso = dt.datetime.now(dt.timezone.utc).isoformat()
+            now_iso = dt.datetime.now(dt.UTC).isoformat()
             detected_domain = domain or infer_harness_domain(resolved)
             friendly_name = name or harnesses.get(hid, {}).get("name") or resolved.name
 
@@ -413,7 +450,9 @@ class HarnessRegistry:
             self._save(data)
             return True
 
-    def _resolve_id(self, id_or_path: str, harnesses: dict[str, dict[str, Any]]) -> str | None:
+    def _resolve_id(
+        self, id_or_path: str, harnesses: dict[str, dict[str, Any]]
+    ) -> str | None:
         if id_or_path in harnesses:
             return id_or_path
 
@@ -426,13 +465,15 @@ class HarnessRegistry:
         # Path resolution lookup
         try:
             target_path = Path(id_or_path).resolve()
-            target_str = str(target_path).lower() if os.name == "nt" else str(target_path)
+            target_str = (
+                str(target_path).lower() if os.name == "nt" else str(target_path)
+            )
             for hid, hdata in harnesses.items():
                 p = Path(hdata.get("path", "")).resolve()
                 p_str = str(p).lower() if os.name == "nt" else str(p)
                 if p_str == target_str:
                     return hid
-        except Exception:
+        except Exception:  # noqa: S110,BLE001  # nosec B110
             pass
 
         return None
@@ -466,7 +507,9 @@ class HarnessRegistry:
             harnesses = data.get("harnesses", {})
             target_id = self._resolve_id(id_or_path, harnesses)
             if not target_id or target_id not in harnesses:
-                raise KeyError(f"Harness '{id_or_path}' is not registered in the catalog.")
+                raise KeyError(
+                    f"Harness '{id_or_path}' is not registered in the catalog."
+                )
 
             record = harnesses[target_id]
             harness_path = Path(record["path"])
@@ -480,7 +523,7 @@ class HarnessRegistry:
                 )
 
             data["active_harness"] = target_id
-            now_iso = dt.datetime.now(dt.timezone.utc).isoformat()
+            now_iso = dt.datetime.now(dt.UTC).isoformat()
             record["last_switched_at"] = now_iso
             harnesses[target_id] = record
             data["harnesses"] = harnesses
@@ -497,7 +540,7 @@ class HarnessRegistry:
             results = []
             for hid, hdata in sorted(harnesses.items(), key=lambda x: x[0]):
                 entry = dict(hdata)
-                entry["is_active"] = (hid == active_id)
+                entry["is_active"] = hid == active_id
 
                 # Augment with live git status
                 live_info = inspect_harness(Path(entry["path"]))
@@ -525,7 +568,7 @@ class HarnessRegistry:
 
         try:
             entries = sorted(scan_root.iterdir(), key=lambda p: p.name.lower())
-        except Exception:
+        except Exception:  # noqa: BLE001
             return []
 
         for item in entries:

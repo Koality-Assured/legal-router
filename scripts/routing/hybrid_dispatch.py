@@ -22,22 +22,137 @@ from typing import Any
 
 _LIB = Path(__file__).resolve().parents[1] / "_lib"
 sys.path.insert(0, str(_LIB))
-from areas import load_area_records, load_nested_defaults  # noqa: E402
-from md import heading_titles, load_skill_record, parse_frontmatter, skill_paths  # noqa: E402
-from paths import REPO_ROOT as DEFAULT_ROOT  # noqa: E402
+from areas import load_area_records
+from md import load_skill_record, skill_paths
+from paths import REPO_ROOT as DEFAULT_ROOT
 
 STOP_WORDS = {
-    "a", "about", "above", "after", "again", "against", "all", "am", "an", "and", "any", "are",
-    "as", "at", "be", "because", "been", "before", "being", "below", "between", "both", "but",
-    "by", "can", "cannot", "could", "did", "do", "does", "doing", "down", "during", "each", "few",
-    "for", "from", "further", "had", "has", "have", "having", "he", "her", "here", "hers", "herself",
-    "him", "himself", "his", "how", "i", "if", "in", "into", "is", "it", "its", "itself", "let",
-    "me", "more", "most", "my", "myself", "no", "nor", "not", "of", "off", "on", "once", "only",
-    "or", "other", "ought", "our", "ours", "ourselves", "out", "over", "own", "same", "she",
-    "should", "so", "some", "such", "than", "that", "the", "their", "theirs", "them", "themselves",
-    "then", "there", "these", "they", "this", "those", "through", "to", "too", "under", "until",
-    "up", "very", "was", "we", "were", "what", "when", "where", "which", "while", "who", "whom",
-    "why", "with", "would", "you", "your", "yours", "yourself", "yourselves",
+    "a",
+    "about",
+    "above",
+    "after",
+    "again",
+    "against",
+    "all",
+    "am",
+    "an",
+    "and",
+    "any",
+    "are",
+    "as",
+    "at",
+    "be",
+    "because",
+    "been",
+    "before",
+    "being",
+    "below",
+    "between",
+    "both",
+    "but",
+    "by",
+    "can",
+    "cannot",
+    "could",
+    "did",
+    "do",
+    "does",
+    "doing",
+    "down",
+    "during",
+    "each",
+    "few",
+    "for",
+    "from",
+    "further",
+    "had",
+    "has",
+    "have",
+    "having",
+    "he",
+    "her",
+    "here",
+    "hers",
+    "herself",
+    "him",
+    "himself",
+    "his",
+    "how",
+    "i",
+    "if",
+    "in",
+    "into",
+    "is",
+    "it",
+    "its",
+    "itself",
+    "let",
+    "me",
+    "more",
+    "most",
+    "my",
+    "myself",
+    "no",
+    "nor",
+    "not",
+    "of",
+    "off",
+    "on",
+    "once",
+    "only",
+    "or",
+    "other",
+    "ought",
+    "our",
+    "ours",
+    "ourselves",
+    "out",
+    "over",
+    "own",
+    "same",
+    "she",
+    "should",
+    "so",
+    "some",
+    "such",
+    "than",
+    "that",
+    "the",
+    "their",
+    "theirs",
+    "them",
+    "themselves",
+    "then",
+    "there",
+    "these",
+    "they",
+    "this",
+    "those",
+    "through",
+    "to",
+    "too",
+    "under",
+    "until",
+    "up",
+    "very",
+    "was",
+    "we",
+    "were",
+    "what",
+    "when",
+    "where",
+    "which",
+    "while",
+    "who",
+    "whom",
+    "why",
+    "with",
+    "would",
+    "you",
+    "your",
+    "yours",
+    "yourself",
+    "yourselves",
 }
 
 
@@ -534,7 +649,11 @@ FAST_PATH_RULES: list[dict[str, Any]] = [
     {
         "skill": "aws-write",
         "owner_agent": "cloud-operator",
-        "patterns": [r"\baws\s+write\b", r"\baws-write\b", r"\bauthorize\s+aws\s+write\b"],
+        "patterns": [
+            r"\baws\s+write\b",
+            r"\baws-write\b",
+            r"\bauthorize\s+aws\s+write\b",
+        ],
     },
     {
         "skill": "azure-logs",
@@ -549,7 +668,11 @@ FAST_PATH_RULES: list[dict[str, Any]] = [
     {
         "skill": "azure-write",
         "owner_agent": "cloud-operator",
-        "patterns": [r"\bazure\s+write\b", r"\bazure-write\b", r"\bauthorize\s+azure\s+write\b"],
+        "patterns": [
+            r"\bazure\s+write\b",
+            r"\bazure-write\b",
+            r"\bauthorize\s+azure\s+write\b",
+        ],
     },
     {
         "skill": "gcp-logs",
@@ -564,14 +687,18 @@ FAST_PATH_RULES: list[dict[str, Any]] = [
     {
         "skill": "gcp-write",
         "owner_agent": "cloud-operator",
-        "patterns": [r"\bgcp\s+write\b", r"\bgcp-write\b", r"\bauthorize\s+gcp\s+write\b"],
+        "patterns": [
+            r"\bgcp\s+write\b",
+            r"\bgcp-write\b",
+            r"\bauthorize\s+gcp\s+write\b",
+        ],
     },
 ]
 
 
 class Tier1FastPath:
     """Tier 1 Fast-Path Regex & Keyword Dispatcher.
-    
+
     Sub-millisecond matcher with strict MED-02 multi-intent collision handling.
     """
 
@@ -638,6 +765,7 @@ class Tier1FastPath:
 # Tier 2: In-Memory BM25 Lexical / Semantic Index
 # ----------------------------------------------------------------------
 
+
 @dataclass
 class IndexedDocument:
     doc_id: str
@@ -654,7 +782,9 @@ class IndexedDocument:
 class Tier2BM25:
     """In-memory BM25 index over routing metadata (~5ms, 0 tokens)."""
 
-    def __init__(self, root: Path | None = None, k1: float = 1.5, b: float = 0.75) -> None:
+    def __init__(
+        self, root: Path | None = None, k1: float = 1.5, b: float = 0.75
+    ) -> None:
         self.root = root or DEFAULT_ROOT
         self.k1 = k1
         self.b = b
@@ -675,7 +805,9 @@ class Tier2BM25:
             desc_tokens = tokenize(rec["description"])
             body_tokens = tokenize(rec["body"][:500])  # preview body
 
-            all_tokens = name_tokens + hints_tokens + topics_tokens + desc_tokens + body_tokens
+            all_tokens = (
+                name_tokens + hints_tokens + topics_tokens + desc_tokens + body_tokens
+            )
             doc = IndexedDocument(
                 doc_id=f"skill:{rec['name']}",
                 doc_type="skill",
@@ -703,13 +835,15 @@ class Tier2BM25:
                     name=area_id,
                     owner_agent=owner,
                     rank="medium",
-                    isolation="mutate" if "mutate" in area.get("load", "") else "read-only",
+                    isolation="mutate"
+                    if "mutate" in area.get("load", "")
+                    else "read-only",
                     description=purpose,
                     tokens=tokens,
                     length=len(tokens),
                 )
                 self.docs.append(doc)
-        except Exception:
+        except Exception:  # noqa: S110,BLE001  # nosec B110
             pass
 
         # Calculate IDF and avgdl
@@ -749,7 +883,9 @@ class Tier2BM25:
                 if q_term in tf_map:
                     tf = tf_map[q_term]
                     idf = self.idf.get(q_term, 0.1)
-                    denom = tf + self.k1 * (1.0 - self.b + self.b * (doc.length / (self.avgdl or 1.0)))
+                    denom = tf + self.k1 * (
+                        1.0 - self.b + self.b * (doc.length / (self.avgdl or 1.0))
+                    )
                     term_score = idf * ((tf * (self.k1 + 1.0)) / denom)
                     doc_score += term_score
                     if q_term not in matched_terms:
@@ -814,6 +950,7 @@ class Tier2BM25:
 # Tier 3: Structured LLM Ambiguity Gate
 # ----------------------------------------------------------------------
 
+
 class Tier3AmbiguityGate:
     """Constructs structured candidate triage payloads and disambiguation questions."""
 
@@ -862,7 +999,11 @@ class Tier3AmbiguityGate:
                 f"Did you intend to execute `{name}` ({short_desc}) based on '{matched}'?"
             )
 
-        status = "multi_intent" if (conflicting_skills or len(cand_list) > 1) else "ambiguous"
+        status = (
+            "multi_intent"
+            if (conflicting_skills or len(cand_list) > 1)
+            else "ambiguous"
+        )
         reason = (
             f"Query matched {len(cand_list)} competing candidate targets across different skill/area domains."
             if len(cand_list) > 1
@@ -903,7 +1044,9 @@ class Tier3AmbiguityGate:
             reason=reason,
             candidates=cand_list,
             disambiguation_questions=questions,
-            recommended_action="clarify_with_user" if len(cand_list) > 1 else "select_top_candidate",
+            recommended_action="clarify_with_user"
+            if len(cand_list) > 1
+            else "select_top_candidate",
             llm_triage_prompt="\n".join(prompt_lines),
             elapsed_ms=elapsed,
         )
@@ -912,6 +1055,7 @@ class Tier3AmbiguityGate:
 # ----------------------------------------------------------------------
 # Unified Hybrid Dispatcher Pipeline
 # ----------------------------------------------------------------------
+
 
 class HybridDispatcher:
     """3-Tier Hybrid Dispatch Pipeline Coordinator."""
@@ -922,7 +1066,9 @@ class HybridDispatcher:
         self.tier2 = Tier2BM25(root=self.root)
         self.tier3 = Tier3AmbiguityGate()
 
-    def dispatch(self, query: str, tier: str = "all", top_k: int = 5) -> HybridDispatchResult:
+    def dispatch(
+        self, query: str, tier: str = "all", top_k: int = 5
+    ) -> HybridDispatchResult:
         t0 = time.perf_counter()
 
         t1_res: Tier1Result | None = None
@@ -946,13 +1092,19 @@ class HybridDispatcher:
 
         if tier in {"2", "all"}:
             t2_res = self.tier2.search(query, top_k=top_k)
-            if tier == "2" or (t2_res.matched and not t2_res.is_ambiguous and tier == "all"):
+            if tier == "2" or (
+                t2_res.matched and not t2_res.is_ambiguous and tier == "all"
+            ):
                 total_elapsed = (time.perf_counter() - t0) * 1000.0
                 return HybridDispatchResult(
                     query=query,
                     selected_tier=2,
-                    final_target=t2_res.skill or (t2_res.candidates[0].name if t2_res.candidates else None),
-                    owner_agent=t2_res.owner_agent or (t2_res.candidates[0].owner_agent if t2_res.candidates else None),
+                    final_target=t2_res.skill
+                    or (t2_res.candidates[0].name if t2_res.candidates else None),
+                    owner_agent=t2_res.owner_agent
+                    or (
+                        t2_res.candidates[0].owner_agent if t2_res.candidates else None
+                    ),
                     confidence=t2_res.confidence,
                     status="dispatched" if t2_res.matched else "ambiguous",
                     tier1=t1_res,
@@ -965,7 +1117,11 @@ class HybridDispatcher:
             if t2_res is None:
                 t2_res = self.tier2.search(query, top_k=top_k)
 
-            conflicts = t1_res.conflicting_skills if t1_res and t1_res.conflicting_skills else None
+            conflicts = (
+                t1_res.conflicting_skills
+                if t1_res and t1_res.conflicting_skills
+                else None
+            )
             t3_res = self.tier3.evaluate(
                 query=query,
                 candidates=t2_res.candidates if t2_res else [],
@@ -999,7 +1155,9 @@ class HybridDispatcher:
         )
 
 
-def dispatch_query(query: str, tier: str = "all", top_k: int = 5, root: Path | None = None) -> dict[str, Any]:
+def dispatch_query(
+    query: str, tier: str = "all", top_k: int = 5, root: Path | None = None
+) -> dict[str, Any]:
     """Convenience functional interface for hybrid dispatch."""
     dispatcher = HybridDispatcher(root=root)
     result = dispatcher.dispatch(query, tier=tier, top_k=top_k)
@@ -1018,8 +1176,16 @@ def main(argv: list[str] | None = None) -> int:
         default="all",
         help="Tier to execute (1=Fast-Path, 2=BM25, 3=Ambiguity Gate, all=Cascade pipeline)",
     )
-    parser.add_argument("--json", action="store_true", help="Output machine-readable JSON")
-    parser.add_argument("--top-k", "-k", type=int, default=5, help="Number of top candidate matches to return")
+    parser.add_argument(
+        "--json", action="store_true", help="Output machine-readable JSON"
+    )
+    parser.add_argument(
+        "--top-k",
+        "-k",
+        type=int,
+        default=5,
+        help="Number of top candidate matches to return",
+    )
     parser.add_argument("--repo-root", type=str, help="Repository root path override")
 
     args = parser.parse_args(argv)
@@ -1042,14 +1208,20 @@ def main(argv: list[str] | None = None) -> int:
     print(f"Total Time:   {res.total_elapsed_ms:.2f} ms")
 
     if res.tier1 and res.tier1.matched:
-        print(f"\n[Tier 1 Fast-Path Match]: {res.tier1.skill} ({res.tier1.owner_agent}) in {res.tier1.elapsed_ms:.2f}ms")
+        print(
+            f"\n[Tier 1 Fast-Path Match]: {res.tier1.skill} ({res.tier1.owner_agent}) in {res.tier1.elapsed_ms:.2f}ms"
+        )
     elif res.tier1 and res.tier1.conflicting_skills:
-        print(f"\n[Tier 1 Conflict]: Multi-intent detected across {res.tier1.conflicting_skills}")
+        print(
+            f"\n[Tier 1 Conflict]: Multi-intent detected across {res.tier1.conflicting_skills}"
+        )
 
     if res.tier2 and res.tier2.candidates:
         print(f"\n[Tier 2 BM25 Top Matches ({res.tier2.elapsed_ms:.2f}ms)]:")
         for i, c in enumerate(res.tier2.candidates[:3], start=1):
-            print(f"  {i}. {c.name} ({c.type}, {c.owner_agent}) - score: {c.score:.2f}, conf: {c.confidence:.2f}")
+            print(
+                f"  {i}. {c.name} ({c.type}, {c.owner_agent}) - score: {c.score:.2f}, conf: {c.confidence:.2f}"
+            )
 
     if res.tier3 and res.tier3.disambiguation_questions:
         print(f"\n[Tier 3 Disambiguation Questions ({res.tier3.elapsed_ms:.2f}ms)]:")

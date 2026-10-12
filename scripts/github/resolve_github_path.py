@@ -25,14 +25,14 @@ from pathlib import Path
 
 _LIB = Path(__file__).resolve().parents[1] / "_lib"
 sys.path.insert(0, str(_LIB))
-from github_paths import (  # noqa: E402
+from github_paths import (
     DEFAULT_REF,
     GithubPathError,
     discover_github_repo,
     github_https_url,
     validate_ref,
 )
-from paths import resolve_repo_root  # noqa: E402
+from paths import resolve_repo_root
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -99,7 +99,9 @@ def main(argv: list[str] | None = None) -> int:
         return 2
 
     owner, repo = owner_repo
-    print(f"origin: https://github.com/{owner}/{repo} (ref={args.ref})", file=sys.stderr)
+    print(
+        f"origin: https://github.com/{owner}/{repo} (ref={args.ref})", file=sys.stderr
+    )
 
     results: list[dict[str, str]] = []
     for raw in paths:

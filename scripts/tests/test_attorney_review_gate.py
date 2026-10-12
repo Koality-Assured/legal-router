@@ -1,5 +1,7 @@
 import unittest
+
 from scripts.legal.attorney_review_gate import verify_attorney_review
+
 
 class TestAttorneyReviewGate(unittest.TestCase):
     def test_valid_review(self):
@@ -10,9 +12,9 @@ class TestAttorneyReviewGate(unittest.TestCase):
                 "metadata": {
                     "timestamp": "2026-10-12T14:00:00Z",
                     "status": "approved",
-                    "hash": "abcdef"
-                }
-            }
+                    "hash": "abcdef",
+                },
+            },
         }
         errors = verify_attorney_review(case)
         self.assertEqual(errors, [])
@@ -29,9 +31,9 @@ class TestAttorneyReviewGate(unittest.TestCase):
                 "metadata": {
                     "timestamp": "2026-10-12T14:00:00Z",
                     "status": "approved",
-                    "hash": "abcdef"
+                    "hash": "abcdef",
                 }
-            }
+            },
         }
         errors = verify_attorney_review(case)
         self.assertIn("[test-3] 'process_in_use' must be true", errors)
@@ -41,14 +43,13 @@ class TestAttorneyReviewGate(unittest.TestCase):
             "case_id": "test-4",
             "attorney_review": {
                 "process_in_use": True,
-                "metadata": {
-                    "timestamp": "2026-10-12T14:00:00Z"
-                }
-            }
+                "metadata": {"timestamp": "2026-10-12T14:00:00Z"},
+            },
         }
         errors = verify_attorney_review(case)
         self.assertIn("[test-4] Missing 'status' in metadata", errors)
         self.assertIn("[test-4] Missing 'hash' in metadata", errors)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()

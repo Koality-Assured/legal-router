@@ -10,15 +10,15 @@ import argparse
 import json
 import re
 import shutil
-import subprocess
+import subprocess  # nosec B404
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 _LIB = Path(__file__).resolve().parents[1] / "_lib"
 sys.path.insert(0, str(_LIB))
-from paths import REPO_ROOT as ROOT  # noqa: E402
-from tool_output import format_tool_execution  # noqa: E402
+from paths import REPO_ROOT as ROOT
+from tool_output import format_tool_execution
 
 
 def prune_old_baselines(combined_root: Path, retain_count: int = 3) -> list[str]:
@@ -40,7 +40,7 @@ def prune_old_baselines(combined_root: Path, retain_count: int = 3) -> list[str]
 
 
 def run_script(script: str, extra: list[str]) -> tuple[int, dict]:
-    proc = subprocess.run(
+    proc = subprocess.run(  # noqa: PLW1510  # nosec B603
         [sys.executable, str(ROOT / "scripts" / script), *extra],
         cwd=ROOT,
         capture_output=True,
@@ -48,7 +48,9 @@ def run_script(script: str, extra: list[str]) -> tuple[int, dict]:
         encoding="utf-8",
         errors="replace",
     )
-    formatted = format_tool_execution(proc.stdout, proc.stderr, exit_code=proc.returncode, try_headroom=False)
+    formatted = format_tool_execution(
+        proc.stdout, proc.stderr, exit_code=proc.returncode, try_headroom=False
+    )
     payload: dict = {
         "exit_code": proc.returncode,
         "stdout": formatted["output"],
@@ -97,17 +99,29 @@ def main(argv: list[str] | None = None) -> int:
         help="Number of randomized trials per benchmark category (default: 5)",
     )
     parser.add_argument("--skip-hybrid", action="store_true", default=True)
-    parser.add_argument("--hybrid", action="store_true", help="Also run slow hybrid qmd query")
+    parser.add_argument(
+        "--hybrid", action="store_true", help="Also run slow hybrid qmd query"
+    )
     parser.add_argument("--skip-structured", action="store_true", default=True)
-    parser.add_argument("--structured", action="store_true", help="Also run slow structured query")
+    parser.add_argument(
+        "--structured", action="store_true", help="Also run slow structured query"
+    )
     parser.add_argument("--skip-qmd", action="store_true")
     parser.add_argument("--skip-headroom", action="store_true")
     parser.add_argument("--skip-ast-grep", action="store_true")
-    parser.add_argument("--skip-prompt-caching", action="store_true", help="Skip prompt cache invariance linter")
-    parser.add_argument("--skip-webfetch", action="store_true", help="Skip local webfetch distillation benchmark")
+    parser.add_argument(
+        "--skip-prompt-caching",
+        action="store_true",
+        help="Skip prompt cache invariance linter",
+    )
+    parser.add_argument(
+        "--skip-webfetch",
+        action="store_true",
+        help="Skip local webfetch distillation benchmark",
+    )
     args = parser.parse_args(argv)
 
-    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    today = datetime.now(UTC).strftime("%Y-%m-%d")
     out_rel = args.out or f"results/cost-layers/combined/{today}"
     out = ROOT / out_rel
     out.mkdir(parents=True, exist_ok=True)
@@ -117,7 +131,10 @@ def main(argv: list[str] | None = None) -> int:
     if combined_root.is_dir():
         pruned = prune_old_baselines(combined_root, retain_count=args.retain_count)
         if pruned:
-            print(f"Pruned {len(pruned)} older baseline run(s): {', '.join(pruned)}", flush=True)
+            print(
+                f"Pruned {len(pruned)} older baseline run(s): {', '.join(pruned)}",
+                flush=True,
+            )
 
     qmd_dir = out / "qmd"
     hr_dir = out / "headroom"
@@ -126,7 +143,7 @@ def main(argv: list[str] | None = None) -> int:
     wf_dir = out / "webfetch"
 
     results: dict = {
-        "generated_at_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "generated_at_utc": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "trials_count": args.trials,
         "qmd": None,
         "headroom": None,
@@ -138,8 +155,10 @@ def main(argv: list[str] | None = None) -> int:
 
     if not args.skip_qmd:
         extra = [
-            "--out", str(qmd_dir.relative_to(ROOT)).replace("\\", "/"),
-            "--trials", str(args.trials),
+            "--out",
+            str(qmd_dir.relative_to(ROOT)).replace("\\", "/"),
+            "--trials",
+            str(args.trials),
         ]
         if args.hybrid:
             extra.append("--hybrid")
@@ -153,11 +172,15 @@ def main(argv: list[str] | None = None) -> int:
 
     if not args.skip_headroom:
         extra = [
-            "--out", str(hr_dir.relative_to(ROOT)).replace("\\", "/"),
-            "--trials", str(args.trials),
+            "--out",
+            str(hr_dir.relative_to(ROOT)).replace("\\", "/"),
+            "--trials",
+            str(args.trials),
         ]
         print("running cost-layers/validate_headroom_compression.py...", flush=True)
-        code, payload = run_script("cost-layers/validate_headroom_compression.py", extra)
+        code, payload = run_script(
+            "cost-layers/validate_headroom_compression.py", extra
+        )
         results["headroom"] = payload
         if code != 0:
             exit_code = 1
@@ -182,11 +205,15 @@ def main(argv: list[str] | None = None) -> int:
 
     if not args.skip_webfetch:
         extra = ["--benchmark", "--trials", str(args.trials)]
-        print("running research/local_webfetch.py distillation benchmark...", flush=True)
+        print(
+            "running research/local_webfetch.py distillation benchmark...", flush=True
+        )
         code, payload = run_script("research/local_webfetch.py", extra)
         results["webfetch"] = payload
         wf_dir.mkdir(parents=True, exist_ok=True)
-        (wf_dir / "summary.json").write_text(json.dumps(payload.get("summary") or {}, indent=2), encoding="utf-8")
+        (wf_dir / "summary.json").write_text(
+            json.dumps(payload.get("summary") or {}, indent=2), encoding="utf-8"
+        )
         if code != 0:
             exit_code = 1
 

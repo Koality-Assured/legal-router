@@ -16,10 +16,10 @@ for _p in (_LIB, _ROUTING):
     if str(_p) not in sys.path:
         sys.path.insert(0, str(_p))
 
-from md import load_skill_record, skill_paths  # noqa: E402
-from areas import AreasYamlError  # noqa: E402
-from generate_routing_index import render_agent_dispatch, render_area_map  # noqa: E402
-from generate_script_index import render_script_index  # noqa: E402
+from areas import AreasYamlError
+from generate_routing_index import render_agent_dispatch, render_area_map
+from generate_script_index import render_script_index
+from md import load_skill_record, skill_paths
 
 HARNESS_TEMPLATE_MODE = "harness_template"
 WIKI_TEMPLATE_MODE = HARNESS_TEMPLATE_MODE  # Backward compatibility alias
@@ -762,14 +762,12 @@ def is_harness_template_rel_kept(rel: str) -> bool:
     if len(parts) == 1 and top in HARNESS_TEMPLATE_ROOT_FILES:
         return True
     if top in {"routing", "config", ".harness"}:
-        if top == "routing" and len(parts) == 2 and parts[1] in {
-            "skill-dispatch.md",
-            "area-map.md",
-            "agent-dispatch.md",
-            "by-task.md",
-        }:
-            return False
-        return True
+        return not (
+            top == "routing"
+            and len(parts) == 2
+            and parts[1]
+            in {"skill-dispatch.md", "area-map.md", "agent-dispatch.md", "by-task.md"}
+        )
     if top == "scripts":
         return _keep_scripts(parts)
     if top == "supporting":
@@ -827,13 +825,17 @@ def harness_template_dir_may_contain_kept(rel_dir: str) -> bool:
     if top in HARNESS_TEMPLATE_EMPTY_AREAS:
         if len(parts) == 1:
             return True
-        if top == "projects" and parts[1] in {"notes", "project-prompts"} and len(parts) <= 2:
-            return True
-        return False
+        return bool(
+            top == "projects"
+            and parts[1] in {"notes", "project-prompts"}
+            and len(parts) <= 2
+        )
     return False
 
 
-wiki_template_dir_may_contain_kept = harness_template_dir_may_contain_kept  # Backward compatibility alias
+wiki_template_dir_may_contain_kept = (
+    harness_template_dir_may_contain_kept  # Backward compatibility alias
+)
 
 
 def harness_template_stub_files() -> dict[str, str]:
@@ -848,7 +850,9 @@ def harness_template_stub_files() -> dict[str, str]:
 wiki_template_stub_files = harness_template_stub_files  # Backward compatibility alias
 
 
-def harness_template_post_copy_files(dest_root: Path, source_root: Path | None = None) -> dict[str, str]:
+def harness_template_post_copy_files(
+    dest_root: Path, source_root: Path | None = None
+) -> dict[str, str]:
     """Dest-relative files generated after the filtered copy (stubs + dest indexes)."""
     files = dict(harness_template_stub_files())
     files["routing/skill-dispatch.md"] = render_dest_skill_dispatch(dest_root)
@@ -861,14 +865,16 @@ def harness_template_post_copy_files(dest_root: Path, source_root: Path | None =
     return files
 
 
-wiki_template_post_copy_files = harness_template_post_copy_files  # Backward compatibility alias
+wiki_template_post_copy_files = (
+    harness_template_post_copy_files  # Backward compatibility alias
+)
 
 
 def render_dest_agent_dispatch(dest_root: Path) -> str:
     """Build agent-dispatch.md from dest ai-tooling/agents (kept agents only)."""
     try:
         return render_agent_dispatch(dest_root, now="export")
-    except Exception:
+    except Exception:  # noqa: BLE001
         return ""
 
 
@@ -909,7 +915,11 @@ def render_dest_script_index(dest_root: Path) -> str:
 
 def render_dest_by_task(dest_root: Path, source_root: Path | None = None) -> str:
     """Build sanitized by-task.md containing only kept agents and skills."""
-    src_by_task = (source_root / "routing" / "by-task.md") if source_root else (dest_root / "routing" / "by-task.md")
+    src_by_task = (
+        (source_root / "routing" / "by-task.md")
+        if source_root
+        else (dest_root / "routing" / "by-task.md")
+    )
     if not src_by_task.exists():
         src_by_task = Path(__file__).resolve().parents[2] / "routing" / "by-task.md"
     if not src_by_task.exists():
@@ -934,7 +944,9 @@ def render_dest_by_task(dest_root: Path, source_root: Path | None = None) -> str
             if len(cols) >= 4:
                 agent_col = cols[2]
                 skill_col = cols[3]
-                has_dropped_agent = any(f"`{da}`" in agent_col for da in HARNESS_TEMPLATE_DROP_AGENTS)
+                has_dropped_agent = any(
+                    f"`{da}`" in agent_col for da in HARNESS_TEMPLATE_DROP_AGENTS
+                )
                 has_dropped_skill = any(
                     f"`{ds}`" in skill_col for ds in HARNESS_TEMPLATE_DROP_SKILLS
                 ) or any(
@@ -942,9 +954,38 @@ def render_dest_by_task(dest_root: Path, source_root: Path | None = None) -> str
                 )
                 if has_dropped_agent or has_dropped_skill:
                     continue
-                if any(k in skill_col for k in ("benchlm-lookup", "ai-vendor-updates", "cloud-admin-provision", "google-workspace-admin", "slack-message", "confluence-doc-manage", "confluence-admin", "confluence-app-manage")):
-                    skill_name_match = [s for s in ("benchlm-lookup", "ai-vendor-updates", "cloud-admin-provision", "google-workspace-admin", "slack-message", "confluence-doc-manage", "confluence-admin", "confluence-app-manage") if s in skill_col]
-                    if skill_name_match and not any((dest_root / "ai-tooling" / "skills").rglob(f"{skill_name_match[0]}/SKILL.md")):
+                if any(
+                    k in skill_col
+                    for k in (
+                        "benchlm-lookup",
+                        "ai-vendor-updates",
+                        "cloud-admin-provision",
+                        "google-workspace-admin",
+                        "slack-message",
+                        "confluence-doc-manage",
+                        "confluence-admin",
+                        "confluence-app-manage",
+                    )
+                ):
+                    skill_name_match = [
+                        s
+                        for s in (
+                            "benchlm-lookup",
+                            "ai-vendor-updates",
+                            "cloud-admin-provision",
+                            "google-workspace-admin",
+                            "slack-message",
+                            "confluence-doc-manage",
+                            "confluence-admin",
+                            "confluence-app-manage",
+                        )
+                        if s in skill_col
+                    ]
+                    if skill_name_match and not any(
+                        (dest_root / "ai-tooling" / "skills").rglob(
+                            f"{skill_name_match[0]}/SKILL.md"
+                        )
+                    ):
                         continue
             out_lines.append(line)
             continue
@@ -1004,7 +1045,10 @@ def harness_template_prune_dest_leftovers(dest_root: Path) -> list[str]:
     agents_root = dest_root / "ai-tooling" / "agents"
     if agents_root.is_dir():
         for agent_dir in sorted(agents_root.iterdir()):
-            if agent_dir.is_dir() and (agent_dir.name in HARNESS_TEMPLATE_DROP_AGENTS or not agent_is_kept(agent_dir.name)):
+            if agent_dir.is_dir() and (
+                agent_dir.name in HARNESS_TEMPLATE_DROP_AGENTS
+                or not agent_is_kept(agent_dir.name)
+            ):
                 shutil.rmtree(agent_dir)
                 pruned.append(f"ai-tooling/agents/{agent_dir.name}")
 
@@ -1029,8 +1073,14 @@ def harness_template_prune_dest_leftovers(dest_root: Path) -> list[str]:
                     for skill_dir in sorted(child.iterdir()):
                         if skill_dir.is_dir() and not skill_is_kept(skill_dir.name):
                             shutil.rmtree(skill_dir)
-                            pruned.append(f"ai-tooling/skills/{child.name}/{skill_dir.name}")
-                    remaining = [f for f in child.iterdir() if f.name not in {".gitkeep", ".DS_Store"}]
+                            pruned.append(
+                                f"ai-tooling/skills/{child.name}/{skill_dir.name}"
+                            )
+                    remaining = [
+                        f
+                        for f in child.iterdir()
+                        if f.name not in {".gitkeep", ".DS_Store"}
+                    ]
                     if not remaining:
                         shutil.rmtree(child)
                         pruned.append(f"ai-tooling/skills/{child.name}")
@@ -1039,20 +1089,30 @@ def harness_template_prune_dest_leftovers(dest_root: Path) -> list[str]:
     refs_root = dest_root / "references"
     if refs_root.is_dir():
         for ref_dir in sorted(refs_root.iterdir()):
-            if ref_dir.is_dir() and (ref_dir.name in HARNESS_TEMPLATE_DROP_REFERENCE_FAMILIES or ref_dir.name not in HARNESS_TEMPLATE_KEEP_REFERENCE_FAMILIES):
+            if ref_dir.is_dir() and (
+                ref_dir.name in HARNESS_TEMPLATE_DROP_REFERENCE_FAMILIES
+                or ref_dir.name not in HARNESS_TEMPLATE_KEEP_REFERENCE_FAMILIES
+            ):
                 shutil.rmtree(ref_dir)
                 pruned.append(f"references/{ref_dir.name}")
 
     return pruned
 
 
-wiki_template_prune_dest_leftovers = harness_template_prune_dest_leftovers  # Backward compatibility alias
+wiki_template_prune_dest_leftovers = (
+    harness_template_prune_dest_leftovers  # Backward compatibility alias
+)
 
 
 def harness_template_sanitize_file_content(rel: str, raw_text: str) -> str:
     """Sanitize file contents for harness template export (e.g. drop unkept delegation targets)."""
     parts = _posix_parts(rel)
-    if len(parts) >= 3 and parts[0] == "ai-tooling" and parts[1] == "agents" and parts[-1] == "AGENT.md":
+    if (
+        len(parts) >= 3
+        and parts[0] == "ai-tooling"
+        and parts[1] == "agents"
+        and parts[-1] == "AGENT.md"
+    ):
         lines = raw_text.splitlines()
         out: list[str] = []
         in_delegation_targets = False
@@ -1065,25 +1125,38 @@ def harness_template_sanitize_file_content(rel: str, raw_text: str) -> str:
             if in_delegation_targets:
                 if stripped.startswith("- "):
                     target_agent = stripped[2:].strip().strip("'\"")
-                    if target_agent in HARNESS_TEMPLATE_DROP_AGENTS or not agent_is_kept(target_agent):
+                    if (
+                        target_agent in HARNESS_TEMPLATE_DROP_AGENTS
+                        or not agent_is_kept(target_agent)
+                    ):
                         continue
                 elif stripped and not stripped.startswith("#"):
                     in_delegation_targets = False
             out.append(line)
         return "\n".join(out) + ("\n" if raw_text.endswith("\n") else "")
-    if len(parts) >= 3 and parts[0] == "ai-tooling" and parts[1] == "agents" and parts[-1] == "README.md":
+    if (
+        len(parts) >= 3
+        and parts[0] == "ai-tooling"
+        and parts[1] == "agents"
+        and parts[-1] == "README.md"
+    ):
         lines = raw_text.splitlines()
         out = []
         for line in lines:
             stripped = line.strip()
-            if stripped.startswith("|") and any(f"`{da}/`" in stripped or f"/{da}/" in stripped for da in HARNESS_TEMPLATE_DROP_AGENTS):
+            if stripped.startswith("|") and any(
+                f"`{da}/`" in stripped or f"/{da}/" in stripped
+                for da in HARNESS_TEMPLATE_DROP_AGENTS
+            ):
                 continue
             out.append(line)
         return "\n".join(out) + ("\n" if raw_text.endswith("\n") else "")
     return raw_text
 
 
-wiki_template_sanitize_file_content = harness_template_sanitize_file_content  # Backward compatibility alias
+wiki_template_sanitize_file_content = (
+    harness_template_sanitize_file_content  # Backward compatibility alias
+)
 
 
 def render_dest_skill_dispatch(dest_root: Path) -> str:
@@ -1115,7 +1188,9 @@ def render_dest_skill_dispatch(dest_root: Path) -> str:
     for r in rows:
         p = r.get("path")
         if isinstance(p, Path):
-            skill_link_map[r["name"]] = (Path("..") / p.relative_to(dest_root)).as_posix()
+            skill_link_map[r["name"]] = (
+                Path("..") / p.relative_to(dest_root)
+            ).as_posix()
         else:
             skill_link_map[r["name"]] = f"../ai-tooling/skills/{r['name']}/SKILL.md"
 
@@ -1130,15 +1205,19 @@ def render_dest_skill_dispatch(dest_root: Path) -> str:
         "",
         "# Skill dispatch",
         "",
-        "Generated from dest `ai-tooling/skills/*/SKILL.md` frontmatter after harness-template export. "
-        "Do not hand-edit — re-export or run `python scripts/routing/generate_routing_index.py` "
-        "from the dest checkout after feeding skills.",
+        (
+            "Generated from dest `ai-tooling/skills/*/SKILL.md` frontmatter after harness-template export. "
+            "Do not hand-edit — re-export or run `python scripts/routing/generate_routing_index.py` "
+            "from the dest checkout after feeding skills."
+        ),
         "",
         "| Skill | Owner agent | Rank | Isolation | When |",
         "| --- | --- | --- | --- | --- |",
     ]
     for row in rows:
-        link_target = skill_link_map.get(row["name"], f"../ai-tooling/skills/{row['name']}/SKILL.md")
+        link_target = skill_link_map.get(
+            row["name"], f"../ai-tooling/skills/{row['name']}/SKILL.md"
+        )
         skill_link = f"[`{row['name']}`]({link_target})"
         lines.append(
             f"| {skill_link} | {_agent_cell(row['owner_agent'])} | `{row['rank']}` | "
@@ -1154,8 +1233,23 @@ def render_dest_skill_dispatch(dest_root: Path) -> str:
         ins_list = deps.get("in_session_skills", [])
         prereqs_list = row.get("prerequisites", [])
         fail_policy = row.get("on_failure")
-        if req_list or del_list or ins_list or prereqs_list or (fail_policy and fail_policy != "abort_and_rollback"):
-            composite_rows.append((row, req_list, del_list, ins_list, prereqs_list, fail_policy or "abort_and_rollback"))
+        if (
+            req_list
+            or del_list
+            or ins_list
+            or prereqs_list
+            or (fail_policy and fail_policy != "abort_and_rollback")
+        ):
+            composite_rows.append(
+                (
+                    row,
+                    req_list,
+                    del_list,
+                    ins_list,
+                    prereqs_list,
+                    fail_policy or "abort_and_rollback",
+                )
+            )
 
     if composite_rows:
         lines.extend(
@@ -1168,24 +1262,37 @@ def render_dest_skill_dispatch(dest_root: Path) -> str:
             ]
         )
         for row, req_list, del_list, ins_list, prereqs_list, fail_str in composite_rows:
-            link_target = skill_link_map.get(row["name"], f"../ai-tooling/skills/{row['name']}/SKILL.md")
+            link_target = skill_link_map.get(
+                row["name"], f"../ai-tooling/skills/{row['name']}/SKILL.md"
+            )
             skill_link = f"[`{row['name']}`]({link_target})"
             req_str = (
-                ", ".join(f"[`{s}`]({skill_link_map.get(s, f'../ai-tooling/skills/{s}/SKILL.md')})" for s in req_list)
+                ", ".join(
+                    f"[`{s}`]({skill_link_map.get(s, f'../ai-tooling/skills/{s}/SKILL.md')})"
+                    for s in req_list
+                )
                 if req_list
                 else "—"
             )
             del_str = (
-                ", ".join(f"[`{s}`]({skill_link_map.get(s, f'../ai-tooling/skills/{s}/SKILL.md')})" for s in del_list)
+                ", ".join(
+                    f"[`{s}`]({skill_link_map.get(s, f'../ai-tooling/skills/{s}/SKILL.md')})"
+                    for s in del_list
+                )
                 if del_list
                 else "—"
             )
             ins_str = (
-                ", ".join(f"[`{s}`]({skill_link_map.get(s, f'../ai-tooling/skills/{s}/SKILL.md')})" for s in ins_list)
+                ", ".join(
+                    f"[`{s}`]({skill_link_map.get(s, f'../ai-tooling/skills/{s}/SKILL.md')})"
+                    for s in ins_list
+                )
                 if ins_list
                 else "—"
             )
-            prereqs_str = ", ".join(f"`{p}`" for p in prereqs_list) if prereqs_list else "—"
+            prereqs_str = (
+                ", ".join(f"`{p}`" for p in prereqs_list) if prereqs_list else "—"
+            )
 
             lines.append(
                 f"| {skill_link} | {req_str} | {del_str} | {ins_str} | {prereqs_str} | `{fail_str}` |"
@@ -1204,25 +1311,23 @@ def _keep_scripts(parts: list[str]) -> bool:
         if len(parts) != 3:
             return False
         return script_test_is_kept(parts[2])
-    if len(parts) >= 2 and parts[1] in HARNESS_TEMPLATE_KEEP_SCRIPT_DIRS:
-        return True
-    return False
+    return bool(len(parts) >= 2 and parts[1] in HARNESS_TEMPLATE_KEEP_SCRIPT_DIRS)
 
 
 def _keep_supporting(parts: list[str]) -> bool:
     if len(parts) == 2 and parts[1] in {"AGENTS.md", "workstation-onboarding.md"}:
         return True
-    if len(parts) >= 2 and parts[1] in HARNESS_TEMPLATE_KEEP_SUPPORTING_DIRS:
-        return True
-    return False
+    return bool(len(parts) >= 2 and parts[1] in HARNESS_TEMPLATE_KEEP_SUPPORTING_DIRS)
 
 
 def _keep_docs(parts: list[str]) -> bool:
     if len(parts) == 2 and parts[1] in HARNESS_TEMPLATE_KEEP_DOCS_FILES:
         return True
-    if len(parts) == 3 and parts[1] == "standards" and parts[2] in HARNESS_TEMPLATE_KEEP_DOCS_STANDARDS:
-        return True
-    return False
+    return bool(
+        len(parts) == 3
+        and parts[1] == "standards"
+        and parts[2] in HARNESS_TEMPLATE_KEEP_DOCS_STANDARDS
+    )
 
 
 def _keep_references(parts: list[str]) -> bool:
@@ -1251,19 +1356,23 @@ def _keep_ai_tooling(parts: list[str]) -> bool:
             return agent_is_kept(parts[2])
         return False
     if len(parts) >= 2 and parts[1] == "skills":
-        if len(parts) == 3 and parts[2] in {"AGENTS.md", "skill-conventions.md", "README.md"}:
+        if len(parts) == 3 and parts[2] in {
+            "AGENTS.md",
+            "skill-conventions.md",
+            "README.md",
+        }:
             return True
         if len(parts) >= 3 and parts[2] in HARNESS_TEMPLATE_DROP_SKILL_FAMILIES:
             return False
         for p in parts[2:]:
-            if p in HARNESS_TEMPLATE_DROP_SKILLS or p.startswith(HARNESS_TEMPLATE_DROP_SKILL_PREFIXES):
+            if p in HARNESS_TEMPLATE_DROP_SKILLS or p.startswith(
+                HARNESS_TEMPLATE_DROP_SKILL_PREFIXES
+            ):
                 return False
         return any(skill_is_kept(p) for p in parts[2:]) or len(parts) == 3
     if len(parts) >= 2 and parts[1] == "memory":
         if parts[-1] in {"AGENTS.md", ".gitkeep"}:
-            if len(parts) >= 5 and parts[2] in {"user", "agent", "model"}:
-                return False
-            return True
+            return not (len(parts) >= 5 and parts[2] in {"user", "agent", "model"})
         return False
     return False
 
@@ -1273,11 +1382,18 @@ def _keep_empty_area(parts: list[str]) -> bool:
         return True
     if parts[-1] == ".gitkeep":
         return True
-    if len(parts) == 2 and parts[0] == "results" and parts[1] == "results-conventions.md":
+    if (
+        len(parts) == 2
+        and parts[0] == "results"
+        and parts[1] == "results-conventions.md"
+    ):
         return True
-    if len(parts) == 3 and parts[0] == "projects" and parts[1] == "notes" and parts[2] == "README.md":
-        return True
-    return False
+    return bool(
+        len(parts) == 3
+        and parts[0] == "projects"
+        and parts[1] == "notes"
+        and parts[2] == "README.md"
+    )
 
 
 def _ai_tooling_dir_may_contain_kept(parts: list[str]) -> bool:
@@ -1297,11 +1413,11 @@ def _ai_tooling_dir_may_contain_kept(parts: list[str]) -> bool:
         if parts[2] in HARNESS_TEMPLATE_DROP_SKILL_FAMILIES:
             return False
         for p in parts[2:]:
-            if p in HARNESS_TEMPLATE_DROP_SKILLS or p.startswith(HARNESS_TEMPLATE_DROP_SKILL_PREFIXES):
+            if p in HARNESS_TEMPLATE_DROP_SKILLS or p.startswith(
+                HARNESS_TEMPLATE_DROP_SKILL_PREFIXES
+            ):
                 return False
         return True
     if parts[1] == "memory":
-        if len(parts) >= 4 and parts[2] in {"user", "agent", "model"}:
-            return False
-        return True
+        return not (len(parts) >= 4 and parts[2] in {"user", "agent", "model"})
     return False

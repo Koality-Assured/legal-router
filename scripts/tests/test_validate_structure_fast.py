@@ -18,13 +18,12 @@ _SCRIPTS = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(_SCRIPTS / "docs"))
 sys.path.insert(0, str(_SCRIPTS / "_lib"))
 
-from validate_structure_fast import (  # noqa: E402
+from validate_structure_fast import (
     extract_headings_and_h1,
     extract_links_from_text,
     main,
     parse_yaml_frontmatter,
     slugify,
-    validate_all_structure,
     validate_file_frontmatter,
     validate_file_h1,
     validate_relative_links,
@@ -34,8 +33,13 @@ from validate_structure_fast import (  # noqa: E402
 class ValidateStructureFastTests(unittest.TestCase):
     def test_slugify(self) -> None:
         self.assertEqual(slugify("Hello World"), "hello-world")
-        self.assertEqual(slugify("`Heading` with [Link](url) & Symbols!"), "heading-with-link-symbols")
-        self.assertEqual(slugify("  Multiple   Spaces  -- Test  "), "multiple-spaces-test")
+        self.assertEqual(
+            slugify("`Heading` with [Link](url) & Symbols!"),
+            "heading-with-link-symbols",
+        )
+        self.assertEqual(
+            slugify("  Multiple   Spaces  -- Test  "), "multiple-spaces-test"
+        )
 
     def test_extract_headings_and_h1(self) -> None:
         doc = """---
@@ -97,7 +101,9 @@ purpose: Validate frontmatter
         self.assertIsNone(err)
         self.assertIsNotNone(fm)
         self.assertEqual(fm.get("doc_kind"), "requirement")
-        errs = validate_file_frontmatter(Path("docs/req.md"), "docs/req.md", valid_fm, fm, err)
+        errs = validate_file_frontmatter(
+            Path("docs/req.md"), "docs/req.md", valid_fm, fm, err
+        )
         self.assertEqual(errs, [])
 
         missing_purpose = """---
@@ -108,7 +114,9 @@ canonical_id: req-001
 # Req 001
 """
         fm, err, _ = parse_yaml_frontmatter(missing_purpose)
-        errs = validate_file_frontmatter(Path("docs/req.md"), "docs/req.md", missing_purpose, fm, err)
+        errs = validate_file_frontmatter(
+            Path("docs/req.md"), "docs/req.md", missing_purpose, fm, err
+        )
         self.assertTrue(any("missing required tag 'purpose'" in e for e in errs))
 
     def test_link_and_anchor_validation(self) -> None:
@@ -129,7 +137,9 @@ canonical_id: req-001
 
             links = extract_links_from_text(source.read_text(encoding="utf-8"))
             headings_cache = {}
-            errs = validate_relative_links(source, "source.md", links, headings_cache, tmp)
+            errs = validate_relative_links(
+                source, "source.md", links, headings_cache, tmp
+            )
 
             self.assertEqual(len(errs), 2)
             self.assertTrue(any("missing.md" in e for e in errs))

@@ -23,16 +23,11 @@ for _p in (str(_SCRIPTS), str(_LIB)):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from cli.harness import (  # noqa: E402
+from cli.harness import (
     SLUG_PATTERN,
     build_parser,
-    cmd_agent,
-    cmd_branch,
-    cmd_clean,
-    cmd_status,
     format_branch_name,
     is_conventional_commit,
-    load_claims,
     main,
 )
 
@@ -58,14 +53,20 @@ class TestHarnessArgParsing(unittest.TestCase):
         self.assertFalse(args.dry_run)
 
     def test_branch_parser_custom(self) -> None:
-        args = self.parser.parse_args([
-            "branch", "feature-x",
-            "--areas", "scripts,docs",
-            "--agent", "router",
-            "--type", "feat",
-            "--force",
-            "--dry-run",
-        ])
+        args = self.parser.parse_args(
+            [
+                "branch",
+                "feature-x",
+                "--areas",
+                "scripts,docs",
+                "--agent",
+                "router",
+                "--type",
+                "feat",
+                "--force",
+                "--dry-run",
+            ]
+        )
         self.assertEqual(args.slug, "feature-feature-x" if False else "feature-x")
         self.assertEqual(args.areas, "scripts,docs")
         self.assertEqual(args.agent, "router")
@@ -84,14 +85,19 @@ class TestHarnessArgParsing(unittest.TestCase):
         self.assertTrue(args2.json)
 
     def test_pr_parser(self) -> None:
-        args = self.parser.parse_args([
-            "pr",
-            "--base", "main",
-            "--title", "feat: my title",
-            "--body", "my body",
-            "--draft",
-            "--dry-run",
-        ])
+        args = self.parser.parse_args(
+            [
+                "pr",
+                "--base",
+                "main",
+                "--title",
+                "feat: my title",
+                "--body",
+                "my body",
+                "--draft",
+                "--dry-run",
+            ]
+        )
         self.assertEqual(args.cmd, "pr")
         self.assertEqual(args.base, "main")
         self.assertEqual(args.title, "feat: my title")
@@ -100,7 +106,9 @@ class TestHarnessArgParsing(unittest.TestCase):
         self.assertTrue(args.dry_run)
 
     def test_clean_parser(self) -> None:
-        args = self.parser.parse_args(["clean", "--merged", "--stale", "--force", "--dry-run"])
+        args = self.parser.parse_args(
+            ["clean", "--merged", "--stale", "--force", "--dry-run"]
+        )
         self.assertEqual(args.cmd, "clean")
         self.assertTrue(args.merged)
         self.assertTrue(args.stale)
@@ -108,7 +116,9 @@ class TestHarnessArgParsing(unittest.TestCase):
         self.assertTrue(args.dry_run)
 
     def test_auth_parser(self) -> None:
-        args_login = self.parser.parse_args(["auth", "login", "anthropic", "--no-browser", "--api-key", "my-key"])
+        args_login = self.parser.parse_args(
+            ["auth", "login", "anthropic", "--no-browser", "--api-key", "my-key"]
+        )
         self.assertEqual(args_login.cmd, "auth")
         self.assertEqual(args_login.auth_cmd, "login")
         self.assertEqual(args_login.provider, "anthropic")
@@ -189,7 +199,9 @@ class TestConventionalCommits(unittest.TestCase):
         ]
         for sample in invalid_samples:
             with self.subTest(sample=sample):
-                self.assertFalse(is_conventional_commit(sample), f"Should fail for {sample}")
+                self.assertFalse(
+                    is_conventional_commit(sample), f"Should fail for {sample}"
+                )
 
 
 class TestHarnessCommands(unittest.TestCase):
@@ -215,7 +227,9 @@ class TestHarnessCommands(unittest.TestCase):
         self.assertIsInstance(agents, list)
         self.assertGreater(len(agents), 0)
         # Verify harness-operator is present
-        harness_op = next((a for a in agents if a.get("agent_id") == "harness-operator"), None)
+        harness_op = next(
+            (a for a in agents if a.get("agent_id") == "harness-operator"), None
+        )
         self.assertIsNotNone(harness_op)
         self.assertEqual(harness_op.get("model_tier"), "standard")
 
@@ -247,7 +261,9 @@ class TestHarnessCommands(unittest.TestCase):
     def test_branch_invalid_areas(self) -> None:
         err_capture = io.StringIO()
         with patch("sys.stderr", err_capture):
-            ret = main(["branch", "valid-slug", "--areas", "nonexistent-area-xyz", "--force"])
+            ret = main(
+                ["branch", "valid-slug", "--areas", "nonexistent-area-xyz", "--force"]
+            )
         self.assertEqual(ret, 2)
         self.assertIn("unknown areas", err_capture.getvalue())
 
@@ -261,19 +277,26 @@ class TestHarnessCommands(unittest.TestCase):
     def test_clean_merged_detection(self) -> None:
         mock_proc = MagicMock()
         mock_proc.stdout = "  main\n+ agent/2026-09-15-test-worktree\n"
-        with patch("cli.harness.run_git", return_value=mock_proc):
+        with patch("cli.harness.run_git", return_value=mock_proc):  # noqa: SIM117
             with patch(
                 "cli.harness.load_claims",
-                return_value=[{"slug": "test-worktree", "branch": "agent/2026-09-15-test-worktree"}],
+                return_value=[
+                    {
+                        "slug": "test-worktree",
+                        "branch": "agent/2026-09-15-test-worktree",
+                    }
+                ],
             ):
                 with patch("routing.spawn_worktree.cmd_remove") as mock_remove:
                     ret = main(["clean", "--merged", "--dry-run"])
                     self.assertEqual(ret, 0)
-                    mock_remove.assert_called_once_with(slug="test-worktree", dry_run=True, force=False)
+                    mock_remove.assert_called_once_with(
+                        slug="test-worktree", dry_run=True, force=False
+                    )
 
     def test_pr_missing_gh(self) -> None:
         err_capture = io.StringIO()
-        with patch("shutil.which", return_value=None):
+        with patch("shutil.which", return_value=None):  # noqa: SIM117
             with patch("sys.stderr", err_capture):
                 ret = main(["pr"])
         self.assertEqual(ret, 1)
@@ -283,7 +306,7 @@ class TestHarnessCommands(unittest.TestCase):
         err_capture = io.StringIO()
         mock_proc = MagicMock()
         mock_proc.stdout = ""
-        with patch("shutil.which", return_value="/usr/bin/gh"):
+        with patch("shutil.which", return_value="/usr/bin/gh"):  # noqa: SIM117
             with patch("cli.harness.run_git", return_value=mock_proc):
                 with patch("sys.stderr", err_capture):
                     ret = main(["pr"])
@@ -294,12 +317,14 @@ class TestHarnessCommands(unittest.TestCase):
         err_capture = io.StringIO()
         mock_proc = MagicMock()
         mock_proc.stdout = "main\n"
-        with patch("shutil.which", return_value="/usr/bin/gh"):
+        with patch("shutil.which", return_value="/usr/bin/gh"):  # noqa: SIM117
             with patch("cli.harness.run_git", return_value=mock_proc):
                 with patch("sys.stderr", err_capture):
                     ret = main(["pr"])
         self.assertEqual(ret, 1)
-        self.assertIn("cannot create PR from base branch 'main'", err_capture.getvalue())
+        self.assertIn(
+            "cannot create PR from base branch 'main'", err_capture.getvalue()
+        )
 
     def test_pr_dry_run_success(self) -> None:
         capture = io.StringIO()
@@ -318,7 +343,7 @@ class TestHarnessCommands(unittest.TestCase):
         mock_sub.returncode = 0
         mock_sub.stdout = "OK"
 
-        with patch("shutil.which", return_value="/usr/bin/gh"):
+        with patch("shutil.which", return_value="/usr/bin/gh"):  # noqa: SIM117
             with patch("cli.harness.run_git", side_effect=fake_git):
                 with patch("subprocess.run", return_value=mock_sub):
                     with patch("sys.stdout", capture):
@@ -329,14 +354,16 @@ class TestHarnessCommands(unittest.TestCase):
 
     def test_branch_claim_collision(self) -> None:
         err_capture = io.StringIO()
-        fake_claims = [{
-            "slug": "existing-task",
-            "branch": "agent/2026-09-16-existing-task",
-            "areas": ["scripts"],
-            "agent": "harness-operator",
-        }]
+        fake_claims = [
+            {
+                "slug": "existing-task",
+                "branch": "agent/2026-09-16-existing-task",
+                "areas": ["scripts"],
+                "agent": "harness-operator",
+            }
+        ]
         clean_status = MagicMock(returncode=0, stdout="")
-        with patch("cli.harness.run_git", return_value=clean_status):
+        with patch("cli.harness.run_git", return_value=clean_status):  # noqa: SIM117
             with patch("cli.harness.load_claims", return_value=fake_claims):
                 with patch("sys.stderr", err_capture):
                     ret = main(["branch", "new-task", "--areas", "scripts"])
@@ -347,16 +374,15 @@ class TestHarnessCommands(unittest.TestCase):
         from routing.spawn_worktree import claim_lock
 
         # First acquisition should succeed
-        with claim_lock(timeout_sec=0.5):
+        with claim_lock(timeout_sec=0.5):  # noqa: SIM117
             # Second concurrent acquisition should timeout
             with self.assertRaises(TimeoutError):
                 with claim_lock(timeout_sec=0.1, poll_interval=0.02):
                     pass
 
-
     def test_harness_missing_command_exits_2(self) -> None:
         err_capture = io.StringIO()
-        with patch("sys.stderr", err_capture):
+        with patch("sys.stderr", err_capture):  # noqa: SIM117
             with self.assertRaises(SystemExit) as ctx:
                 main([])
         self.assertEqual(ctx.exception.code, 2)
@@ -364,11 +390,13 @@ class TestHarnessCommands(unittest.TestCase):
     def test_branch_dirty_repo_rejected(self) -> None:
         dirty_proc = MagicMock(returncode=0, stdout=" M scripts/cli/harness.py\n")
         err_capture = io.StringIO()
-        with patch("cli.harness.run_git", return_value=dirty_proc):
+        with patch("cli.harness.run_git", return_value=dirty_proc):  # noqa: SIM117
             with patch("sys.stderr", err_capture):
                 ret = main(["branch", "my-feature", "--areas", "scripts"])
         self.assertEqual(ret, 1)
-        self.assertIn("primary repository has uncommitted changes", err_capture.getvalue())
+        self.assertIn(
+            "primary repository has uncommitted changes", err_capture.getvalue()
+        )
 
     def test_pr_non_conforming_commit_rejected(self) -> None:
         def fake_git(args, **kwargs):
@@ -383,13 +411,15 @@ class TestHarnessCommands(unittest.TestCase):
 
         mock_sub = MagicMock(returncode=0, stdout="OK")
         err_capture = io.StringIO()
-        with patch("shutil.which", return_value="/usr/bin/gh"):
+        with patch("shutil.which", return_value="/usr/bin/gh"):  # noqa: SIM117
             with patch("cli.harness.run_git", side_effect=fake_git):
                 with patch("subprocess.run", return_value=mock_sub):
                     with patch("sys.stderr", err_capture):
                         ret = main(["pr"])
         self.assertEqual(ret, 1)
-        self.assertIn("commits do not conform to Conventional Commits", err_capture.getvalue())
+        self.assertIn(
+            "commits do not conform to Conventional Commits", err_capture.getvalue()
+        )
 
     def test_cli_registry_lifecycle(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -402,7 +432,9 @@ class TestHarnessCommands(unittest.TestCase):
                 # 1. Register
                 out_reg = io.StringIO()
                 with patch("sys.stdout", out_reg):
-                    ret_reg = main(["register", str(repo1), "--name", "Spoke One", "--json"])
+                    ret_reg = main(
+                        ["register", str(repo1), "--name", "Spoke One", "--json"]
+                    )
                 self.assertEqual(ret_reg, 0)
                 reg_payload = json.loads(out_reg.getvalue())
                 self.assertEqual(reg_payload["id"], "spoke-one")
