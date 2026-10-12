@@ -10,14 +10,14 @@ import argparse
 import json
 import re
 import sys
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 _LIB = Path(__file__).resolve().parents[1] / "_lib"
 sys.path.insert(0, str(_LIB))
-from ast_grep import AstGrepError, run_ast_grep
-from md import agent_paths, skill_paths
-from paths import REPO_ROOT as ROOT
+from ast_grep import AstGrepError, run_ast_grep  # noqa: E402
+from md import agent_paths, skill_paths  # noqa: E402
+from paths import REPO_ROOT as ROOT  # noqa: E402
 
 FACTS_PER_FILE = 40
 SKIP_DIR_NAMES = {
@@ -48,7 +48,7 @@ AREA_IDS = (
 
 
 def utc_now() -> str:
-    return datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
+    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
 def rel_posix(path: Path, root: Path = ROOT) -> str:
@@ -93,9 +93,7 @@ def parse_json_pair(text: str) -> tuple[str, str] | None:
         raw_val.startswith("'") and raw_val.endswith("'")
     ):
         try:
-            raw_val = json.loads(
-                raw_val.replace("'", '"') if raw_val.startswith("'") else raw_val
-            )
+            raw_val = json.loads(raw_val.replace("'", '"') if raw_val.startswith("'") else raw_val)
         except json.JSONDecodeError:
             raw_val = raw_val[1:-1]
     if not isinstance(raw_val, str):
@@ -184,15 +182,11 @@ def extract_agent_cards(root: Path = ROOT) -> list[dict]:
     for path in agent_paths(root):
         if skipped_path(path, root):
             continue
-        facts.extend(
-            _yaml_pairs_from_markdown(path, root, "agent-cards", AGENT_YAML_KEYS)
-        )
+        facts.extend(_yaml_pairs_from_markdown(path, root, "agent-cards", AGENT_YAML_KEYS))
     return _cap(facts)
 
 
-def _yaml_pairs_from_markdown(
-    path: Path, root: Path, area: str, keep_keys: set[str]
-) -> list[dict]:
+def _yaml_pairs_from_markdown(path: Path, root: Path, area: str, keep_keys: set[str]) -> list[dict]:
     try:
         text = path.read_text(encoding="utf-8")
     except OSError:
@@ -232,9 +226,7 @@ def extract_skills_frontmatter(root: Path = ROOT) -> list[dict]:
     for path in skill_paths(root):
         if skipped_path(path, root):
             continue
-        facts.extend(
-            _yaml_pairs_from_markdown(path, root, "skills-frontmatter", SKILL_YAML_KEYS)
-        )
+        facts.extend(_yaml_pairs_from_markdown(path, root, "skills-frontmatter", SKILL_YAML_KEYS))
     return _cap(facts)
 
 
@@ -246,9 +238,7 @@ def extract_docs_frontmatter(root: Path = ROOT) -> list[dict]:
     for path in sorted(docs.rglob("*.md")):
         if skipped_path(path, root):
             continue
-        facts.extend(
-            _yaml_pairs_from_markdown(path, root, "docs-frontmatter", DOCS_YAML_KEYS)
-        )
+        facts.extend(_yaml_pairs_from_markdown(path, root, "docs-frontmatter", DOCS_YAML_KEYS))
     return _cap(facts)
 
 
@@ -260,11 +250,7 @@ def extract_routing_frontmatter(root: Path = ROOT) -> list[dict]:
     for path in sorted(routing.glob("*.md")):
         if skipped_path(path, root):
             continue
-        facts.extend(
-            _yaml_pairs_from_markdown(
-                path, root, "routing-frontmatter", ROUTING_YAML_KEYS
-            )
-        )
+        facts.extend(_yaml_pairs_from_markdown(path, root, "routing-frontmatter", ROUTING_YAML_KEYS))
     return _cap(facts)
 
 
@@ -304,9 +290,7 @@ def main(argv: list[str] | None = None) -> int:
         default=",".join(AREA_IDS),
         help="Comma-separated area ids to extract",
     )
-    parser.add_argument(
-        "--out", help="Optional JSON output path (under repo or absolute)"
-    )
+    parser.add_argument("--out", help="Optional JSON output path (under repo or absolute)")
     parser.add_argument(
         "--dry-run",
         action="store_true",

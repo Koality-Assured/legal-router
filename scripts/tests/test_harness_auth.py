@@ -57,9 +57,7 @@ class TestPKCE(unittest.TestCase):
 
         # Verify challenge computation matches RFC 7636: BASE64URL(SHA256(ASCII(verifier)))
         digest = hashlib.sha256(verifier.encode("ascii")).digest()
-        expected_challenge = (
-            base64.urlsafe_b64encode(digest).decode("ascii").rstrip("=")
-        )
+        expected_challenge = base64.urlsafe_b64encode(digest).decode("ascii").rstrip("=")
         self.assertEqual(challenge, expected_challenge)
 
     def test_pkce_rfc7636_test_vector(self) -> None:
@@ -71,9 +69,7 @@ class TestPKCE(unittest.TestCase):
         self.assertEqual(challenge, expected)
 
     def test_extract_code_from_input(self) -> None:
-        self.assertEqual(
-            extract_code_from_input("my-auth-code-123"), "my-auth-code-123"
-        )
+        self.assertEqual(extract_code_from_input("my-auth-code-123"), "my-auth-code-123")
         url_input = "http://127.0.0.1:8085/callback?code=captured_code_xyz&state=abc"
         self.assertEqual(extract_code_from_input(url_input), "captured_code_xyz")
 
@@ -82,7 +78,7 @@ class TestCredentialSanitization(unittest.TestCase):
     """Test zero plaintext token leakage in logs and terminal representations."""
 
     def test_mask_token_long(self) -> None:
-        token = "sk-ant-api03-1234567890abcdefghijklmnopqr"  # nosec B105
+        token = "sk-ant-api03-1234567890abcdefghijklmnopqr"
         masked = mask_token(token)
         self.assertTrue(masked.startswith("sk-ant"))
         self.assertTrue(masked.endswith("nopqr"[-4:]))
@@ -97,35 +93,23 @@ class TestCredentialSanitization(unittest.TestCase):
     def test_is_token_expired(self) -> None:
         now = time.time()
         # Non-expiring (API Key)
-        self.assertFalse(is_token_expired({"access_token": "abc", "expires_at": None}))  # nosec B105
-        self.assertFalse(is_token_expired({"access_token": "abc"}))  # nosec B105
+        self.assertFalse(is_token_expired({"access_token": "abc", "expires_at": None}))
+        self.assertFalse(is_token_expired({"access_token": "abc"}))
 
         # Expired in past
-        self.assertTrue(
-            is_token_expired({"access_token": "abc", "expires_at": now - 100})  # nosec B105
-        )
+        self.assertTrue(is_token_expired({"access_token": "abc", "expires_at": now - 100}))
 
         # Valid in future
-        self.assertFalse(
-            is_token_expired({"access_token": "abc", "expires_at": now + 3600})  # nosec B105
-        )
+        self.assertFalse(is_token_expired({"access_token": "abc", "expires_at": now + 3600}))
 
         # Within buffer (expires in 30s, buffer is 60s)
-        self.assertTrue(
-            is_token_expired(
-                {"access_token": "abc", "expires_at": now + 30}, buffer_seconds=60  # nosec B105
-            )
-        )
+        self.assertTrue(is_token_expired({"access_token": "abc", "expires_at": now + 30}, buffer_seconds=60))
 
         # ISO string parsing
         future_iso = "2099-01-01T00:00:00Z"
-        self.assertFalse(
-            is_token_expired({"access_token": "abc", "expires_at": future_iso})  # nosec B105
-        )
+        self.assertFalse(is_token_expired({"access_token": "abc", "expires_at": future_iso}))
         past_iso = "2020-01-01T00:00:00Z"
-        self.assertTrue(
-            is_token_expired({"access_token": "abc", "expires_at": past_iso})  # nosec B105
-        )
+        self.assertTrue(is_token_expired({"access_token": "abc", "expires_at": past_iso}))
 
 
 class TestEncryptedFileVault(unittest.TestCase):
@@ -134,10 +118,8 @@ class TestEncryptedFileVault(unittest.TestCase):
     def setUp(self) -> None:
         self.temp_dir = tempfile.TemporaryDirectory()
         self.vault_file = Path(self.temp_dir.name) / "credentials.enc"
-        self.passphrase = "test-secret-passphrase-123"  # nosec B105
-        self.vault = EncryptedFileVault(
-            vault_path=self.vault_file, passphrase=self.passphrase
-        )
+        self.passphrase = "test-secret-passphrase-123"
+        self.vault = EncryptedFileVault(vault_path=self.vault_file, passphrase=self.passphrase)
 
     def tearDown(self) -> None:
         self.temp_dir.cleanup()
@@ -149,8 +131,8 @@ class TestEncryptedFileVault(unittest.TestCase):
 
         # Set credential
         token_data = {
-            "access_token": "test-access-token",  # nosec B105
-            "token_type": "Bearer",  # nosec B105
+            "access_token": "test-access-token",
+            "token_type": "Bearer",
             "profile": "user@example.com",
         }
         self.vault.set_credential("anthropic", token_data)
@@ -177,12 +159,10 @@ class TestEncryptedFileVault(unittest.TestCase):
         self.assertFalse(self.vault.delete_credential("anthropic"))
 
     def test_wrong_passphrase_fails(self) -> None:
-        self.vault.set_credential("gemini", {"access_token": "ya29.test"})  # nosec B105
+        self.vault.set_credential("gemini", {"access_token": "ya29.test"})
 
         # Try to open with wrong passphrase
-        wrong_vault = EncryptedFileVault(
-            vault_path=self.vault_file, passphrase="wrong-passphrase"  # nosec B106
-        )
+        wrong_vault = EncryptedFileVault(vault_path=self.vault_file, passphrase="wrong-passphrase")
         with self.assertRaises(ValueError):
             wrong_vault.get_credential("gemini")
 
@@ -192,7 +172,7 @@ class TestEncryptedFileVault(unittest.TestCase):
             self.vault.get_credential("openai")
 
     def test_tampered_ciphertext_fails(self) -> None:
-        self.vault.set_credential("anthropic", {"access_token": "valid-secret-token"})  # nosec B105
+        self.vault.set_credential("anthropic", {"access_token": "valid-secret-token"})
         raw = bytearray(self.vault_file.read_bytes())
         # Corrupt a byte in ciphertext (after magic + salt + nonce = 32 bytes)
         raw[35] ^= 0xFF
@@ -203,7 +183,7 @@ class TestEncryptedFileVault(unittest.TestCase):
         self.assertIn("Authentication tag verification failed", str(ctx.exception))
 
     def test_tampered_header_fails(self) -> None:
-        self.vault.set_credential("cursor", {"access_token": "cur-secret-999"})  # nosec B105
+        self.vault.set_credential("cursor", {"access_token": "cur-secret-999"})
         raw = self.vault_file.read_bytes()
         tampered = b"BAD1" + raw[4:]
         self.vault_file.write_bytes(tampered)
@@ -215,7 +195,7 @@ class TestEncryptedFileVault(unittest.TestCase):
     def test_corrupted_vault_recovery(self) -> None:
         self.vault_file.write_bytes(b"garbage-data-simulating-corruption")
         # Writing a new credential to a corrupted vault must safely back up and re-initialize
-        self.vault.set_credential("openai", {"access_token": "sk-recovered-key"})  # nosec B105
+        self.vault.set_credential("openai", {"access_token": "sk-recovered-key"})
         cred = self.vault.get_credential("openai")
         self.assertIsNotNone(cred)
         self.assertEqual(cred["access_token"], "sk-recovered-key")
@@ -232,7 +212,7 @@ class TestEncryptedFileVault(unittest.TestCase):
         self.assertTrue(pass1.startswith("harness-vault:"))
 
         # Profile 2: Container environment with stripped USER and USERNAME and no getlogin
-        with patch("os.getlogin", side_effect=OSError("No login session")):  # noqa: SIM117
+        with patch("os.getlogin", side_effect=OSError("No login session")):
             with patch.dict(os.environ, {"USER": "", "USERNAME": ""}, clear=False):
                 v2 = EncryptedFileVault(vault_path=self.vault_file)
                 pass2 = v2._get_passphrase()
@@ -241,7 +221,7 @@ class TestEncryptedFileVault(unittest.TestCase):
     def test_file_permissions_enforcement(self) -> None:
         from cli.auth.keyring_vault import _enforce_private_permissions
 
-        self.vault.set_credential("gemini", {"access_token": "ya29.perm_test"})  # nosec B105
+        self.vault.set_credential("gemini", {"access_token": "ya29.perm_test"})
         self.assertTrue(self.vault_file.exists())
         # Calling permission enforcement directly should not raise
         _enforce_private_permissions(self.vault_file)
@@ -289,7 +269,7 @@ class TestKeyringVault(unittest.TestCase):
             if key in fake_storage:
                 del fake_storage[key]
             else:
-                raise Exception("Not found")  # noqa: TRY002
+                raise Exception("Not found")
 
         mock_keyring.get_password.side_effect = fake_get_password
         mock_keyring.set_password.side_effect = fake_set_password
@@ -299,7 +279,7 @@ class TestKeyringVault(unittest.TestCase):
         kv._keyring = mock_keyring
         self.assertTrue(kv.is_available)
 
-        kv.set_credential("openai", {"access_token": "sk-1234567890"})  # nosec B105
+        kv.set_credential("openai", {"access_token": "sk-1234567890"})
         cred = kv.get_credential("openai")
         self.assertIsNotNone(cred)
         self.assertEqual(cred["access_token"], "sk-1234567890")
@@ -312,12 +292,10 @@ class TestKeyringVault(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             vf = Path(td) / "credentials.enc"
             # Force file vault mode
-            uv = UniversalVault(
-                vault_path=vf, passphrase="fallback-passphrase", force_file_vault=True  # nosec B106
-            )
+            uv = UniversalVault(vault_path=vf, passphrase="fallback-passphrase", force_file_vault=True)
             self.assertEqual(uv.active_backend_name, "encrypted_file")
 
-            uv.set_credential("cursor", {"access_token": "cursor-token-999"})  # nosec B105
+            uv.set_credential("cursor", {"access_token": "cursor-token-999"})
             cred = uv.get_credential("cursor")
             self.assertIsNotNone(cred)
             self.assertEqual(cred["access_token"], "cursor-token-999")
@@ -331,12 +309,8 @@ class TestOAuthFlows(unittest.TestCase):
         self.temp_dir = tempfile.TemporaryDirectory()
         self.vault_file = Path(self.temp_dir.name) / "credentials.enc"
         self.vault = UniversalVault(vault_path=self.vault_file, force_file_vault=True)
-        self.patch_vault = patch(
-            "cli.auth.keyring_vault.get_vault", return_value=self.vault
-        )
-        self.patch_oauth_vault = patch(
-            "cli.auth.oauth_flows.get_vault", return_value=self.vault
-        )
+        self.patch_vault = patch("cli.auth.keyring_vault.get_vault", return_value=self.vault)
+        self.patch_oauth_vault = patch("cli.auth.oauth_flows.get_vault", return_value=self.vault)
         self.patch_vault.start()
         self.patch_oauth_vault.start()
 
@@ -397,12 +371,8 @@ class TestAuthCLICommands(unittest.TestCase):
         self.vault_file = Path(self.temp_dir.name) / "credentials.enc"
         self.vault = UniversalVault(vault_path=self.vault_file, force_file_vault=True)
         self.patch_vault1 = patch("cli.auth.get_vault", return_value=self.vault)
-        self.patch_vault2 = patch(
-            "cli.auth.keyring_vault.get_vault", return_value=self.vault
-        )
-        self.patch_vault3 = patch(
-            "cli.auth.oauth_flows.get_vault", return_value=self.vault
-        )
+        self.patch_vault2 = patch("cli.auth.keyring_vault.get_vault", return_value=self.vault)
+        self.patch_vault3 = patch("cli.auth.oauth_flows.get_vault", return_value=self.vault)
         self.patch_vault1.start()
         self.patch_vault2.start()
         self.patch_vault3.start()
@@ -424,15 +394,12 @@ class TestAuthCLICommands(unittest.TestCase):
 
     def test_auth_status_json(self) -> None:
         # Pre-seed one credential
-        self.vault.set_credential(
-            "anthropic",
-            {
-                "access_token": "sk-ant-test-token-123456789",  # nosec B105
-                "token_type": "ApiKey",  # nosec B105
-                "profile": "test-profile",
-                "expires_at": None,
-            },
-        )
+        self.vault.set_credential("anthropic", {
+            "access_token": "sk-ant-test-token-123456789",
+            "token_type": "ApiKey",
+            "profile": "test-profile",
+            "expires_at": None,
+        })
 
         capture = io.StringIO()
         with patch("sys.stdout", capture):
@@ -442,9 +409,7 @@ class TestAuthCLICommands(unittest.TestCase):
         self.assertIn("active_vault_backend", data)
         self.assertIn("providers", data)
 
-        anthropic_stat = next(
-            p for p in data["providers"] if p["provider"] == "anthropic"
-        )
+        anthropic_stat = next(p for p in data["providers"] if p["provider"] == "anthropic")
         self.assertTrue(anthropic_stat["authenticated"])
         self.assertEqual(anthropic_stat["status"], "VALID")
         # Ensure plaintext secret is NEVER exposed in status JSON
@@ -452,22 +417,14 @@ class TestAuthCLICommands(unittest.TestCase):
         self.assertTrue(anthropic_stat["token_masked"].startswith("sk-ant"))
 
     def test_auth_login_via_cli(self) -> None:
-        ret = main(
-            [
-                "auth",
-                "login",
-                "openai",
-                "--api-key",
-                "sk-proj-testkey1234567890abcdef123456",
-            ]
-        )
+        ret = main(["auth", "login", "openai", "--api-key", "sk-proj-testkey1234567890abcdef123456"])
         self.assertEqual(ret, 0)
         saved = self.vault.get_credential("openai")
         self.assertIsNotNone(saved)
         self.assertEqual(saved["access_token"], "sk-proj-testkey1234567890abcdef123456")
 
     def test_auth_logout_single(self) -> None:
-        self.vault.set_credential("cursor", {"access_token": "cur_12345"})  # nosec B105
+        self.vault.set_credential("cursor", {"access_token": "cur_12345"})
         self.assertIsNotNone(self.vault.get_credential("cursor"))
 
         capture = io.StringIO()
@@ -478,8 +435,8 @@ class TestAuthCLICommands(unittest.TestCase):
         self.assertIsNone(self.vault.get_credential("cursor"))
 
     def test_auth_logout_all(self) -> None:
-        self.vault.set_credential("gemini", {"access_token": "ya29.123"})  # nosec B105
-        self.vault.set_credential("openai", {"access_token": "sk-123"})  # nosec B105
+        self.vault.set_credential("gemini", {"access_token": "ya29.123"})
+        self.vault.set_credential("openai", {"access_token": "sk-123"})
 
         capture = io.StringIO()
         with patch("sys.stdout", capture):
@@ -490,7 +447,7 @@ class TestAuthCLICommands(unittest.TestCase):
 
     def test_auth_login_invalid_provider(self) -> None:
         err_capture = io.StringIO()
-        with patch("sys.stderr", err_capture):  # noqa: SIM117
+        with patch("sys.stderr", err_capture):
             with self.assertRaises(SystemExit) as ctx:
                 main(["auth", "login", "nonexistent_provider_xyz"])
         self.assertEqual(ctx.exception.code, 2)
@@ -506,20 +463,9 @@ class TestAuthCLICommands(unittest.TestCase):
     def test_auth_login_api_key_warning(self) -> None:
         err_capture = io.StringIO()
         with patch("sys.stderr", err_capture):
-            ret = main(
-                [
-                    "auth",
-                    "login",
-                    "openai",
-                    "--api-key",
-                    "sk-proj-testkey1234567890abcdef123456",
-                ]
-            )
+            ret = main(["auth", "login", "openai", "--api-key", "sk-proj-testkey1234567890abcdef123456"])
         self.assertEqual(ret, 0)
-        self.assertIn(
-            "warning: providing secrets via the '--api-key' CLI argument",
-            err_capture.getvalue(),
-        )
+        self.assertIn("warning: providing secrets via the '--api-key' CLI argument", err_capture.getvalue())
 
 
 class TestLoopbackAndOAuthSecurity(unittest.TestCase):
@@ -530,16 +476,14 @@ class TestLoopbackAndOAuthSecurity(unittest.TestCase):
         import urllib.error
         import urllib.request
 
-        server = LoopbackAuthServer(
-            host="127.0.0.1", port=8085, expected_state="expected-secret-state-999"
-        )
+        server = LoopbackAuthServer(host="127.0.0.1", port=8085, expected_state="expected-secret-state-999")
         port = server.server_port
 
         def send_attack():
             time.sleep(0.1)
             attack_url = f"http://127.0.0.1:{port}/callback?code=evil_code&state=ATTACKER_INJECTED_STATE"
             try:
-                urllib.request.urlopen(attack_url, timeout=2.0)  # nosec B310
+                urllib.request.urlopen(attack_url, timeout=2.0)
             except urllib.error.HTTPError as e:
                 # Expect 400 Bad Request
                 self.assertEqual(e.code, 400)
@@ -564,9 +508,7 @@ class TestLoopbackAndOAuthSecurity(unittest.TestCase):
 
         try:
             # LoopbackAuthServer should detect busy_port and bind to busy_port + 1 without error
-            server = LoopbackAuthServer(
-                host="127.0.0.1", port=busy_port, max_port_retries=5
-            )
+            server = LoopbackAuthServer(host="127.0.0.1", port=busy_port, max_port_retries=5)
             self.assertNotEqual(server.server_port, busy_port)
             self.assertEqual(server.server_port, busy_port + 1)
             server.server_close()

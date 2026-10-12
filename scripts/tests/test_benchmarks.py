@@ -17,17 +17,19 @@ sys.path.insert(0, str(_SCRIPTS))
 sys.path.insert(0, str(_SCRIPTS / "benchmarks"))
 sys.path.insert(0, str(_SCRIPTS / "_lib"))
 
-from benchmark_agent_fleet import benchmark_single_agent
-from benchmark_retrieval import evaluate_retrieval
-from benchmark_task_eval import evaluate_task, load_task_suite
-from benchmark_tool_efficiency import TOOL_FIXTURES, benchmark_fixture
-from estimate_agent_costs import (
+from paths import REPO_ROOT as ROOT  # noqa: E402
+from estimate_agent_costs import (  # noqa: E402
     DEFAULT_PRICING_TABLE,
     compute_trajectory_cost,
     estimate_agent_and_skill,
     estimate_tokens,
+    inspect_agent_tokens,
 )
-from paths import REPO_ROOT as ROOT
+from benchmark_agent_fleet import benchmark_single_agent  # noqa: E402
+from benchmark_retrieval import evaluate_retrieval, fallback_search  # noqa: E402
+from benchmark_tool_efficiency import benchmark_fixture, TOOL_FIXTURES  # noqa: E402
+from benchmark_task_eval import evaluate_task, load_task_suite  # noqa: E402
+from run_benchmark_suite import run_benchmark_script  # noqa: E402
 
 
 class BenchmarkSuiteUnitTests(unittest.TestCase):
@@ -68,13 +70,7 @@ class BenchmarkSuiteUnitTests(unittest.TestCase):
         all_skills = list((ROOT / "ai-tooling" / "skills").rglob("SKILL.md"))
         res = benchmark_single_agent(
             agent_path=agent_path,
-            known_agent_ids={
-                "benchmark-agent",
-                "router",
-                "script-ops",
-                "artifact-agent",
-                "router-maintenance",
-            },
+            known_agent_ids={"benchmark-agent", "router", "script-ops", "artifact-agent", "router-maintenance"},
             all_skills=all_skills,
             turns_to_simulate=5,
         )

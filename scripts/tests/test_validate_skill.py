@@ -25,8 +25,8 @@ sys.path.insert(0, str(_SCRIPTS))
 sys.path.insert(0, str(_SCRIPTS / "ai-tooling"))
 sys.path.insert(0, str(_SCRIPTS / "_lib"))
 
-from md import check_required_skill_v2_contracts
-from validate_skill import check_skill
+from md import check_required_skill_v2_contracts  # noqa: E402
+from validate_skill import check_skill  # noqa: E402
 
 _VALID_BODY = """# {name}
 
@@ -112,9 +112,7 @@ class CheckRequiredSkillV2ContractsTests(unittest.TestCase):
             {"inputs": ["in"], "outputs": ["out"]},
         )
         self.assertTrue(any("schema_version missing" in e for e in errs))
-        self.assertFalse(
-            any("1.0.0" in e for e in errs if "schema_version" in e and "!=" not in e)
-        )
+        self.assertFalse(any("1.0.0" in e for e in errs if "schema_version" in e and "!=" not in e))
 
     def test_explicit_v1_does_not_skip_contract_checks(self) -> None:
         errs = check_required_skill_v2_contracts("1.0.0", None)
@@ -145,8 +143,7 @@ class CheckRequiredSkillV2ContractsTests(unittest.TestCase):
         )
         self.assertTrue(
             any(
-                e
-                == "Skill 'cloud-admin-provision': Schema V2 contracts.inputs must be non-empty"
+                e == "Skill 'cloud-admin-provision': Schema V2 contracts.inputs must be non-empty"
                 for e in errs
             )
         )
@@ -155,9 +152,7 @@ class CheckRequiredSkillV2ContractsTests(unittest.TestCase):
 class ValidateSkillUnitTests(unittest.TestCase):
     def test_check_skill_passes_valid_fixture(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
-            path = _write_skill(
-                Path(tmp), "fixture-skill", _skill_text("fixture-skill")
-            )
+            path = _write_skill(Path(tmp), "fixture-skill", _skill_text("fixture-skill"))
             errs = check_skill(path, _OWNERS)
             self.assertEqual(errs, [], f"expected valid fixture, got {errs}")
 
@@ -192,12 +187,8 @@ class ValidateSkillUnitTests(unittest.TestCase):
                 ),
             )
             errs = check_skill(path, _OWNERS)
-            self.assertTrue(
-                any("contracts.inputs must be non-empty" in e for e in errs)
-            )
-            self.assertTrue(
-                any("contracts.outputs must be non-empty" in e for e in errs)
-            )
+            self.assertTrue(any("contracts.inputs must be non-empty" in e for e in errs))
+            self.assertTrue(any("contracts.outputs must be non-empty" in e for e in errs))
 
     def test_check_skill_keeps_name_and_heading_checks(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

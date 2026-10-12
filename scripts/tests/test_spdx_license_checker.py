@@ -15,7 +15,7 @@ sys.path.insert(0, str(_SCRIPTS))
 sys.path.insert(0, str(_SCRIPTS / "legal"))
 sys.path.insert(0, str(_SCRIPTS / "_lib"))
 
-from spdx_license_checker import (
+from spdx_license_checker import (  # noqa: E402
     ADVISORY_STAMP,
     analyze_expression,
     main,

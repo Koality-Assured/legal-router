@@ -9,51 +9,34 @@ from __future__ import annotations
 import argparse
 import datetime as dt
 import json
-import sys
-import urllib.request
-import xml.etree.ElementTree as ET  # nosec B405
 from pathlib import Path
+import sys
 from typing import Any
+import urllib.request
+import xml.etree.ElementTree as ET
 
 _LIB = Path(__file__).resolve().parents[1] / "_lib"
 sys.path.insert(0, str(_LIB))
-from paths import REPO_ROOT as ROOT
+from paths import REPO_ROOT as ROOT  # noqa: E402
 
-CATALOG_PATH = (
-    ROOT
-    / "ai-tooling"
-    / "skills"
-    / "meta"
-    / "ai-vendor-updates"
-    / "references"
-    / "vendor-sources.json"
-)
+CATALOG_PATH = ROOT / "ai-tooling" / "skills" / "meta" / "ai-vendor-updates" / "references" / "vendor-sources.json"
 
 
 def load_vendor_catalog() -> dict[str, Any]:
     target_path = CATALOG_PATH
     if not target_path.is_file():
         # Fallback to non-meta if moved
-        target_path = (
-            ROOT
-            / "ai-tooling"
-            / "skills"
-            / "ai-vendor-updates"
-            / "references"
-            / "vendor-sources.json"
-        )
+        target_path = ROOT / "ai-tooling" / "skills" / "ai-vendor-updates" / "references" / "vendor-sources.json"
     if not target_path.is_file():
         raise FileNotFoundError(f"Vendor source catalog not found at {CATALOG_PATH}")
     return json.loads(target_path.read_text(encoding="utf-8"))
 
 
-def parse_feed_entries(
-    xml_data: bytes, source_name: str, vendor_id: str
-) -> list[dict[str, Any]]:
+def parse_feed_entries(xml_data: bytes, source_name: str, vendor_id: str) -> list[dict[str, Any]]:
     entries: list[dict[str, Any]] = []
     try:
-        root = ET.fromstring(xml_data)  # nosec B314
-    except Exception:  # noqa: BLE001
+        root = ET.fromstring(xml_data)
+    except Exception:
         return entries
 
     # Handle RSS 2.0
@@ -62,23 +45,17 @@ def parse_feed_entries(
         for item in channel.findall("item"):
             title = (item.findtext("title") or "").strip()
             link = (item.findtext("link") or "").strip()
-            pub_date = (
-                item.findtext("pubDate")
-                or item.findtext("{http://purl.org/dc/elements/1.1/}date")
-                or ""
-            ).strip()
+            pub_date = (item.findtext("pubDate") or item.findtext("{http://purl.org/dc/elements/1.1/}date") or "").strip()
             description = (item.findtext("description") or "").strip()
             if title or link:
-                entries.append(
-                    {
-                        "vendor": vendor_id,
-                        "source": source_name,
-                        "title": title,
-                        "link": link,
-                        "published": pub_date,
-                        "summary": description[:300] if description else "",
-                    }
-                )
+                entries.append({
+                    "vendor": vendor_id,
+                    "source": source_name,
+                    "title": title,
+                    "link": link,
+                    "published": pub_date,
+                    "summary": description[:300] if description else "",
+                })
         return entries
 
     # Handle Atom
@@ -86,54 +63,26 @@ def parse_feed_entries(
     # Try with namespace, then fallback without
     atom_entries = root.findall("atom:entry", ns) or root.findall("entry")
     for entry in atom_entries:
-        title_el = (
-            entry.find("atom:title", ns)
-            if entry.find("atom:title", ns) is not None
-            else entry.find("title")
-        )
-        title = (
-            title_el.text if title_el is not None and title_el.text else ""
-        ).strip()
+        title_el = entry.find("atom:title", ns) if entry.find("atom:title", ns) is not None else entry.find("title")
+        title = (title_el.text if title_el is not None and title_el.text else "").strip()
         link = ""
-        link_el = (
-            entry.find("atom:link", ns)
-            if entry.find("atom:link", ns) is not None
-            else entry.find("link")
-        )
+        link_el = entry.find("atom:link", ns) if entry.find("atom:link", ns) is not None else entry.find("link")
         if link_el is not None:
             link = link_el.get("href") or link_el.text or ""
-        updated_el = (
-            entry.find("atom:updated", ns)
-            if entry.find("atom:updated", ns) is not None
-            else entry.find("updated")
-        )
-        published_el = (
-            entry.find("atom:published", ns)
-            if entry.find("atom:published", ns) is not None
-            else entry.find("published")
-        )
-        pub_date = (
-            published_el.text if published_el is not None and published_el.text else ""
-        ) or (updated_el.text if updated_el is not None and updated_el.text else "")
-        summary_el = (
-            entry.find("atom:summary", ns)
-            if entry.find("atom:summary", ns) is not None
-            else entry.find("summary")
-        )
-        summary = (
-            summary_el.text if summary_el is not None and summary_el.text else ""
-        ).strip()
+        updated_el = entry.find("atom:updated", ns) if entry.find("atom:updated", ns) is not None else entry.find("updated")
+        published_el = entry.find("atom:published", ns) if entry.find("atom:published", ns) is not None else entry.find("published")
+        pub_date = (published_el.text if published_el is not None and published_el.text else "") or (updated_el.text if updated_el is not None and updated_el.text else "")
+        summary_el = entry.find("atom:summary", ns) if entry.find("atom:summary", ns) is not None else entry.find("summary")
+        summary = (summary_el.text if summary_el is not None and summary_el.text else "").strip()
         if title or link:
-            entries.append(
-                {
-                    "vendor": vendor_id,
-                    "source": source_name,
-                    "title": title,
-                    "link": link,
-                    "published": pub_date,
-                    "summary": summary[:300] if summary else "",
-                }
-            )
+            entries.append({
+                "vendor": vendor_id,
+                "source": source_name,
+                "title": title,
+                "link": link,
+                "published": pub_date,
+                "summary": summary[:300] if summary else "",
+            })
     return entries
 
 
@@ -141,13 +90,11 @@ def fetch_live_feed(url: str, timeout: int = 5) -> bytes | None:
     try:
         req = urllib.request.Request(
             url,
-            headers={
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AI-Vendor-Intel/1.0"
-            },
+            headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AI-Vendor-Intel/1.0"},
         )
-        with urllib.request.urlopen(req, timeout=timeout) as response:  # nosec B310
+        with urllib.request.urlopen(req, timeout=timeout) as response:
             return response.read()
-    except Exception:  # noqa: BLE001
+    except Exception:
         return None
 
 
@@ -167,15 +114,9 @@ def generate_flash_briefing(
     ]
 
     all_vendors = catalog.get("vendors", {})
-    monitored_names = [
-        all_vendors[v]["name"] for v in selected_vendors if v in all_vendors
-    ]
-    lines.append(
-        f"- **Monitored Ecosystems ({len(monitored_names)})**: {', '.join(monitored_names)}"
-    )
-    lines.append(
-        f"- **Total Feeds & Endpoints Tracked**: {sum(len(all_vendors[v].get('primary_channels', [])) for v in selected_vendors if v in all_vendors)}"
-    )
+    monitored_names = [all_vendors[v]["name"] for v in selected_vendors if v in all_vendors]
+    lines.append(f"- **Monitored Ecosystems ({len(monitored_names)})**: {', '.join(monitored_names)}")
+    lines.append(f"- **Total Feeds & Endpoints Tracked**: {sum(len(all_vendors[v].get('primary_channels', [])) for v in selected_vendors if v in all_vendors)}")
     lines.append(f"- **Live Updates Captured**: {len(live_entries)}")
     lines.append("")
 
@@ -186,9 +127,7 @@ def generate_flash_briefing(
         if v_key not in all_vendors:
             continue
         v_data = all_vendors[v_key]
-        lines.append(
-            f"### {v_data['name']} (`{', '.join(v_data.get('ecosystem', []))}`)"
-        )
+        lines.append(f"### {v_data['name']} (`{', '.join(v_data.get('ecosystem', []))}`)")
         lines.append("")
 
         # Matching live entries
@@ -222,20 +161,12 @@ def generate_flash_briefing(
 
     lines.append("## Signal Triage & Recommended Actions")
     lines.append("")
-    lines.append(
-        "- **P0 (Immediate Action / Deprecations / Breaking Changes)**: Verify API snapshot dates, context limits, and token pricing changes."
-    )
-    lines.append(
-        "- **P1 (Platform & Tooling Capabilities)**: Assess agentic runtime features, MCP server updates, and SDK upgrades."
-    )
-    lines.append(
-        "- **P2 (Strategic Intel & Research)**: Review foundation model preprints, reasoning distillation techniques, and benchmark evaluations."
-    )
+    lines.append("- **P0 (Immediate Action / Deprecations / Breaking Changes)**: Verify API snapshot dates, context limits, and token pricing changes.")
+    lines.append("- **P1 (Platform & Tooling Capabilities)**: Assess agentic runtime features, MCP server updates, and SDK upgrades.")
+    lines.append("- **P2 (Strategic Intel & Research)**: Review foundation model preprints, reasoning distillation techniques, and benchmark evaluations.")
     lines.append("")
     lines.append("---")
-    lines.append(
-        f"*Generated automatically via `scripts/research/ai_vendor_briefing.py` on {date_str}.*"
-    )
+    lines.append(f"*Generated automatically via `scripts/research/ai_vendor_briefing.py` on {date_str}.*")
     return "\n".join(lines)
 
 
@@ -283,17 +214,10 @@ def main(argv: list[str] | None = None) -> int:
     if args.vendor.strip().lower() == "all":
         selected_vendors = all_vendors
     else:
-        selected_vendors = [
-            v.strip().lower()
-            for v in args.vendor.split(",")
-            if v.strip().lower() in all_vendors
-        ]
+        selected_vendors = [v.strip().lower() for v in args.vendor.split(",") if v.strip().lower() in all_vendors]
 
     if not selected_vendors:
-        print(
-            f"Error: No valid vendors specified. Available: {', '.join(all_vendors)}",
-            file=sys.stderr,
-        )
+        print(f"Error: No valid vendors specified. Available: {', '.join(all_vendors)}", file=sys.stderr)
         return 2
 
     live_entries: list[dict[str, Any]] = []
@@ -310,20 +234,14 @@ def main(argv: list[str] | None = None) -> int:
                         parsed = parse_feed_entries(data, ch["name"], v_key)
                         live_entries.extend(parsed)
                     else:
-                        feed_errors.append(
-                            f"Failed to fetch {ch['name']} at {feed_url}"
-                        )
+                        feed_errors.append(f"Failed to fetch {ch['name']} at {feed_url}")
 
-    today_str = dt.datetime.now(dt.UTC).strftime("%Y-%m-%d")
-    briefing_md = generate_flash_briefing(
-        catalog, selected_vendors, live_entries, today_str
-    )
+    today_str = dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%d")
+    briefing_md = generate_flash_briefing(catalog, selected_vendors, live_entries, today_str)
 
     out_file = None
     if not args.dry_run:
-        out_dir = args.out_dir or (
-            ROOT / "results" / "reports" / "vendor-briefings" / today_str
-        )
+        out_dir = args.out_dir or (ROOT / "results" / "reports" / "vendor-briefings" / today_str)
         out_dir.mkdir(parents=True, exist_ok=True)
         out_file = out_dir / "flash-briefing.md"
         out_file.write_text(briefing_md, encoding="utf-8")
@@ -332,10 +250,7 @@ def main(argv: list[str] | None = None) -> int:
         "status": "success",
         "date": today_str,
         "selected_vendors": selected_vendors,
-        "total_sources_scanned": sum(
-            len(catalog["vendors"][v].get("primary_channels", []))
-            for v in selected_vendors
-        ),
+        "total_sources_scanned": sum(len(catalog["vendors"][v].get("primary_channels", [])) for v in selected_vendors),
         "live_entries_count": len(live_entries),
         "feed_errors": feed_errors,
         "artifact_path": str(out_file.relative_to(ROOT)) if out_file else None,
@@ -347,12 +262,8 @@ def main(argv: list[str] | None = None) -> int:
     else:
         if args.dry_run:
             print("OK: Vendor catalog validated. Dry run simulation succeeded.")
-            print(
-                f"Target vendors ({len(selected_vendors)}): {', '.join(selected_vendors)}"
-            )
-            print(
-                f"Total primary endpoints catalogued: {result['total_sources_scanned']}"
-            )
+            print(f"Target vendors ({len(selected_vendors)}): {', '.join(selected_vendors)}")
+            print(f"Total primary endpoints catalogued: {result['total_sources_scanned']}")
         else:
             print(f"Flash briefing generated successfully: {out_file}")
 

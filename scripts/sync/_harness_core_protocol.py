@@ -8,9 +8,9 @@ from __future__ import annotations
 
 import json
 import re
-import subprocess  # nosec B404
-from collections.abc import Callable, Iterable
+import subprocess
 from pathlib import Path
+from typing import Callable, Iterable
 
 from _harness_template import (
     HARNESS_TEMPLATE_DEST_EXCLUDE_RELS,
@@ -129,9 +129,7 @@ def validate_org(org: str) -> str:
 
 def validate_visibility(visibility: str) -> str:
     if visibility not in VISIBILITY_CHOICES:
-        raise ValueError(
-            f"invalid --visibility {visibility!r}: expected public|private"
-        )
+        raise ValueError(f"invalid --visibility {visibility!r}: expected public|private")
     return visibility
 
 
@@ -161,31 +159,25 @@ def is_domain_marker(rel: str) -> bool:
     if path.endswith("-overlay.md") and path.startswith("docs/standards/"):
         return True
     parts = [p for p in path.split("/") if p]
-    if len(parts) >= 3 and parts[0] == "ai-tooling" and parts[1] == "skills":  # noqa: SIM102
+    if len(parts) >= 3 and parts[0] == "ai-tooling" and parts[1] == "skills":
         if parts[2] in HARNESS_TEMPLATE_DROP_SKILL_FAMILIES:
             return True
-    if len(parts) >= 3 and parts[0] == "ai-tooling" and parts[1] == "agents":  # noqa: SIM102
-        if parts[2] not in {
-            "AGENTS.md",
-            "model-tiers.md",
-            "README.md",
-        } and not agent_is_kept(parts[2]):
+    if len(parts) >= 3 and parts[0] == "ai-tooling" and parts[1] == "agents":
+        if parts[2] not in {"AGENTS.md", "model-tiers.md", "README.md"} and not agent_is_kept(parts[2]):
             return True
     if len(parts) >= 3 and parts[0] == "scripts" and parts[1] == "tests":
         if path in HARNESS_TEMPLATE_DEST_EXCLUDE_RELS:
             return True
         if len(parts) != 3 or not script_test_is_kept(parts[2]):
             return True
-    return bool(
-        len(parts) >= 2
-        and parts[0] == "docs"
-        and parts[1] == "standards"
-        and (
+    if len(parts) >= 2 and parts[0] == "docs" and parts[1] == "standards":
+        if (
             len(parts) >= 3
             and parts[2] not in HARNESS_TEMPLATE_KEEP_DOCS_STANDARDS
             and parts[2] not in {"AGENTS.md", "README.md"}
-        )
-    )
+        ):
+            return True
+    return False
 
 
 def is_ignorable_copy_rel(rel: str) -> bool:
@@ -195,7 +187,9 @@ def is_ignorable_copy_rel(rel: str) -> bool:
         return True
     if parts and parts[-1] in COPY_SKIP_FILE_NAMES:
         return True
-    return bool(parts and parts[-1].endswith((".pyc", ".pyo")))
+    if parts and parts[-1].endswith((".pyc", ".pyo")):
+        return True
+    return False
 
 
 def may_copy_core_source_rel(rel: str) -> bool:
@@ -223,34 +217,26 @@ def is_instance_corpus_rel(rel: str) -> bool:
     parts = [p for p in path.split("/") if p]
     if not parts:
         return False
-    if len(parts) >= 3 and parts[0] == "ai-tooling" and parts[1] == "skills":  # noqa: SIM102
+    if len(parts) >= 3 and parts[0] == "ai-tooling" and parts[1] == "skills":
         if parts[2] in HARNESS_TEMPLATE_DROP_SKILL_FAMILIES:
             return True
     if len(parts) >= 2 and parts[0] == "references":
         fam = parts[1]
         if fam in HARNESS_TEMPLATE_DROP_REFERENCE_FAMILIES:
             return True
-        if fam not in HARNESS_TEMPLATE_KEEP_REFERENCE_FAMILIES and fam not in {
-            "AGENTS.md",
-            "reference-maintenance.md",
-        }:
+        if (
+            fam not in HARNESS_TEMPLATE_KEEP_REFERENCE_FAMILIES
+            and fam not in {"AGENTS.md", "reference-maintenance.md"}
+        ):
             return True
-    if (
-        len(parts) >= 2
-        and parts[0] == "projects"
-        and parts[1]
-        not in {
-            "notes",
-            "project-prompts",
-            "AGENTS.md",
-        }
-    ):
+    if len(parts) >= 2 and parts[0] == "projects" and parts[1] not in {
+        "notes",
+        "project-prompts",
+        "AGENTS.md",
+    }:
         return True
-    if len(parts) >= 4 and parts[0] == "ai-tooling" and parts[1] == "memory":  # noqa: SIM102
-        if parts[2] in {"user", "agent", "model"} and parts[3] not in {
-            "AGENTS.md",
-            ".gitkeep",
-        }:
+    if len(parts) >= 4 and parts[0] == "ai-tooling" and parts[1] == "memory":
+        if parts[2] in {"user", "agent", "model"} and parts[3] not in {"AGENTS.md", ".gitkeep"}:
             return True
     return False
 
@@ -408,7 +394,7 @@ def run_git(
     """Run a git subprocess with a list argv (never shell=True)."""
     if not args or args[0] != "git":
         raise ValueError("run_git requires argv starting with git")
-    result = subprocess.run(  # nosec B603
+    result = subprocess.run(
         args,
         cwd=cwd,
         capture_output=True,
@@ -469,9 +455,7 @@ def git_init_if_needed(repo: Path, runner: GitRunner = run_git) -> bool:
 
 
 def current_branch(repo: Path, runner: GitRunner = run_git) -> str:
-    code, stdout, _stderr = runner(
-        ["git", "rev-parse", "--abbrev-ref", "HEAD"], cwd=repo
-    )
+    code, stdout, stderr = runner(["git", "rev-parse", "--abbrev-ref", "HEAD"], cwd=repo)
     if code != 0:
         return "HEAD"
     return stdout or "HEAD"

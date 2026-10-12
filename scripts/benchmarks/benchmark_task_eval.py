@@ -10,18 +10,18 @@ import argparse
 import json
 import sys
 import time
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
 _LIB = Path(__file__).resolve().parents[1] / "_lib"
 sys.path.insert(0, str(_LIB))
-from paths import REPO_ROOT as ROOT
+from paths import REPO_ROOT as ROOT  # noqa: E402
 
 if sys.stdout.encoding and sys.stdout.encoding.lower() != "utf-8":
     try:
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
-    except Exception:  # noqa: S110,BLE001  # nosec B110
+    except Exception:
         pass
 
 DEFAULT_SUITE_PATH = (
@@ -76,12 +76,12 @@ def load_task_suite(suite_path: Path | None = None) -> dict[str, Any]:
     if suite_path and suite_path.is_file():
         try:
             return json.loads(suite_path.read_text(encoding="utf-8"))
-        except Exception:  # noqa: S110,BLE001  # nosec B110
+        except Exception:
             pass
     if DEFAULT_SUITE_PATH.is_file():
         try:
             return json.loads(DEFAULT_SUITE_PATH.read_text(encoding="utf-8"))
-        except Exception:  # noqa: S110,BLE001  # nosec B110
+        except Exception:
             pass
     return FALLBACK_SUITE
 
@@ -94,20 +94,12 @@ def evaluate_task(task: dict[str, Any]) -> dict[str, Any]:
     timeout = task.get("timeout_seconds", 60)
 
     # Simulated metric scoring based on task validation rules
-    simulated_elapsed_sec = round(
-        min(timeout - 5, max(2.5, len(task.get("prompt", "")) * 0.05)), 2
-    )
-    simulated_tokens = max(
-        500,
-        len(task.get("prompt", "")) * 12
-        + len(task.get("expected_artifacts", [])) * 800,
-    )
+    simulated_elapsed_sec = round(min(timeout - 5, max(2.5, len(task.get("prompt", "")) * 0.05)), 2)
+    simulated_tokens = max(500, len(task.get("prompt", "")) * 12 + len(task.get("expected_artifacts", [])) * 800)
 
     # All standard suite tasks validate successfully in dry-run mode
     passed = True
-    score = (
-        100.0 if difficulty == "easy" else (96.5 if difficulty == "medium" else 92.0)
-    )
+    score = 100.0 if difficulty == "easy" else (96.5 if difficulty == "medium" else 92.0)
 
     eval_time_ms = round((time.perf_counter() - start_time) * 1000, 2)
 
@@ -127,13 +119,9 @@ def evaluate_task(task: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def render_task_eval_report(
-    suite_info: dict[str, Any],
-    results: list[dict[str, Any]],
-    summary_stats: dict[str, Any],
-) -> str:
+def render_task_eval_report(suite_info: dict[str, Any], results: list[dict[str, Any]], summary_stats: dict[str, Any]) -> str:
     """Render structured Markdown scorecard report."""
-    now_utc = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
+    now_utc = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     lines = [
         "---",
         "doc_kind: result",
@@ -163,7 +151,7 @@ def render_task_eval_report(
     ]
 
     for r in results:
-        status_badge = f"**{r['status']}**" if r["status"] == "PASS" else "**FAIL**"
+        status_badge = f"**{r['status']}**" if r["status"] == "PASS" else f"**FAIL**"
         artifacts_str = ", ".join([f"`{a}`" for a in r["expected_artifacts"]])
         lines.append(
             f"| `{r['task_id']}` | {r['title']} | `{r['difficulty']}` | "
@@ -180,9 +168,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--suite", help="Path to custom benchmark suite JSON file")
     parser.add_argument("--json", action="store_true", help="Print JSON results")
     parser.add_argument("--out", help="Output directory under repo root")
-    parser.add_argument(
-        "--dry-run", action="store_true", help="Run without writing files"
-    )
+    parser.add_argument("--dry-run", action="store_true", help="Run without writing files")
     args = parser.parse_args(argv)
 
     suite_path = Path(args.suite) if args.suite else None
@@ -195,9 +181,7 @@ def main(argv: list[str] | None = None) -> int:
     total_count = len(results)
     mean_score = round(sum(r["score_pct"] for r in results) / max(1, total_count), 1)
     total_tokens = sum(r["simulated_tokens"] for r in results)
-    mean_wall_time = round(
-        sum(r["simulated_wall_time_sec"] for r in results) / max(1, total_count), 1
-    )
+    mean_wall_time = round(sum(r["simulated_wall_time_sec"] for r in results) / max(1, total_count), 1)
 
     summary_stats = {
         "total_tasks": total_count,
@@ -210,7 +194,7 @@ def main(argv: list[str] | None = None) -> int:
 
     report_md = render_task_eval_report(suite_data, results, summary_stats)
 
-    today = datetime.now(UTC).strftime("%Y-%m-%d")
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     out_rel = args.out or f"results/benchmarks/task-eval/{today}"
     out_dir = ROOT / out_rel
 
@@ -218,10 +202,7 @@ def main(argv: list[str] | None = None) -> int:
         out_dir.mkdir(parents=True, exist_ok=True)
         (out_dir / "report.md").write_text(report_md, encoding="utf-8")
         (out_dir / "summary.json").write_text(
-            json.dumps(
-                {"suite": suite_data, "summary": summary_stats, "tasks": results},
-                indent=2,
-            ),
+            json.dumps({"suite": suite_data, "summary": summary_stats, "tasks": results}, indent=2),
             encoding="utf-8",
         )
 

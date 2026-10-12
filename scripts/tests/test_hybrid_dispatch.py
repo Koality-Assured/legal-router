@@ -9,7 +9,7 @@ Run: python -m unittest scripts/tests/test_hybrid_dispatch.py -v
 from __future__ import annotations
 
 import json
-import subprocess  # nosec B404
+import subprocess
 import sys
 import unittest
 from pathlib import Path
@@ -19,7 +19,7 @@ _ROUTING = Path(__file__).resolve().parents[1] / "routing"
 sys.path.insert(0, str(_LIB))
 sys.path.insert(0, str(_ROUTING))
 
-from hybrid_dispatch import (
+from hybrid_dispatch import (  # noqa: E402
     BM25Candidate,
     HybridDispatcher,
     Tier1FastPath,
@@ -28,8 +28,8 @@ from hybrid_dispatch import (
     dispatch_query,
     tokenize,
 )
-from md import load_skill_record, parse_frontmatter
-from paths import REPO_ROOT as ROOT
+from md import load_skill_record, parse_frontmatter  # noqa: E402
+from paths import REPO_ROOT as ROOT  # noqa: E402
 
 
 def _skill_md(name: str) -> Path:
@@ -56,42 +56,18 @@ class TestTier1FastPath(unittest.TestCase):
             ("isolate the worktree", "isolate-work", "router"),
             ("qmd search docs", "qmd-usage", "qmd-ops"),
             ("qmd commands and retrieval", "qmd-usage", "qmd-ops"),
-            (
-                "verify citations in brief",
-                "verify-citations",
-                "legal-research-operator",
-            ),
+            ("verify citations in brief", "verify-citations", "legal-research-operator"),
             ("render mermaid diagram", "mermaid-diagram", "artifact-agent"),
             ("ast-grep precision retrieval", "ast-grep", "router-maintenance"),
             ("headroom context compression", "headroom", "router-maintenance"),
             ("markdownlint fix md001", "markdownlint", "documentation-ops"),
             ("deep research into cloud models", "deep-research", "detailed-activity"),
             ("create memory checkpoint", "memory-create", "ai-tooling-ops"),
-            (
-                "contract redline of msa",
-                "contract-redline-diff",
-                "contract-lifecycle-operator",
-            ),
-            (
-                "generate deal risk memo",
-                "deal-risk-memo",
-                "contract-lifecycle-operator",
-            ),
-            (
-                "jurisdiction hierarchy mapping",
-                "jurisdiction-hierarchy-map",
-                "legal-research-operator",
-            ),
-            (
-                "patent claim crosswalk",
-                "patent-claim-crosswalk",
-                "ip-licensing-curator",
-            ),
-            (
-                "privacy policy benchmark",
-                "privacy-policy-benchmark",
-                "statutory-compliance-analyst",
-            ),
+            ("contract redline of msa", "contract-redline-diff", "contract-lifecycle-operator"),
+            ("generate deal risk memo", "deal-risk-memo", "contract-lifecycle-operator"),
+            ("jurisdiction hierarchy mapping", "jurisdiction-hierarchy-map", "legal-research-operator"),
+            ("patent claim crosswalk", "patent-claim-crosswalk", "ip-licensing-curator"),
+            ("privacy policy benchmark", "privacy-policy-benchmark", "statutory-compliance-analyst"),
             ("spdx license scan of sbom", "spdx-license-scan", "ip-licensing-curator"),
         ]
         for query, expected_skill, expected_owner in test_cases:
@@ -103,9 +79,7 @@ class TestTier1FastPath(unittest.TestCase):
             self.assertEqual(res.tier, 1)
 
     def test_no_match_returns_cleanly(self) -> None:
-        res = self.tier1.evaluate(
-            "What is the capital of France and how is the weather?"
-        )
+        res = self.tier1.evaluate("What is the capital of France and how is the weather?")
         self.assertFalse(res.matched)
         self.assertIsNone(res.skill)
         self.assertEqual(res.reason, "no_match")
@@ -116,9 +90,7 @@ class TestTier1FastPath(unittest.TestCase):
             "isolating work from the rest",
         ):
             res = self.tier1.evaluate(query)
-            self.assertFalse(
-                res.matched, f"Query '{query}' must not hit isolate-work Fast-Path"
-            )
+            self.assertFalse(res.matched, f"Query '{query}' must not hit isolate-work Fast-Path")
             self.assertEqual(res.reason, "no_match")
 
     def test_med02_multi_intent_collision_avoids_overtriggering(self) -> None:
@@ -126,9 +98,7 @@ class TestTier1FastPath(unittest.TestCase):
         # Query matching both antagonistic review and anti-slop
         query = "Antagonistic review of the anti-slop report in docs/"
         res = self.tier1.evaluate(query)
-        self.assertFalse(
-            res.matched, "Multi-intent query must not match single skill in Tier 1"
-        )
+        self.assertFalse(res.matched, "Multi-intent query must not match single skill in Tier 1")
         self.assertEqual(res.reason, "multi_intent_conflict")
         self.assertGreaterEqual(len(res.conflicting_skills), 2)
         self.assertIn("anti-slop", res.conflicting_skills)
@@ -176,9 +146,7 @@ class TestTier2BM25(unittest.TestCase):
 
     def test_bm25_ranking_cloud_logs(self) -> None:
         if not (_skill_md("aws-logs").is_file() or _skill_md("aws-read").is_file()):
-            self.skipTest(
-                "aws-logs/aws-read are instance-only; omitted from wiki template"
-            )
+            self.skipTest("aws-logs/aws-read are instance-only; omitted from wiki template")
         query = "inspect amazon cloudwatch log streams via oauth"
         res = self.bm25.search(query, top_k=3)
         self.assertTrue(len(res.candidates) > 0)
@@ -234,9 +202,7 @@ class TestTier3AmbiguityGate(unittest.TestCase):
         self.assertIn("anti-slop", res.disambiguation_questions[0])
         self.assertIn("antagonistic-review", res.disambiguation_questions[1])
         self.assertEqual(res.recommended_action, "clarify_with_user")
-        self.assertIn(
-            "User Query: Review the anti-slop report in docs/", res.llm_triage_prompt
-        )
+        self.assertIn("User Query: Review the anti-slop report in docs/", res.llm_triage_prompt)
 
 
 class TestHybridDispatcher(unittest.TestCase):
@@ -262,9 +228,7 @@ class TestHybridDispatcher(unittest.TestCase):
 
     def test_dispatch_tier3_multi_intent(self) -> None:
         # Multi-intent triggers Tier 3 ambiguity gate
-        res = self.dispatcher.dispatch(
-            "Antagonistic review of the anti-slop report in docs/", tier="all"
-        )
+        res = self.dispatcher.dispatch("Antagonistic review of the anti-slop report in docs/", tier="all")
         self.assertEqual(res.selected_tier, 3)
         self.assertIn(res.status, {"multi_intent", "ambiguous"})
         self.assertIsNotNone(res.tier3)
@@ -282,11 +246,7 @@ class TestSchemaV2SkillParsing(unittest.TestCase):
 
     def test_load_skill_record_v2_fields(self) -> None:
         threat_model_path = _skill_md("threat-model")
-        skill_path = (
-            threat_model_path
-            if threat_model_path.is_file()
-            else _skill_md("isolate-work")
-        )
+        skill_path = threat_model_path if threat_model_path.is_file() else _skill_md("isolate-work")
         rec = load_skill_record(skill_path)
         self.assertEqual(rec["name"], skill_path.parent.name)
         self.assertTrue(rec.get("owner_agent"))
@@ -328,7 +288,7 @@ contracts:
 ## When to use
 Testing DAGs.
 """
-        fields, _body = parse_frontmatter(v2_raw)
+        fields, body = parse_frontmatter(v2_raw)
         self.assertEqual(fields.get("schema_version"), "2.0.0")
         self.assertEqual(fields.get("name"), "custom-composite")
         self.assertEqual(fields.get("on_failure"), "fallback_degrade")
@@ -348,7 +308,7 @@ class TestCLIExecution(unittest.TestCase):
 
     def test_cli_json_output(self) -> None:
         script = ROOT / "scripts" / "routing" / "hybrid_dispatch.py"
-        proc = subprocess.run(  # nosec B603
+        proc = subprocess.run(
             [sys.executable, str(script), "--query", "git status", "--json"],
             cwd=str(ROOT),
             capture_output=True,
@@ -363,7 +323,7 @@ class TestCLIExecution(unittest.TestCase):
 
     def test_cli_multi_intent_json(self) -> None:
         script = ROOT / "scripts" / "routing" / "hybrid_dispatch.py"
-        proc = subprocess.run(  # nosec B603
+        proc = subprocess.run(
             [
                 sys.executable,
                 str(script),

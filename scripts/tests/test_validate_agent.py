@@ -18,9 +18,9 @@ sys.path.insert(0, str(_SCRIPTS))
 sys.path.insert(0, str(_SCRIPTS / "ai-tooling"))
 sys.path.insert(0, str(_SCRIPTS / "_lib"))
 
-from md import agent_ids, agent_paths
-from paths import REPO_ROOT as ROOT
-from validate_agent import check_agent, extract_frontmatter_and_body, main
+from md import agent_ids, agent_paths  # noqa: E402
+from paths import REPO_ROOT as ROOT  # noqa: E402
+from validate_agent import check_agent, extract_frontmatter_and_body, main  # noqa: E402
 
 
 class ValidateAgentUnitTests(unittest.TestCase):
@@ -59,14 +59,11 @@ contracts:
         data, _, err = extract_frontmatter_and_body(raw)
         self.assertIsNone(err)
         self.assertEqual(data.get("description"), "First line. Second line.")
-        self.assertEqual(
-            data["contracts"]["inputs"]["properties"]["request"]["description"],
-            "Nested description must not replace the skill description",
-        )
+        self.assertEqual(data["contracts"]["inputs"]["properties"]["request"]["description"], "Nested description must not replace the skill description")
 
     def test_extract_frontmatter_missing(self) -> None:
         raw = "# No frontmatter"
-        data, _body, err = extract_frontmatter_and_body(raw)
+        data, body, err = extract_frontmatter_and_body(raw)
         self.assertIsNotNone(err)
         self.assertIsNone(data)
 
@@ -76,9 +73,7 @@ contracts:
         fed = (ROOT / "ai-tooling" / "agents" / "cloud-operator" / "AGENT.md").is_file()
         if fed:
             self.assertGreaterEqual(
-                len(known),
-                14,
-                f"expected at least 14 agents in fed catalog, got {len(known)}",
+                len(known), 14, f"expected at least 14 agents in fed catalog, got {len(known)}"
             )
         for path in agent_paths(ROOT):
             errs = check_agent(path, known)

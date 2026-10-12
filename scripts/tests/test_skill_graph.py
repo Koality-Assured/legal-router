@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import io
 import json
+import shutil
 import sys
 import tempfile
 import unittest
@@ -31,9 +32,12 @@ if str(_ROUTING) not in sys.path:
 if str(_LIB) not in sys.path:
     sys.path.insert(0, str(_LIB))
 
-from md import check_required_skill_v2_contracts
-from resolve_skill_graph import (
+from resolve_skill_graph import (  # noqa: E402
+    ALLOWED_FAILURE_POLICIES,
+    DEFAULT_FAILURE_POLICY,
+    ExecutionPlan,
     InvalidLifecyclePolicyError,
+    InvalidSkillSchemaError,
     MissingSkillDependencyError,
     SkillDefinition,
     SkillGraph,
@@ -41,7 +45,9 @@ from resolve_skill_graph import (
     SkillNotFoundError,
     load_skill_from_file,
     main,
+    parse_skill_frontmatter,
 )
+from md import check_required_skill_v2_contracts  # noqa: E402
 
 _INSTANCE_CATALOG_SKILLS = ("aws-read", "noir-scan", "threat-model")
 
@@ -123,9 +129,7 @@ class TestBranchingDAGTopologicalOrder(unittest.TestCase):
         graph.add_skill(SkillDefinition(name="skill-a"))
         graph.add_skill(SkillDefinition(name="skill-b", required_skills=["skill-a"]))
         graph.add_skill(SkillDefinition(name="skill-c", required_skills=["skill-a"]))
-        graph.add_skill(
-            SkillDefinition(name="skill-d", required_skills=["skill-b", "skill-c"])
-        )
+        graph.add_skill(SkillDefinition(name="skill-d", required_skills=["skill-b", "skill-c"]))
 
         plan = graph.resolve_plan(target="skill-d")
         self.assertEqual(len(plan.stages), 3)
@@ -221,9 +225,7 @@ class TestCyclicDependencyDetection(unittest.TestCase):
 
     def test_self_loop_cycle(self) -> None:
         graph = SkillGraph()
-        graph.add_skill(
-            SkillDefinition(name="self-skill", required_skills=["self-skill"])
-        )
+        graph.add_skill(SkillDefinition(name="self-skill", required_skills=["self-skill"]))
 
         with self.assertRaises(SkillGraphCycleError) as ctx:
             graph.resolve_plan(target="self-skill")
@@ -280,9 +282,7 @@ class TestPrerequisiteCheckLogic(unittest.TestCase):
 
     @patch("shutil.which")
     def test_plan_with_check_prereqs_flag(self, mock_which: Any) -> None:
-        mock_which.side_effect = lambda tool: (
-            f"/usr/bin/{tool}" if tool == "git" else None
-        )
+        mock_which.side_effect = lambda tool: f"/usr/bin/{tool}" if tool == "git" else None
 
         graph = SkillGraph()
         graph.add_skill(
@@ -321,12 +321,8 @@ class TestOnFailureLifecycleHandling(unittest.TestCase):
 
     def test_fallback_degrade_simulation(self) -> None:
         graph = SkillGraph()
-        graph.add_skill(
-            SkillDefinition(name="diagram-render", on_failure="fallback_degrade")
-        )
-        graph.add_skill(
-            SkillDefinition(name="report-assembly", required_skills=["diagram-render"])
-        )
+        graph.add_skill(SkillDefinition(name="diagram-render", on_failure="fallback_degrade"))
+        graph.add_skill(SkillDefinition(name="report-assembly", required_skills=["diagram-render"]))
 
         plan = graph.resolve_plan(target="report-assembly")
         forward_adj, _ = graph.build_adjacency(set(plan.topological_order))
@@ -338,9 +334,7 @@ class TestOnFailureLifecycleHandling(unittest.TestCase):
 
     def test_continue_with_partial_simulation(self) -> None:
         graph = SkillGraph()
-        graph.add_skill(
-            SkillDefinition(name="telemetry-scan", on_failure="continue_with_partial")
-        )
+        graph.add_skill(SkillDefinition(name="telemetry-scan", on_failure="continue_with_partial"))
         graph.add_skill(SkillDefinition(name="main-workflow"))
 
         plan = graph.resolve_plan()
@@ -468,9 +462,7 @@ contracts:
         graph = SkillGraph()
         graph.add_skill(SkillDefinition(name="skill-1", contracts=contracts))
         graph.add_skill(
-            SkillDefinition(
-                name="skill-2", required_skills=["skill-1"], contracts=contracts
-            )
+            SkillDefinition(name="skill-2", required_skills=["skill-1"], contracts=contracts)
         )
 
         report = graph.validate_catalog(check_prereqs=False)
@@ -479,9 +471,7 @@ contracts:
 
     def test_validate_catalog_with_broken_deps_and_cycle(self) -> None:
         graph = SkillGraph()
-        graph.add_skill(
-            SkillDefinition(name="a", required_skills=["b", "missing-target"])
-        )
+        graph.add_skill(SkillDefinition(name="a", required_skills=["b", "missing-target"]))
         graph.add_skill(SkillDefinition(name="b", required_skills=["a"]))
 
         report = graph.validate_catalog(check_prereqs=False)
@@ -559,16 +549,9 @@ isolation: mutate
             graph = SkillGraph.from_directory(Path(tmpdir))
             report = graph.validate_catalog(check_prereqs=False)
             self.assertFalse(report["ok"])
-            self.assertTrue(
-                any("schema_version missing" in e for e in report["errors"])
-            )
+            self.assertTrue(any("schema_version missing" in e for e in report["errors"]))
             self.assertTrue(any("Schema V2 contracts" in e for e in report["errors"]))
-            self.assertFalse(
-                any(
-                    e.endswith("1.0.0") and "skip" in e.lower()
-                    for e in report["errors"]
-                )
-            )
+            self.assertFalse(any(e.endswith("1.0.0") and "skip" in e.lower() for e in report["errors"]))
 
 
 class TestRealRepoCatalogIntegrity(unittest.TestCase):
@@ -577,16 +560,12 @@ class TestRealRepoCatalogIntegrity(unittest.TestCase):
     def test_real_skills_catalog_validation(self) -> None:
         repo_root = Path(__file__).resolve().parents[2]
         skills_dir = repo_root / "ai-tooling" / "skills"
-        self.assertTrue(
-            skills_dir.exists(), f"Skills directory not found at {skills_dir}"
-        )
+        self.assertTrue(skills_dir.exists(), f"Skills directory not found at {skills_dir}")
 
         graph = SkillGraph.from_directory(skills_dir)
         self.assertGreater(len(graph.skills), 0, "Expected skills in repository")
         if _fed_router_skill_catalog(skills_dir):
-            self.assertGreaterEqual(
-                len(graph.skills), 40, "Expected at least 40 skills in repository"
-            )
+            self.assertGreaterEqual(len(graph.skills), 40, "Expected at least 40 skills in repository")
 
         report = graph.validate_catalog(check_prereqs=False)
         if _schema_v2_contract_errors_only(report["errors"]):

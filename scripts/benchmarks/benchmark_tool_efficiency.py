@@ -11,19 +11,19 @@ import json
 import math
 import sys
 import time
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
 _LIB = Path(__file__).resolve().parents[1] / "_lib"
 sys.path.insert(0, str(_LIB))
-from paths import REPO_ROOT as ROOT
-from tool_output import format_tool_execution
+from paths import REPO_ROOT as ROOT  # noqa: E402
+from tool_output import format_tool_execution  # noqa: E402
 
 if sys.stdout.encoding and sys.stdout.encoding.lower() != "utf-8":
     try:
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
-    except Exception:  # noqa: S110,BLE001  # nosec B110
+    except Exception:
         pass
 
 
@@ -44,13 +44,7 @@ TOOL_FIXTURES: list[dict[str, Any]] = [
             "platform win32 -- Python 3.13.15, pytest-8.3.2, pluggy-1.5.0\n"
             "rootdir: C:\\Code\\ai-router\n"
             "collected 45 items\n\n"
-            + "\n".join(
-                [
-                    f"tests/test_module_{i}.py::test_case_{j} PASSED [ {(i * 5 + j + 1) * 2}%]"
-                    for i in range(8)
-                    for j in range(5)
-                ]
-            )
+            + "\n".join([f"tests/test_module_{i}.py::test_case_{j} PASSED [ {(i*5+j+1)*2}%]" for i in range(8) for j in range(5)])
             + "\n\n============================== 40 passed in 2.14s ==============================\n"
         ),
         "required_facts": ["40 passed in 2.14s", "Python 3.13.15"],
@@ -72,12 +66,7 @@ TOOL_FIXTURES: list[dict[str, Any]] = [
             "+    rates = {'fast': 0.15, 'standard': 1.25, 'high': 3.00, 'max': 5.00}\n"
             "+    return (tokens / 1_000_000) * rates.get(tier, 1.25)\n"
             "+\n"
-            + "\n".join(
-                [
-                    f"+# Added optimization rule {i}\n+def helper_rule_{i}(): pass"
-                    for i in range(30)
-                ]
-            )
+            + "\n".join([f"+# Added optimization rule {i}\n+def helper_rule_{i}(): pass" for i in range(30)])
             + "\n"
         ),
         "required_facts": ["calculate_route_cost", "helper_rule_0", "helper_rule_29"],
@@ -87,13 +76,8 @@ TOOL_FIXTURES: list[dict[str, Any]] = [
         "category": "ast_grep",
         "description": "Structured symbol table containing classes, methods, and functions",
         "raw_text": (
-            '{\n  "symbols": [\n'
-            + ",\n".join(
-                [
-                    f'    {{"kind": "function", "name": "handler_{i}", "line": {i * 10 + 1}, "scope": "public"}}'
-                    for i in range(40)
-                ]
-            )
+            "{\n  \"symbols\": [\n"
+            + ",\n".join([f"    {{\"kind\": \"function\", \"name\": \"handler_{i}\", \"line\": {i*10+1}, \"scope\": \"public\"}}" for i in range(40)])
             + "\n  ]\n}"
         ),
         "required_facts": ["handler_0", "handler_39", "symbols"],
@@ -112,11 +96,7 @@ TOOL_FIXTURES: list[dict[str, Any]] = [
             "<p>KV cache discount provides 75% savings on static system prompt prefixes.</p>"
             "</article></main><footer><p>&copy; 2026 Router Team. All rights reserved.</p></footer></body></html>"
         ),
-        "required_facts": [
-            "API Pricing Guide",
-            "$1.25 per million input tokens",
-            "KV cache discount",
-        ],
+        "required_facts": ["API Pricing Guide", "$1.25 per million input tokens", "KV cache discount"],
     },
 ]
 
@@ -130,19 +110,13 @@ def benchmark_fixture(fixture: dict[str, Any]) -> dict[str, Any]:
     # Compress via standard format_tool_execution
     formatted = format_tool_execution(raw, "", exit_code=0, try_headroom=True)
     compressed_text = formatted["output"]
-    compressed_tokens = formatted.get("est_output_tokens") or estimate_tokens(
-        compressed_text
-    )
+    compressed_tokens = formatted.get("est_output_tokens") or estimate_tokens(compressed_text)
 
     # Fallback to local truncation / distillation if raw == compressed for long text
     if compressed_tokens >= raw_tokens and len(raw) > 300:
         lines = raw.splitlines()
         if len(lines) > 20:
-            compacted = "\n".join(
-                lines[:10]
-                + [f"\n... [{len(lines) - 15} lines compressed] ...\n"]
-                + lines[-5:]
-            )
+            compacted = "\n".join(lines[:10] + [f"\n... [{len(lines)-15} lines compressed] ...\n"] + lines[-5:])
             compressed_text = compacted
             compressed_tokens = estimate_tokens(compacted)
 
@@ -153,14 +127,8 @@ def benchmark_fixture(fixture: dict[str, Any]) -> dict[str, Any]:
 
     # Fact retention audit
     required_facts = fixture.get("required_facts", [])
-    retained_facts = [
-        f
-        for f in required_facts
-        if f.lower() in compressed_text.lower() or f.lower() in raw.lower()
-    ]
-    fact_accuracy_pct = round(
-        (len(retained_facts) / max(1, len(required_facts))) * 100, 1
-    )
+    retained_facts = [f for f in required_facts if f.lower() in compressed_text.lower() or f.lower() in raw.lower()]
+    fact_accuracy_pct = round((len(retained_facts) / max(1, len(required_facts))) * 100, 1)
 
     return {
         "name": fixture["name"],
@@ -177,11 +145,9 @@ def benchmark_fixture(fixture: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def render_efficiency_report(
-    results: list[dict[str, Any]], summary_stats: dict[str, Any]
-) -> str:
+def render_efficiency_report(results: list[dict[str, Any]], summary_stats: dict[str, Any]) -> str:
     """Render structured Markdown tool efficiency report."""
-    now_utc = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
+    now_utc = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     lines = [
         "---",
         "doc_kind: result",
@@ -225,9 +191,7 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--json", action="store_true", help="Print JSON results")
     parser.add_argument("--out", help="Output directory under repo root")
-    parser.add_argument(
-        "--dry-run", action="store_true", help="Run without writing files"
-    )
+    parser.add_argument("--dry-run", action="store_true", help="Run without writing files")
     args = parser.parse_args(argv)
 
     results = [benchmark_fixture(f) for f in TOOL_FIXTURES]
@@ -254,7 +218,7 @@ def main(argv: list[str] | None = None) -> int:
 
     report_md = render_efficiency_report(results, summary_stats)
 
-    today = datetime.now(UTC).strftime("%Y-%m-%d")
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     out_rel = args.out or f"results/benchmarks/tool-efficiency/{today}"
     out_dir = ROOT / out_rel
 

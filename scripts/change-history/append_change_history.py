@@ -14,7 +14,7 @@ from pathlib import Path
 
 _LIB = Path(__file__).resolve().parents[1] / "_lib"
 sys.path.insert(0, str(_LIB))
-from paths import REPO_ROOT as ROOT
+from paths import REPO_ROOT as ROOT  # noqa: E402
 
 CH_ROOT = ROOT / "change-history"
 
@@ -51,9 +51,7 @@ def build_entry(
     request: str,
     summary_lines: list[str],
 ) -> str:
-    bullets = "\n".join(
-        f"  - {line.lstrip('- ').strip()}" for line in summary_lines if line.strip()
-    )
+    bullets = "\n".join(f"  - {line.lstrip('- ').strip()}" for line in summary_lines if line.strip())
     return (
         f"### {date} — {title}\n\n"
         f"- **Requesting user:** {user}\n"
@@ -81,22 +79,16 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--title", required=True, help="Short entry title")
     parser.add_argument("--user", required=True, help="Requesting user")
     parser.add_argument("--agent", default="Cursor agent", help="AI agent identity")
-    parser.add_argument(
-        "--request", required=True, help="Short paraphrase of user request"
-    )
+    parser.add_argument("--request", required=True, help="Short paraphrase of user request")
     parser.add_argument(
         "--summary",
         action="append",
         default=[],
         help="Summary bullet (repeatable)",
     )
-    parser.add_argument(
-        "--date", default=dt.date.today().isoformat(), help="YYYY-MM-DD"
-    )
+    parser.add_argument("--date", default=dt.date.today().isoformat(), help="YYYY-MM-DD")
     parser.add_argument("--year", type=int, help="Override year")
-    parser.add_argument(
-        "--quarter", type=int, choices=[1, 2, 3, 4], help="Override quarter"
-    )
+    parser.add_argument("--quarter", type=int, choices=[1, 2, 3, 4], help="Override quarter")
     args = parser.parse_args(argv)
 
     if not args.summary:

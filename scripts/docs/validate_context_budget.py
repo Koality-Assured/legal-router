@@ -17,15 +17,15 @@ from typing import Any
 
 _LIB = Path(__file__).resolve().parents[1] / "_lib"
 sys.path.insert(0, str(_LIB))
-from paths import REPO_ROOT as ROOT
-from tool_output import estimate_tokens
+from paths import REPO_ROOT as ROOT  # noqa: E402
+from tool_output import estimate_tokens  # noqa: E402
 
 # Budget ceilings in characters (chars / 4 ~= tokens)
 BUDGET_CEILINGS: dict[str, int] = {
-    "AGENTS.md": 14500,  # Root AGENTS.md ceiling (~3,625 tokens)
-    "routing/AGENTS.md": 4500,  # Next-step routing index (~1,125 tokens)
-    "routing/by-task.md": 10000,  # Intent pattern matrix (~2,500 tokens)
-    "routing/area-map.md": 5000,  # Area map (~1,250 tokens)
+    "AGENTS.md": 14500,           # Root AGENTS.md ceiling (~3,625 tokens)
+    "routing/AGENTS.md": 4500,     # Next-step routing index (~1,125 tokens)
+    "routing/by-task.md": 10000,   # Intent pattern matrix (~2,500 tokens)
+    "routing/area-map.md": 5000,   # Area map (~1,250 tokens)
 }
 
 # Maximum allowed size for any nested AGENTS.md file (~1,125 tokens)
@@ -34,9 +34,7 @@ NESTED_AGENTS_MAX_CHARS = 4500
 EXCLUDE_DIRS = frozenset({"scratch", ".git", "node_modules", ".venv", "venv"})
 
 
-def check_context_budgets(
-    repo_root: Path,
-) -> tuple[bool, list[dict[str, Any]], list[str]]:
+def check_context_budgets(repo_root: Path) -> tuple[bool, list[dict[str, Any]], list[str]]:
     """Check that repository entry files stay within token and character budget ceilings."""
     results: list[dict[str, Any]] = []
     errors: list[str] = []
@@ -46,14 +44,12 @@ def check_context_budgets(
         file_path = repo_root / rel_path_str
         if not file_path.is_file():
             errors.append(f"Missing required context file: {rel_path_str}")
-            results.append(
-                {
-                    "file": rel_path_str,
-                    "exists": False,
-                    "ok": False,
-                    "error": "missing",
-                }
-            )
+            results.append({
+                "file": rel_path_str,
+                "exists": False,
+                "ok": False,
+                "error": "missing",
+            })
             continue
 
         text = file_path.read_text(encoding="utf-8", errors="replace")
@@ -66,17 +62,15 @@ def check_context_budgets(
                 f"{rel_path_str} exceeded budget: {chars} chars (~{tokens} tokens), "
                 f"ceiling is {max_chars} chars (~{max_tokens} tokens)"
             )
-        results.append(
-            {
-                "file": rel_path_str,
-                "exists": True,
-                "chars": chars,
-                "tokens": tokens,
-                "max_chars": max_chars,
-                "max_tokens": max_tokens,
-                "ok": ok,
-            }
-        )
+        results.append({
+            "file": rel_path_str,
+            "exists": True,
+            "chars": chars,
+            "tokens": tokens,
+            "max_chars": max_chars,
+            "max_tokens": max_tokens,
+            "ok": ok,
+        })
 
     # 2. Check all nested AGENTS.md files
     for path in sorted(repo_root.rglob("AGENTS.md")):
@@ -102,20 +96,16 @@ def check_context_budgets(
 
         # Anti-pattern: Copying root header into nested delta
         if "# Repository AGENTS" in text:
-            errors.append(
-                f"Nested {rel_str} improperly duplicates root '# Repository AGENTS' header"
-            )
+            errors.append(f"Nested {rel_str} improperly duplicates root '# Repository AGENTS' header")
             ok = False
 
-        results.append(
-            {
-                "file": rel_str,
-                "chars": chars,
-                "tokens": tokens,
-                "max_chars": NESTED_AGENTS_MAX_CHARS,
-                "ok": ok,
-            }
-        )
+        results.append({
+            "file": rel_str,
+            "chars": chars,
+            "tokens": tokens,
+            "max_chars": NESTED_AGENTS_MAX_CHARS,
+            "ok": ok,
+        })
 
     return len(errors) == 0, results, errors
 

@@ -16,7 +16,7 @@ import sys
 import unittest
 from contextlib import redirect_stderr, redirect_stdout
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 _SCRIPTS = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(_SCRIPTS))
@@ -113,73 +113,43 @@ class VerifyCitationsTests(unittest.TestCase):
         known = {"Marbury v. Madison, 5 U.S. 137 (1803)"}
         # Known fixture
         self.assertEqual(
-            verify_citations.classify_parsed(
-                {"text": "Marbury v. Madison, 5 U.S. 137 (1803)"}, known
-            ),
+            verify_citations.classify_parsed({"text": "Marbury v. Madison, 5 U.S. 137 (1803)"}, known),
             "valid_fixture",
         )
         # Out-of-bounds USC title
         self.assertEqual(
-            verify_citations.classify_parsed(
-                {"kind": "usc", "title": "99", "text": "99 U.S.C. § 1"}, known
-            ),
+            verify_citations.classify_parsed({"kind": "usc", "title": "99", "text": "99 U.S.C. § 1"}, known),
             "hallucinated",
         )
         # Out-of-bounds CFR title
         self.assertEqual(
-            verify_citations.classify_parsed(
-                {"kind": "cfr", "title": "99", "text": "99 C.F.R. § 1"}, known
-            ),
+            verify_citations.classify_parsed({"kind": "cfr", "title": "99", "text": "99 C.F.R. § 1"}, known),
             "hallucinated",
         )
         # Out-of-bounds Federal Register volume or year
         self.assertEqual(
             verify_citations.classify_parsed(
-                {
-                    "kind": "federal_register",
-                    "volume": "200",
-                    "year": 2024,
-                    "text": "200 Fed. Reg. 1",
-                },
-                known,
+                {"kind": "federal_register", "volume": "200", "year": 2024, "text": "200 Fed. Reg. 1"}, known
             ),
             "hallucinated",
         )
         self.assertEqual(
             verify_citations.classify_parsed(
-                {
-                    "kind": "federal_register",
-                    "volume": "89",
-                    "year": 2099,
-                    "text": "89 Fed. Reg. 1 (2099)",
-                },
-                known,
+                {"kind": "federal_register", "volume": "89", "year": 2099, "text": "89 Fed. Reg. 1 (2099)"}, known
             ),
             "hallucinated",
         )
         # Fake case reporter
         self.assertEqual(
             verify_citations.classify_parsed(
-                {
-                    "kind": "case",
-                    "reporter": "Fake. Rep.",
-                    "year": 2020,
-                    "text": "X v. Y, 1 Fake. Rep. 2",
-                },
-                known,
+                {"kind": "case", "reporter": "Fake. Rep.", "year": 2020, "text": "X v. Y, 1 Fake. Rep. 2"}, known
             ),
             "hallucinated",
         )
         # Legitimate unverified citation
         self.assertEqual(
             verify_citations.classify_parsed(
-                {
-                    "kind": "case",
-                    "reporter": "F.4th",
-                    "year": 2022,
-                    "text": "Real v. Case, 10 F.4th 20",
-                },
-                known,
+                {"kind": "case", "reporter": "F.4th", "year": 2022, "text": "Real v. Case, 10 F.4th 20"}, known
             ),
             "unverified",
         )
@@ -195,7 +165,7 @@ class VerifyCitationsTests(unittest.TestCase):
         self.assertGreaterEqual(memo_report["valid_fixture_count"], 3)
 
     def test_load_suite_missing_items(self) -> None:
-        with patch.object(Path, "read_text", return_value="{}"):  # noqa: SIM117
+        with patch.object(Path, "read_text", return_value="{}"):
             with self.assertRaises(ValueError):
                 verify_citations.load_suite(Path("dummy.json"))
 
@@ -215,9 +185,7 @@ class VerifyCitationsTests(unittest.TestCase):
         # Text parsing with --ast
         stdout = io.StringIO()
         with redirect_stdout(stdout):
-            code = verify_citations.main(
-                ["--text", "5 U.S.C. § 552", "--ast", "--json"]
-            )
+            code = verify_citations.main(["--text", "5 U.S.C. § 552", "--ast", "--json"])
         self.assertEqual(code, 0)
         data = json.loads(stdout.getvalue())
         self.assertIn("ast_nodes", data)
@@ -232,8 +200,9 @@ class VerifyCitationsTests(unittest.TestCase):
 
         # Live without token in env
         stderr = io.StringIO()
-        with redirect_stderr(stderr), patch.dict("os.environ", {}, clear=True):
-            code = verify_citations.main(["--live", "--text", "5 U.S.C. § 552"])
+        with redirect_stderr(stderr):
+            with patch.dict("os.environ", {}, clear=True):
+                code = verify_citations.main(["--live", "--text", "5 U.S.C. § 552"])
         self.assertEqual(code, 2)
 
     def test_case_citation_missing_year_violation(self) -> None:
@@ -253,30 +222,22 @@ class VerifyCitationsTests(unittest.TestCase):
         known = set()
         # Non-numeric usc title
         self.assertEqual(
-            verify_citations.classify_parsed(
-                {"kind": "usc", "title": "non_numeric"}, known
-            ),
+            verify_citations.classify_parsed({"kind": "usc", "title": "non_numeric"}, known),
             "hallucinated",
         )
         # Non-numeric cfr title
         self.assertEqual(
-            verify_citations.classify_parsed(
-                {"kind": "cfr", "title": "non_numeric"}, known
-            ),
+            verify_citations.classify_parsed({"kind": "cfr", "title": "non_numeric"}, known),
             "hallucinated",
         )
         # Non-numeric federal register volume
         self.assertEqual(
-            verify_citations.classify_parsed(
-                {"kind": "federal_register", "volume": "non_numeric"}, known
-            ),
+            verify_citations.classify_parsed({"kind": "federal_register", "volume": "non_numeric"}, known),
             "hallucinated",
         )
         # Non-numeric case year
         self.assertEqual(
-            verify_citations.classify_parsed(
-                {"kind": "case", "year": "non_numeric"}, known
-            ),
+            verify_citations.classify_parsed({"kind": "case", "year": "non_numeric"}, known),
             "hallucinated",
         )
 
@@ -303,9 +264,7 @@ class SpdxLicenseCheckerTests(unittest.TestCase):
         self.cdx_path = self.sbom_dir / "example.cdx.json"
 
     def test_license_tokenization_and_normalization(self) -> None:
-        tokens = spdx_license_checker.tokenize_expression(
-            "(MIT OR Apache-2.0) AND GPL-3.0"
-        )
+        tokens = spdx_license_checker.tokenize_expression("(MIT OR Apache-2.0) AND GPL-3.0")
         self.assertEqual(tokens, ["MIT", "Apache-2.0", "GPL-3.0"])
 
         norm, note = spdx_license_checker.normalize_gnu("GPL-3.0")
@@ -331,30 +290,22 @@ class SpdxLicenseCheckerTests(unittest.TestCase):
 
     def test_evaluate_compatibility_matrix(self) -> None:
         # Compatible permissive combination
-        comp = spdx_license_checker.evaluate_compatibility(
-            ["MIT", "Apache-2.0", "BSD-3-Clause"]
-        )
+        comp = spdx_license_checker.evaluate_compatibility(["MIT", "Apache-2.0", "BSD-3-Clause"])
         self.assertTrue(comp["compatible"])
         self.assertEqual(comp["highest_severity"], "none")
 
         # Incompatible: GPL-2.0-only + Apache-2.0
-        incomp_apache_gpl2 = spdx_license_checker.evaluate_compatibility(
-            ["GPL-2.0-only", "Apache-2.0"]
-        )
+        incomp_apache_gpl2 = spdx_license_checker.evaluate_compatibility(["GPL-2.0-only", "Apache-2.0"])
         self.assertFalse(incomp_apache_gpl2["compatible"])
         self.assertEqual(incomp_apache_gpl2["highest_severity"], "high")
 
         # Incompatible: GPL-2.0-only + GPL-3.0-only
-        incomp_gpl_versions = spdx_license_checker.evaluate_compatibility(
-            ["GPL-2.0-only", "GPL-3.0-only"]
-        )
+        incomp_gpl_versions = spdx_license_checker.evaluate_compatibility(["GPL-2.0-only", "GPL-3.0-only"])
         self.assertFalse(incomp_gpl_versions["compatible"])
         self.assertEqual(incomp_gpl_versions["highest_severity"], "critical")
 
         # Proprietary + Network Copyleft (AGPL)
-        incomp_prop_agpl = spdx_license_checker.evaluate_compatibility(
-            ["proprietary", "AGPL-3.0-only"]
-        )
+        incomp_prop_agpl = spdx_license_checker.evaluate_compatibility(["proprietary", "AGPL-3.0-only"])
         self.assertFalse(incomp_prop_agpl["compatible"])
         self.assertEqual(incomp_prop_agpl["highest_severity"], "critical")
 
@@ -373,20 +324,14 @@ class SpdxLicenseCheckerTests(unittest.TestCase):
 
     def test_assess_copyleft_risk_contexts(self) -> None:
         # AGPL under SaaS vs Proprietary Distribution
-        saas_risk = spdx_license_checker.assess_copyleft_risk(
-            ["AGPL-3.0-only"], context="saas_cloud"
-        )
+        saas_risk = spdx_license_checker.assess_copyleft_risk(["AGPL-3.0-only"], context="saas_cloud")
         self.assertEqual(saas_risk["overall_risk"], "critical")
 
         # GPL under SaaS (no distribution) vs Proprietary Distribution
-        gpl_saas = spdx_license_checker.assess_copyleft_risk(
-            ["GPL-3.0-only"], context="saas_cloud"
-        )
+        gpl_saas = spdx_license_checker.assess_copyleft_risk(["GPL-3.0-only"], context="saas_cloud")
         self.assertEqual(gpl_saas["overall_risk"], "low")
 
-        gpl_dist = spdx_license_checker.assess_copyleft_risk(
-            ["GPL-3.0-only"], context="proprietary_distribution"
-        )
+        gpl_dist = spdx_license_checker.assess_copyleft_risk(["GPL-3.0-only"], context="proprietary_distribution")
         self.assertEqual(gpl_dist["overall_risk"], "critical")
 
     def test_scan_path_spdx_and_cyclonedx(self) -> None:
@@ -408,9 +353,7 @@ class SpdxLicenseCheckerTests(unittest.TestCase):
         # Expression
         stdout = io.StringIO()
         with redirect_stdout(stdout):
-            code = spdx_license_checker.main(
-                ["--expression", "MIT AND BSD-3-Clause", "--json"]
-            )
+            code = spdx_license_checker.main(["--expression", "MIT AND BSD-3-Clause", "--json"])
         self.assertEqual(code, 0)
         data = json.loads(stdout.getvalue())
         self.assertTrue(data["ok"])
@@ -419,11 +362,7 @@ class SpdxLicenseCheckerTests(unittest.TestCase):
         stdout = io.StringIO()
         with redirect_stdout(stdout):
             code = spdx_license_checker.main(
-                [
-                    "--dependencies",
-                    '[{"name": "demo", "license": "Apache-2.0"}]',
-                    "--json",
-                ]
+                ["--dependencies", '[{"name": "demo", "license": "Apache-2.0"}]', "--json"]
             )
         self.assertEqual(code, 0)
 
@@ -445,17 +384,10 @@ class SpdxLicenseCheckerTests(unittest.TestCase):
         self.assertTrue(any("strong copyleft" in r for r in reasons))
 
     def test_agpl_gpl2_incompatibility(self) -> None:
-        comp = spdx_license_checker.evaluate_compatibility(
-            ["AGPL-3.0-only", "GPL-2.0-only"]
-        )
+        comp = spdx_license_checker.evaluate_compatibility(["AGPL-3.0-only", "GPL-2.0-only"])
         self.assertFalse(comp["compatible"])
         self.assertEqual(comp["highest_severity"], "critical")
-        self.assertTrue(
-            any(
-                "AGPL-3.0-only" in c["licenses"] and "GPL-2.0-only" in c["licenses"]
-                for c in comp["conflicts"]
-            )
-        )
+        self.assertTrue(any("AGPL-3.0-only" in c["licenses"] and "GPL-2.0-only" in c["licenses"] for c in comp["conflicts"]))
 
     def test_cli_error_handling_and_consistent_exit_codes(self) -> None:
         # File not found on --sbom
@@ -475,9 +407,7 @@ class SpdxLicenseCheckerTests(unittest.TestCase):
         # Incompatible expression returns exit code 1
         stdout = io.StringIO()
         with redirect_stdout(stdout):
-            code3 = spdx_license_checker.main(
-                ["--expression", "GPL-2.0-only AND Apache-2.0", "--json"]
-            )
+            code3 = spdx_license_checker.main(["--expression", "GPL-2.0-only AND Apache-2.0", "--json"])
         self.assertEqual(code3, 1)
         data = json.loads(stdout.getvalue())
         self.assertFalse(data["ok"])
@@ -564,9 +494,7 @@ class ContractDifferTests(unittest.TestCase):
     def test_diff_contracts_material_shifts(self) -> None:
         v1_text = self.v1_path.read_text(encoding="utf-8-sig")
         v2_text = self.v2_path.read_text(encoding="utf-8-sig")
-        report = contract_differ.diff_contracts(
-            v1_text, v2_text, left_name="v1", right_name="v2"
-        )
+        report = contract_differ.diff_contracts(v1_text, v2_text, left_name="v1", right_name="v2")
         self.assertTrue(report["ok"])
         self.assertIn("limitation_of_liability", report["changed_labels"])
         self.assertIn("sla_credits", report["changed_labels"])
@@ -589,9 +517,7 @@ class ContractDifferTests(unittest.TestCase):
         # Playbook diff
         stdout = io.StringIO()
         with redirect_stdout(stdout):
-            code = contract_differ.main(
-                ["--playbook", "--left", str(self.v1_path), "--json"]
-            )
+            code = contract_differ.main(["--playbook", "--left", str(self.v1_path), "--json"])
         self.assertEqual(code, 0)
         data = json.loads(stdout.getvalue())
         self.assertIn("contract_risk", data)
@@ -599,9 +525,7 @@ class ContractDifferTests(unittest.TestCase):
         # Left and Right diff
         stdout = io.StringIO()
         with redirect_stdout(stdout):
-            code = contract_differ.main(
-                ["--left", str(self.v1_path), "--right", str(self.v2_path), "--json"]
-            )
+            code = contract_differ.main(["--left", str(self.v1_path), "--right", str(self.v2_path), "--json"])
         self.assertEqual(code, 0)
 
         # Missing args error
@@ -619,9 +543,7 @@ class ContractDifferTests(unittest.TestCase):
 
         stderr2 = io.StringIO()
         with redirect_stderr(stderr2):
-            code2 = contract_differ.main(
-                ["--left", "missing1.md", "--right", "missing2.md"]
-            )
+            code2 = contract_differ.main(["--left", "missing1.md", "--right", "missing2.md"])
         self.assertEqual(code2, 2)
         self.assertIn("error:", stderr2.getvalue().lower())
 

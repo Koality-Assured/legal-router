@@ -15,7 +15,7 @@ from typing import Any
 
 _LIB = Path(__file__).resolve().parents[1] / "_lib"
 sys.path.insert(0, str(_LIB))
-from md import (
+from md import (  # noqa: E402
     ISOLATION,
     MODEL_TIERS,
     agent_ids,
@@ -23,7 +23,7 @@ from md import (
     heading_titles,
     parse_frontmatter,
 )
-from paths import REPO_ROOT as ROOT
+from paths import REPO_ROOT as ROOT  # noqa: E402
 
 NAME_MAX = 128
 ID_MAX = 64
@@ -32,9 +32,7 @@ BODY_MAX_LINES = 500
 DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 
 
-def extract_frontmatter_and_body(
-    text: str,
-) -> tuple[dict[str, Any] | None, str, str | None]:
+def extract_frontmatter_and_body(text: str) -> tuple[dict[str, Any] | None, str, str | None]:
     """Return (data, body, error_message)."""
     if not text.startswith("---"):
         return None, text, "missing YAML frontmatter (no leading ---)"
@@ -109,12 +107,8 @@ def check_agent(path: Path, known_agents: set[str]) -> list[str]:
         errors.append(f"description exceeds {DESC_MAX} chars")
     else:
         low_desc = desc.lower()
-        if not any(
-            k in low_desc for k in ("use for", "use when", "specialist", "dispatcher")
-        ):
-            errors.append(
-                "description must include usage guidance ('Use for', 'Use when', or role summary)"
-            )
+        if not any(k in low_desc for k in ("use for", "use when", "specialist", "dispatcher")):
+            errors.append("description must include usage guidance ('Use for', 'Use when', or role summary)")
 
     # 5. model_tier
     if model_tier not in MODEL_TIERS:
@@ -123,14 +117,8 @@ def check_agent(path: Path, known_agents: set[str]) -> list[str]:
     # 6. token_ceiling
     if token_ceiling is None:
         errors.append("token_ceiling missing (e.g. 100000)")
-    elif (
-        not isinstance(token_ceiling, int)
-        or isinstance(token_ceiling, bool)
-        or token_ceiling <= 0
-    ):
-        errors.append(
-            f"token_ceiling must be a positive integer, got {token_ceiling!r}"
-        )
+    elif not isinstance(token_ceiling, int) or isinstance(token_ceiling, bool) or token_ceiling <= 0:
+        errors.append(f"token_ceiling must be a positive integer, got {token_ceiling!r}")
 
     # 7. capabilities
     if capabilities is None:
@@ -165,9 +153,7 @@ def check_agent(path: Path, known_agents: set[str]) -> list[str]:
     else:
         for mode in isolation_modes:
             if mode not in ISOLATION:
-                errors.append(
-                    f"isolation_modes contains invalid mode {mode!r} (must be in {sorted(ISOLATION)})"
-                )
+                errors.append(f"isolation_modes contains invalid mode {mode!r} (must be in {sorted(ISOLATION)})")
 
     # 10. allowed_tools
     if allowed_tools is None:
@@ -184,9 +170,7 @@ def check_agent(path: Path, known_agents: set[str]) -> list[str]:
         else:
             for target in delegation_targets:
                 if not isinstance(target, str) or target not in known_agents:
-                    errors.append(
-                        f"delegation_targets item {target!r} is not a registered agent"
-                    )
+                    errors.append(f"delegation_targets item {target!r} is not a registered agent")
 
     # 12. Optional prohibitions / quirks / last_verified
     if prohibitions is not None and not isinstance(prohibitions, list):
@@ -285,7 +269,9 @@ def main(argv: list[str] | None = None) -> int:
         warns: list[str] = []
         slug = path.parent.name
         if listed is not None and slug not in listed:
-            warns.append("human consistency: not listed in ai-tooling/agents/README.md")
+            warns.append(
+                "human consistency: not listed in ai-tooling/agents/README.md"
+            )
         report.append(
             {
                 "agent": slug,

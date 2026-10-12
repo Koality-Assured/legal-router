@@ -13,7 +13,7 @@ from pathlib import Path
 
 _LIB = Path(__file__).resolve().parents[1] / "_lib"
 sys.path.insert(0, str(_LIB))
-from md import (
+from md import (  # noqa: E402
     ISOLATION,
     RANKS,
     REQUIRED_SKILL_HEADINGS,
@@ -23,7 +23,7 @@ from md import (
     parse_frontmatter,
     skill_paths,
 )
-from paths import REPO_ROOT as ROOT
+from paths import REPO_ROOT as ROOT  # noqa: E402
 
 NAME_MAX = 64
 DESC_MAX = 1024
@@ -46,11 +46,7 @@ def check_skill(path: Path, owners: set[str]) -> list[str]:
         return errors
     if name != folder:
         errors.append(f"name {name!r} != folder {folder!r}")
-    if (
-        not name
-        or len(name) > NAME_MAX
-        or any(c not in "abcdefghijklmnopqrstuvwxyz0123456789-" for c in name)
-    ):
+    if not name or len(name) > NAME_MAX or any(c not in "abcdefghijklmnopqrstuvwxyz0123456789-" for c in name):
         errors.append("name must be kebab-case, max 64 chars")
     if not desc:
         errors.append("description missing")
@@ -88,7 +84,9 @@ def check_skill(path: Path, owners: set[str]) -> list[str]:
             "must inherit Critical cost layers (qmd, ast-grep, and Headroom) in the skill body"
         )
     elif not (
-        "qmd" in low and ("ast-grep" in low or "astgrep" in low) and "headroom" in low
+        "qmd" in low
+        and ("ast-grep" in low or "astgrep" in low)
+        and "headroom" in low
     ):
         # Close waiver-by-oracle: naming only qmd + Headroom is not enough.
         errors.append(
@@ -135,18 +133,12 @@ def main(argv: list[str] | None = None) -> int:
     paths = skill_paths(ROOT)
     if args.skill:
         matched = [
-            p
-            for p in paths
+            p for p in paths
             if p.parent.name == args.skill
-            or p.relative_to(ROOT / "ai-tooling" / "skills")
-            .as_posix()
-            .startswith(args.skill)
+            or p.relative_to(ROOT / "ai-tooling" / "skills").as_posix().startswith(args.skill)
         ]
         if not matched:
-            print(
-                f"error: skill {args.skill!r} not found under ai-tooling/skills/",
-                file=sys.stderr,
-            )
+            print(f"error: skill {args.skill!r} not found under ai-tooling/skills/", file=sys.stderr)
             return 2
         paths = matched
 
@@ -160,7 +152,9 @@ def main(argv: list[str] | None = None) -> int:
         # Agent registration = SKILL.md + owner AGENT.md. README is human-only;
         # missing README rows must not fail skill validation.
         if listed is not None and slug not in listed:
-            warns.append("human consistency: not listed in ai-tooling/skills/README.md")
+            warns.append(
+                "human consistency: not listed in ai-tooling/skills/README.md"
+            )
         report.append(
             {
                 "skill": slug,

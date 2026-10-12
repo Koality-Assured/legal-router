@@ -16,7 +16,7 @@ _SCRIPTS = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(_SCRIPTS))
 sys.path.insert(0, str(_SCRIPTS / "_lib"))
 
-from pacing import (
+from pacing import (  # noqa: E402
     chunk_tasks,
     format_schedule_wakeup,
     load_quota_profiles,
@@ -61,9 +61,7 @@ class PacingUnitTests(unittest.TestCase):
 
     def test_resolve_quota_profile_secondary_antigravity(self) -> None:
         self.assertEqual(
-            resolve_quota_profile(
-                host="antigravity", model_name="Claude Opus 4.6 (Thinking)"
-            ),
+            resolve_quota_profile(host="antigravity", model_name="Claude Opus 4.6 (Thinking)"),
             "metered_secondary",
         )
         self.assertEqual(

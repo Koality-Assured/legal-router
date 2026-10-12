@@ -12,7 +12,7 @@ from __future__ import annotations
 
 import argparse
 import json
-import subprocess  # nosec B404
+import subprocess
 import sys
 from pathlib import Path
 from typing import Any
@@ -23,7 +23,8 @@ for _p in (_SYNC, _LIB):
     if str(_p) not in sys.path:
         sys.path.insert(0, str(_p))
 
-from _harness_core_protocol import (
+from paths import resolve_repo_root  # noqa: E402
+from _harness_core_protocol import (  # noqa: E402
     CORE_REPO_NAME,
     DEFAULT_ORG,
     classify_spoke_path,
@@ -31,7 +32,6 @@ from _harness_core_protocol import (
     posix_rel,
     unique_paths,
 )
-from paths import resolve_repo_root
 
 
 class DomainPathRefused(ValueError):
@@ -63,7 +63,7 @@ def _changed_paths(spoke: Path) -> list[str]:
     """List dirty/untracked paths. Empty when the spoke is not a git repo."""
     if not (spoke / ".git").exists():
         return []
-    head = subprocess.run(  # nosec B607, B603
+    head = subprocess.run(
         ["git", "rev-parse", "--verify", "HEAD"],
         cwd=spoke,
         capture_output=True,
@@ -77,7 +77,7 @@ def _changed_paths(spoke: Path) -> list[str]:
     commands.append(["git", "ls-files", "--others", "--exclude-standard"])
     names: list[str] = []
     for args in commands:
-        result = subprocess.run(  # nosec B603
+        result = subprocess.run(
             args,
             cwd=spoke,
             capture_output=True,
@@ -160,7 +160,7 @@ def propose_core_update(
         return payload
 
     repo = f"{DEFAULT_ORG}/{CORE_REPO_NAME}"
-    result = subprocess.run(  # nosec B607, B603
+    result = subprocess.run(
         [
             "gh",
             "issue",
@@ -214,9 +214,7 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="Open a text-only issue on ai-harness-core (never merged, never a PR)",
     )
-    parser.add_argument(
-        "--dry-run", action="store_true", help="Plan only; create nothing"
-    )
+    parser.add_argument("--dry-run", action="store_true", help="Plan only; create nothing")
     parser.add_argument("--json", action="store_true", help="Print JSON summary")
     args = parser.parse_args(argv)
 
@@ -272,7 +270,7 @@ def main(argv: list[str] | None = None) -> int:
         print(f"Propose core update ({mode})")
         print(f"  repo:    {payload['core_repo']}")
         print(f"  title:   {payload['title']}")
-        print("  merged:  no")
+        print(f"  merged:  no")
         for rel in payload["paths"]:
             print(f"  path:    {rel}")
     return 0

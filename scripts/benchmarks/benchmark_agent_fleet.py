@@ -10,25 +10,28 @@ import argparse
 import json
 import sys
 import time
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
 _LIB = Path(__file__).resolve().parents[1] / "_lib"
 sys.path.insert(0, str(_LIB))
+from md import (  # noqa: E402
+    agent_ids,
+    agent_paths,
+    load_agent_record,
+    load_skill_record,
+    parse_frontmatter,
+    skill_paths,
+)
+from paths import REPO_ROOT as ROOT  # noqa: E402
+
 # Import local cost calculation helpers
-from estimate_agent_costs import (
+from estimate_agent_costs import (  # noqa: E402
     compute_trajectory_cost,
     inspect_agent_tokens,
     inspect_skill_tokens,
 )
-from md import (
-    agent_ids,
-    agent_paths,
-    parse_frontmatter,
-    skill_paths,
-)
-from paths import REPO_ROOT as ROOT
 
 
 def benchmark_single_agent(
@@ -48,9 +51,7 @@ def benchmark_single_agent(
 
     # 1. Delegation targets verification
     delegations = fields.get("delegation_targets", [])
-    invalid_delegations = [
-        d for d in delegations if d not in known_agent_ids and d != "router"
-    ]
+    invalid_delegations = [d for d in delegations if d not in known_agent_ids and d != "router"]
 
     # 2. Owned skills mapping
     owned_skills = []
@@ -66,13 +67,8 @@ def benchmark_single_agent(
         lower = line.lower()
         if "last_verified" in lower:
             continue
-        if any(
-            keyword in lower
-            for keyword in ("current_time", "random_seed", "temp_path", "runtime_id")
-        ):
-            prefix_violations.append(
-                f"Line {idx + 1}: contains dynamic token ({line.strip()})"
-            )
+        if any(keyword in lower for keyword in ("current_time", "random_seed", "temp_path", "runtime_id")):
+            prefix_violations.append(f"Line {idx+1}: contains dynamic token ({line.strip()})")
 
     # 4. Trajectory and headroom simulation
     trajectory = compute_trajectory_cost(
@@ -80,9 +76,7 @@ def benchmark_single_agent(
         turns=turns_to_simulate,
     )
 
-    headroom_remaining = max(
-        0, agent_info["token_ceiling"] - trajectory["final_context_tokens"]
-    )
+    headroom_remaining = max(0, agent_info["token_ceiling"] - trajectory["final_context_tokens"])
     headroom_pct = round((headroom_remaining / agent_info["token_ceiling"]) * 100, 1)
 
     elapsed_ms = round((time.perf_counter() - start_time) * 1000, 2)
@@ -104,16 +98,14 @@ def benchmark_single_agent(
         "headroom_pct": headroom_pct,
         "cost_5_turns_usd": trajectory["cost_with_cache_usd"],
         "elapsed_ms": elapsed_ms,
-        "status": "PASS"
-        if len(invalid_delegations) == 0 and len(prefix_violations) == 0
-        else "FAIL",
+        "status": "PASS" if len(invalid_delegations) == 0 and len(prefix_violations) == 0 else "FAIL",
     }
 
 
 if sys.stdout.encoding and sys.stdout.encoding.lower() != "utf-8":
     try:
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
-    except Exception:  # noqa: S110,BLE001  # nosec B110
+    except Exception:
         pass
 
 
@@ -122,7 +114,7 @@ def render_fleet_report(
     summary_stats: dict[str, Any],
 ) -> str:
     """Render comprehensive Markdown fleet report."""
-    now_utc = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
+    now_utc = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     lines = [
         "---",
         "doc_kind: result",
@@ -152,10 +144,8 @@ def render_fleet_report(
     ]
 
     for item in fleet_results:
-        status_badge = (
-            f"**{item['status']}**" if item["status"] == "PASS" else "**FAIL**"
-        )
-        cache_badge = "Yes" if item["prompt_cache_invariant"] else "No"
+        status_badge = f"**{item['status']}**" if item['status'] == "PASS" else f"**FAIL**"
+        cache_badge = "Yes" if item['prompt_cache_invariant'] else "No"
         lines.append(
             f"| [`{item['agent_id']}`](../../../ai-tooling/agents/{item['agent_id']}/AGENT.md) | "
             f"`{item['model_tier']}` | {item['tool_count']} | {item['owned_skills_count']} | "
@@ -169,20 +159,12 @@ def render_fleet_report(
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument(
-        "--all",
-        action="store_true",
-        help="Run benchmark on entire agent fleet (default)",
-    )
+    parser.add_argument("--all", action="store_true", help="Run benchmark on entire agent fleet (default)")
     parser.add_argument("--agents", help="Comma-separated agent IDs to benchmark")
-    parser.add_argument(
-        "--turns", type=int, default=5, help="Number of turns to simulate (default: 5)"
-    )
+    parser.add_argument("--turns", type=int, default=5, help="Number of turns to simulate (default: 5)")
     parser.add_argument("--json", action="store_true", help="Output JSON results")
     parser.add_argument("--out", help="Output directory under repo root")
-    parser.add_argument(
-        "--dry-run", action="store_true", help="Run dry run without writing files"
-    )
+    parser.add_argument("--dry-run", action="store_true", help="Run dry run without writing files")
     args = parser.parse_args(argv)
 
     all_agent_paths = agent_paths(ROOT)
@@ -212,12 +194,8 @@ def main(argv: list[str] | None = None) -> int:
     total_count = len(fleet_results)
 
     static_prefixes = [r["static_prefix_tokens"] for r in fleet_results]
-    median_prefix = (
-        sorted(static_prefixes)[len(static_prefixes) // 2] if static_prefixes else 0
-    )
-    avg_headroom = round(
-        sum(r["headroom_pct"] for r in fleet_results) / max(1, total_count), 1
-    )
+    median_prefix = sorted(static_prefixes)[len(static_prefixes) // 2] if static_prefixes else 0
+    avg_headroom = round(sum(r["headroom_pct"] for r in fleet_results) / max(1, total_count), 1)
 
     summary_stats = {
         "total_agents": total_count,
@@ -231,7 +209,7 @@ def main(argv: list[str] | None = None) -> int:
 
     report_md = render_fleet_report(fleet_results, summary_stats)
 
-    today = datetime.now(UTC).strftime("%Y-%m-%d")
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     out_rel = args.out or f"results/benchmarks/fleet/{today}"
     out_dir = ROOT / out_rel
 

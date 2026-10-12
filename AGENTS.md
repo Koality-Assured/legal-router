@@ -112,7 +112,7 @@ Before mutating, create a unique task worktree with `python scripts/routing/spaw
 
 ### Skill-agent pairing priority and operator discipline
 
-When introducing or decomposing skills or agent tasks, prioritize mapping to existing Operators (`harness-operator`, `document-operator`, `research-operator`, `cloud-operator`, `security-tooling-operator`, `legal-research-operator`, `contract-lifecycle-operator`) or established specialists before minting new micro-agents.
+When introducing or decomposing skills or agent tasks, prioritize mapping to existing Operators (`harness-operator`, `document-operator`, `research-operator`, `cloud-operator`, `security-tooling-operator`) or established specialists before minting new micro-agents.
 - **Operator-first pairing**: Incorporate new capabilities into the most relevant operator or expand via skill parameters.
 - **Pairing maintenance**: Keep skill-to-agent pairings and routing catalogs synchronized over time.
 - **True specialist threshold**: Dedicated specialists only for truly disjoint domains outside operator archetypes (e.g. game simulation, art synthesis, independent adversarial auditors). Full SoT: [`docs/guidance/agent-skill-pairing-discipline.md`](./docs/guidance/agent-skill-pairing-discipline.md).
@@ -159,4 +159,4 @@ The parent is coordinator/validator: it coordinates, validates consistency, and 
 
 ## Area write-back
 
-Destination map and rules: [`routing/area-map.md`](./routing/area-map.md). Always write durable lessons to their owning source area.
+Full destination map and ownership rules: [`routing/area-map.md`](./routing/area-map.md). Always write durable lessons to their owning source area.

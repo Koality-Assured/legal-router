@@ -10,40 +10,23 @@ import argparse
 import json
 import re
 import sys
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
 _LIB = Path(__file__).resolve().parents[1] / "_lib"
 sys.path.insert(0, str(_LIB))
-from md import agent_paths
-from paths import REPO_ROOT as ROOT
+from md import agent_paths, parse_frontmatter  # noqa: E402
+from paths import REPO_ROOT as ROOT  # noqa: E402
 
 CHARS_PER_TOKEN = 4.0
 
 # Volatile patterns that break prompt KV-cache prefixes if placed at template heads
 VOLATILE_PREFIX_PATTERNS = [
-    (
-        re.compile(
-            r"\b\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})\b"
-        ),
-        "ISO-8601 dynamic timestamp",
-    ),
-    (
-        re.compile(r"(?i)\bcurrent\s+(?:date|time|timestamp)\s*:\s*\S+"),
-        "runtime timestamp injection",
-    ),
-    (
-        re.compile(
-            r"\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b",
-            re.IGNORECASE,
-        ),
-        "random session UUID / nonce",
-    ),
-    (
-        re.compile(r"(?i)[A-Z]:\\Users\\[^\s\\]+\\"),
-        "user-specific local filesystem path (Windows)",
-    ),
+    (re.compile(r"\b\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})\b"), "ISO-8601 dynamic timestamp"),
+    (re.compile(r"(?i)\bcurrent\s+(?:date|time|timestamp)\s*:\s*\S+"), "runtime timestamp injection"),
+    (re.compile(r"\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b", re.IGNORECASE), "random session UUID / nonce"),
+    (re.compile(r"(?i)[A-Z]:\\Users\\[^\s\\]+\\"), "user-specific local filesystem path (Windows)"),
     (re.compile(r"(?i)/home/[^\s/]+/"), "user-specific local filesystem path (Linux)"),
     (re.compile(r"(?i)/Users/[^\s/]+/"), "user-specific local filesystem path (macOS)"),
 ]
@@ -55,12 +38,10 @@ MIN_STATIC_PREFIX_BYTES = 512
 def est_tokens(text: str) -> int:
     if not text:
         return 0
-    return max(1, round(len(text) / CHARS_PER_TOKEN))
+    return max(1, int(round(len(text) / CHARS_PER_TOKEN)))
 
 
-def check_prompt_head(
-    path: Path, text: str, head_chars: int = 2000
-) -> list[dict[str, str]]:
+def check_prompt_head(path: Path, text: str, head_chars: int = 2000) -> list[dict[str, str]]:
     """Scan the head (prefix) of a prompt or agent definition for volatile cache-busting patterns."""
     violations: list[dict[str, str]] = []
     head_content = text[:head_chars]
@@ -88,15 +69,13 @@ def check_prompt_head(
                     rel_path = str(path.relative_to(ROOT)).replace("\\", "/")
                 except ValueError:
                     rel_path = str(path).replace("\\", "/")
-                violations.append(
-                    {
-                        "file": rel_path,
-                        "line": str(line_idx),
-                        "matched": match.group(0),
-                        "violation": label,
-                        "snippet": line.strip()[:100],
-                    }
-                )
+                violations.append({
+                    "file": rel_path,
+                    "line": str(line_idx),
+                    "matched": match.group(0),
+                    "violation": label,
+                    "snippet": line.strip()[:100],
+                })
     return violations
 
 
@@ -106,7 +85,7 @@ def validate_all_prompts(repo_root: Path) -> dict[str, Any]:
 
     # 1. All agent definitions
     for p in agent_paths(repo_root):
-        files_to_audit.append(p)  # noqa: PERF402
+        files_to_audit.append(p)
 
     # 2. Core repository instructions
     root_agents = repo_root / "AGENTS.md"
@@ -124,16 +103,14 @@ def validate_all_prompts(repo_root: Path) -> dict[str, Any]:
         rel = str(file_path.relative_to(repo_root)).replace("\\", "/")
         try:
             content = file_path.read_text(encoding="utf-8")
-        except Exception as exc:  # noqa: BLE001
-            all_violations.append(
-                {
-                    "file": rel,
-                    "line": "0",
-                    "matched": "",
-                    "violation": f"read error: {exc}",
-                    "snippet": "",
-                }
-            )
+        except Exception as exc:
+            all_violations.append({
+                "file": rel,
+                "line": "0",
+                "matched": "",
+                "violation": f"read error: {exc}",
+                "snippet": "",
+            })
             continue
 
         violations = check_prompt_head(file_path, content)
@@ -143,15 +120,13 @@ def validate_all_prompts(repo_root: Path) -> dict[str, Any]:
         total_tokens = est_tokens(content)
         prefix_stable = len(violations) == 0 and total_bytes >= MIN_STATIC_PREFIX_BYTES
 
-        audited_rows.append(
-            {
-                "file": rel,
-                "bytes": total_bytes,
-                "est_tokens": total_tokens,
-                "prefix_stable": prefix_stable,
-                "violations_count": len(violations),
-            }
-        )
+        audited_rows.append({
+            "file": rel,
+            "bytes": total_bytes,
+            "est_tokens": total_tokens,
+            "prefix_stable": prefix_stable,
+            "violations_count": len(violations),
+        })
 
     pass_status = len(all_violations) == 0
     return {
@@ -201,17 +176,11 @@ def write_report(out_dir: Path, payload: dict[str, Any]) -> None:
     lines.append("")
     if not payload["violations"]:
         lines.append("- All prompt definitions maintain byte-stable prefix headers.")
-        lines.append(
-            "- No dynamic timestamps, nonces, or user environment paths detected in prompt heads."
-        )
-        lines.append(
-            "- KV-cache hit efficiency preserved across provider routing boundaries."
-        )
+        lines.append("- No dynamic timestamps, nonces, or user environment paths detected in prompt heads.")
+        lines.append("- KV-cache hit efficiency preserved across provider routing boundaries.")
     else:
         for v in payload["violations"]:
-            lines.append(
-                f"- **{v['file']}:{v['line']}** — `{v['violation']}` on `{v['matched']}`: _{v['snippet']}_"
-            )
+            lines.append(f"- **{v['file']}:{v['line']}** — `{v['violation']}` on `{v['matched']}`: _{v['snippet']}_")
 
     lines.append("")
     (out_dir / "report.md").write_text("\n".join(lines), encoding="utf-8")
@@ -224,16 +193,12 @@ def main(argv: list[str] | None = None) -> int:
         default=None,
         help="Output directory (default: results/cost-layers/prompt-caching/<YYYY-MM-DD>)",
     )
-    parser.add_argument(
-        "--json", action="store_true", help="Output JSON envelope to stdout"
-    )
-    parser.add_argument(
-        "--dry-run", action="store_true", help="Run audit and print summary"
-    )
+    parser.add_argument("--json", action="store_true", help="Output JSON envelope to stdout")
+    parser.add_argument("--dry-run", action="store_true", help="Run audit and print summary")
     args = parser.parse_args(argv)
 
-    now_utc = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
-    today = datetime.now(UTC).strftime("%Y-%m-%d")
+    now_utc = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     out_rel = args.out or f"results/cost-layers/prompt-caching/{today}"
     out_dir = ROOT / out_rel
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -244,9 +209,7 @@ def main(argv: list[str] | None = None) -> int:
         **result,
     }
 
-    (out_dir / "results.json").write_text(
-        json.dumps(payload, indent=2), encoding="utf-8"
-    )
+    (out_dir / "results.json").write_text(json.dumps(payload, indent=2), encoding="utf-8")
     (out_dir / "summary.json").write_text(
         json.dumps(
             {
@@ -257,9 +220,7 @@ def main(argv: list[str] | None = None) -> int:
                 "findings": (
                     ["All prompt definitions maintain static byte prefix stability."]
                     if payload["pass"]
-                    else [
-                        f"{v['file']}: {v['violation']}" for v in payload["violations"]
-                    ]
+                    else [f"{v['file']}: {v['violation']}" for v in payload["violations"]]
                 ),
             },
             indent=2,

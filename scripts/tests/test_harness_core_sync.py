@@ -9,7 +9,7 @@ Run: python -m unittest scripts.tests.test_harness_core_sync -v
 from __future__ import annotations
 
 import json
-import subprocess  # nosec B404
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -62,7 +62,7 @@ from scaffold_harness import scaffold_harness
 
 
 def _git(cwd: Path, *args: str) -> None:
-    result = subprocess.run(  # nosec B607, B603
+    result = subprocess.run(
         ["git", *args],
         cwd=cwd,
         capture_output=True,
@@ -124,27 +124,15 @@ class SkillFamilyCouplingTests(unittest.TestCase):
     def test_domain_marker_not_core(self) -> None:
         self.assertTrue(is_domain_marker(".harness/domain.json"))
         self.assertFalse(is_allowlisted_core_path(".harness/domain.json"))
-        self.assertEqual(
-            classify_spoke_path("docs/standards/legal-overlay.md"), "domain"
-        )
+        self.assertEqual(classify_spoke_path("docs/standards/legal-overlay.md"), "domain")
         self.assertEqual(classify_spoke_path("AGENTS.md"), "core")
-        self.assertFalse(
-            is_harness_template_rel_kept("ai-tooling/skills/aws/aws-read/SKILL.md")
-        )
-        self.assertFalse(
-            is_harness_template_rel_kept(
-                "ai-tooling/skills/slack/slack-message/SKILL.md"
-            )
-        )
+        self.assertFalse(is_harness_template_rel_kept("ai-tooling/skills/aws/aws-read/SKILL.md"))
+        self.assertFalse(is_harness_template_rel_kept("ai-tooling/skills/slack/slack-message/SKILL.md"))
         self.assertFalse(skill_is_kept("slack-message"))
         self.assertFalse(skill_is_kept("google-workspace-admin"))
         self.assertFalse(is_harness_template_rel_kept("references/financial/sox.md"))
-        self.assertFalse(
-            is_harness_template_rel_kept("scripts/tests/test_windows_security.py")
-        )
-        self.assertFalse(
-            is_harness_template_rel_kept("scripts/tests/test_network_discovery.py")
-        )
+        self.assertFalse(is_harness_template_rel_kept("scripts/tests/test_windows_security.py"))
+        self.assertFalse(is_harness_template_rel_kept("scripts/tests/test_network_discovery.py"))
         self.assertIn(
             "scripts/tests/test_network_discovery.py",
             HARNESS_TEMPLATE_DEST_EXCLUDE_RELS,
@@ -166,12 +154,8 @@ class SkillFamilyCouplingTests(unittest.TestCase):
         self.assertTrue(is_domain_marker(rel))
         self.assertFalse(is_allowlisted_core_path(rel))
         self.assertEqual(classify_spoke_path(rel), "domain")
-        self.assertEqual(
-            classify_spoke_path("ai-tooling/agents/script-ops/AGENT.md"), "core"
-        )
-        self.assertTrue(
-            is_allowlisted_core_path("ai-tooling/agents/script-ops/AGENT.md")
-        )
+        self.assertEqual(classify_spoke_path("ai-tooling/agents/script-ops/AGENT.md"), "core")
+        self.assertTrue(is_allowlisted_core_path("ai-tooling/agents/script-ops/AGENT.md"))
 
     def test_domain_test_file_is_not_core(self) -> None:
         rel = "scripts/tests/test_ui_ux.py"
@@ -179,17 +163,9 @@ class SkillFamilyCouplingTests(unittest.TestCase):
         self.assertFalse(is_allowlisted_core_path(rel))
         self.assertEqual(classify_spoke_path(rel), "domain")
         self.assertFalse(is_harness_template_rel_kept(rel))
-        self.assertTrue(
-            is_harness_template_rel_kept("scripts/tests/test_harness_core_sync.py")
-        )
-        self.assertTrue(
-            is_harness_template_rel_kept(
-                "scripts/tests/test_subagent_context_config.py"
-            )
-        )
-        self.assertEqual(
-            classify_spoke_path("scripts/tests/test_subagent_context_config.py"), "core"
-        )
+        self.assertTrue(is_harness_template_rel_kept("scripts/tests/test_harness_core_sync.py"))
+        self.assertTrue(is_harness_template_rel_kept("scripts/tests/test_subagent_context_config.py"))
+        self.assertEqual(classify_spoke_path("scripts/tests/test_subagent_context_config.py"), "core")
 
     def test_game_product_paths_are_instance_leaks(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -205,17 +181,14 @@ class SkillFamilyCouplingTests(unittest.TestCase):
             self.assertIn("secpanic-idler", joined)
             self.assertIn("distastefu1", joined)
             self.assertTrue(is_domain_marker("projects/secpanic-idler/README.md"))
-            self.assertFalse(
-                is_harness_template_rel_kept("projects/secpanic-idler/README.md")
-            )
-            self.assertFalse(
-                is_harness_template_rel_kept("vendor/Distastefu1/notes/note.md")
-            )
+            self.assertFalse(is_harness_template_rel_kept("projects/secpanic-idler/README.md"))
+            self.assertFalse(is_harness_template_rel_kept("vendor/Distastefu1/notes/note.md"))
             pruned = harness_template_prune_dest_leftovers(root)
             self.assertFalse(marker.exists())
             self.assertFalse((root / "vendor" / "Distastefu1").exists())
             self.assertTrue(any("secpanic-idler" in item.lower() for item in pruned))
             self.assertTrue(any("distastefu1" in item.lower() for item in pruned))
+
 
     def test_prune_drops_leftover_vendor_family(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -228,9 +201,7 @@ class SkillFamilyCouplingTests(unittest.TestCase):
             (meta / "SKILL.md").write_text("# isolate\n", encoding="utf-8")
             pruned = harness_template_prune_dest_leftovers(dest)
             self.assertFalse((dest / "ai-tooling" / "skills" / "aws").exists())
-            self.assertTrue(
-                (dest / "ai-tooling" / "skills" / "meta" / "isolate-work").exists()
-            )
+            self.assertTrue((dest / "ai-tooling" / "skills" / "meta" / "isolate-work").exists())
             self.assertTrue(any("aws" in item for item in pruned))
 
     def test_prune_drops_orphan_network_discovery_test(self) -> None:
@@ -263,12 +234,9 @@ class SkillFamilyCouplingTests(unittest.TestCase):
             self.assertIn(rel, CORE_CHECKOUT_EXTRA_RELS)
 
         for rel in CORE_CHECKOUT_EXTRA_RELS:
-            self.assertEqual(
-                classify_spoke_path(rel), "core", f"{rel} should be classified as core"
-            )
-            self.assertTrue(
-                is_allowlisted_core_path(rel), f"{rel} should be allowlisted core"
-            )
+            self.assertEqual(classify_spoke_path(rel), "core", f"{rel} should be classified as core")
+            self.assertTrue(is_allowlisted_core_path(rel), f"{rel} should be allowlisted core")
+
 
 
 class ScaffoldHarnessTests(unittest.TestCase):
@@ -300,9 +268,7 @@ class ScaffoldHarnessTests(unittest.TestCase):
             dry_run=True,
         )
         self.assertEqual(payload["visibility"], "private")
-        self.assertTrue(
-            payload["remotes"][ORIGIN_REMOTE_NAME].endswith("game-dev-router.git")
-        )
+        self.assertTrue(payload["remotes"][ORIGIN_REMOTE_NAME].endswith("game-dev-router.git"))
         self.assertIn("ai-harness-core.git", payload["remotes"][CORE_REMOTE_NAME])
 
     def test_game_dev_public_visibility_is_refused(self) -> None:
@@ -349,12 +315,10 @@ class ScaffoldHarnessTests(unittest.TestCase):
                 encoding="utf-8"
             )
             self.assertIn("ui-ux", overlay)
-            marker = json.loads(
-                (target / ".harness" / "domain.json").read_text(encoding="utf-8")
-            )
+            marker = json.loads((target / ".harness" / "domain.json").read_text(encoding="utf-8"))
             self.assertEqual(marker["visibility"], "public")
             self.assertEqual(marker["domain"], "ui-ux")
-            remotes = subprocess.run(  # nosec B607, B603
+            remotes = subprocess.run(
                 ["git", "remote", "-v"],
                 cwd=target,
                 capture_output=True,
@@ -370,7 +334,7 @@ class ScaffoldHarnessTests(unittest.TestCase):
             self.assertIn("initial-commit", payload["actions"])
             self.assertTrue(payload["committed"])
             self.assertFalse(payload["pushed"])
-            head = subprocess.run(  # noqa: PLW1510  # nosec B607, B603
+            head = subprocess.run(
                 ["git", "rev-parse", "--verify", "HEAD"],
                 cwd=target,
                 capture_output=True,
@@ -602,6 +566,7 @@ class ProposeCoreUpdateTests(unittest.TestCase):
                 self.assertIn(rel, str(ctx.exception))
 
 
+
 class PullHarnessCoreTests(unittest.TestCase):
     def test_dry_run_and_live_branch_never_merges(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -632,9 +597,7 @@ class PullHarnessCoreTests(unittest.TestCase):
             self.assertFalse(dry["merged"])
             self.assertIn("AGENTS.md", dry["updates"])
             self.assertIn("docs/standards/legal-overlay.md", dry["skipped_domain"])
-            self.assertEqual(
-                (spoke / "AGENTS.md").read_text(encoding="utf-8"), "# core v1\n"
-            )
+            self.assertEqual((spoke / "AGENTS.md").read_text(encoding="utf-8"), "# core v1\n")
             base = dry["base_branch"]
 
             live = pull_harness_core(spoke=spoke, ref="main", dry_run=False, fetch=True)
@@ -642,13 +605,9 @@ class PullHarnessCoreTests(unittest.TestCase):
             self.assertFalse(live["merged"])
             self.assertIsNotNone(live["branch"])
             self.assertTrue(str(live["branch"]).startswith("chore/pull-harness-core-"))
-            self.assertEqual(
-                (spoke / "AGENTS.md").read_text(encoding="utf-8"), "# core v2\n"
-            )
-            self.assertFalse(
-                (spoke / "docs" / "standards" / "legal-overlay.md").exists()
-            )
-            current = subprocess.run(  # nosec B607, B603
+            self.assertEqual((spoke / "AGENTS.md").read_text(encoding="utf-8"), "# core v2\n")
+            self.assertFalse((spoke / "docs" / "standards" / "legal-overlay.md").exists())
+            current = subprocess.run(
                 ["git", "rev-parse", "--abbrev-ref", "HEAD"],
                 cwd=spoke,
                 capture_output=True,
@@ -703,9 +662,7 @@ class PullHarnessCoreTests(unittest.TestCase):
             self.assertFalse(payload.get("fetched"))
             self.assertFalse(payload["merged"])
 
-    def test_pull_handles_core_checkout_extra_rels_and_regenerates_indexes(
-        self,
-    ) -> None:
+    def test_pull_handles_core_checkout_extra_rels_and_regenerates_indexes(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             core = Path(tmp) / "core"
             spoke = Path(tmp) / "spoke"
@@ -714,13 +671,9 @@ class PullHarnessCoreTests(unittest.TestCase):
             (core / "AGENTS.md").write_text("# core v1\n", encoding="utf-8")
             (core / "README.md").write_text("# Core Readme v1\n", encoding="utf-8")
             (core / ".github" / "workflows").mkdir(parents=True)
-            (core / ".github" / "workflows" / "ci.yml").write_text(
-                "name: CI v1\n", encoding="utf-8"
-            )
+            (core / ".github" / "workflows" / "ci.yml").write_text("name: CI v1\n", encoding="utf-8")
             (core / "routing").mkdir(parents=True)
-            (core / "routing" / "skill-dispatch.md").write_text(
-                "# skills core v1\n", encoding="utf-8"
-            )
+            (core / "routing" / "skill-dispatch.md").write_text("# skills core v1\n", encoding="utf-8")
             _commit(core, "core v1")
 
             _init_repo(spoke)
@@ -747,16 +700,10 @@ class PullHarnessCoreTests(unittest.TestCase):
 
             # Update extra rels and add a domain marker in core
             (core / "README.md").write_text("# Core Readme v2\n", encoding="utf-8")
-            (core / ".github" / "workflows" / "ci.yml").write_text(
-                "name: CI v2\n", encoding="utf-8"
-            )
-            (core / "routing" / "skill-dispatch.md").write_text(
-                "# skills core v2\n", encoding="utf-8"
-            )
+            (core / ".github" / "workflows" / "ci.yml").write_text("name: CI v2\n", encoding="utf-8")
+            (core / "routing" / "skill-dispatch.md").write_text("# skills core v2\n", encoding="utf-8")
             (core / "docs" / "standards").mkdir(parents=True, exist_ok=True)
-            (core / "docs" / "standards" / "legal-overlay.md").write_text(
-                "# domain leak\n", encoding="utf-8"
-            )
+            (core / "docs" / "standards" / "legal-overlay.md").write_text("# domain leak\n", encoding="utf-8")
             _commit(core, "core v2")
 
             # Dry-run verification
@@ -781,9 +728,7 @@ class PullHarnessCoreTests(unittest.TestCase):
             self.assertIn("README.md", live["updates"])
             self.assertIn("routing/skill-dispatch.md", live["updates"])
             self.assertEqual(
-                (spoke / ".github" / "workflows" / "ci.yml").read_text(
-                    encoding="utf-8"
-                ),
+                (spoke / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8"),
                 "name: CI v2\n",
             )
             self.assertEqual(
@@ -816,25 +761,19 @@ class PullHarnessCoreTests(unittest.TestCase):
             _init_repo(core)
             (core / "AGENTS.md").write_text("# core v1\n", encoding="utf-8")
             (core / "routing").mkdir(parents=True)
-            (core / "routing" / "areas.yaml").write_text(
-                "areas:\n  - id: core_area\n", encoding="utf-8"
-            )
+            (core / "routing" / "areas.yaml").write_text("areas:\n  - id: core_area\n", encoding="utf-8")
             _commit(core, "core v1")
 
             _init_repo(spoke)
             (spoke / "AGENTS.md").write_text("# core v1\n", encoding="utf-8")
             (spoke / "routing").mkdir(parents=True)
-            (spoke / "routing" / "areas.yaml").write_text(
-                "areas:\n  - id: domain_area\n", encoding="utf-8"
-            )
+            (spoke / "routing" / "areas.yaml").write_text("areas:\n  - id: domain_area\n", encoding="utf-8")
             _commit(spoke, "spoke v1")
             _git(spoke, "remote", "add", CORE_REMOTE_NAME, str(core))
             _git(spoke, "fetch", CORE_REMOTE_NAME)
 
             # Core updates areas.yaml
-            (core / "routing" / "areas.yaml").write_text(
-                "areas:\n  - id: core_area_v2\n", encoding="utf-8"
-            )
+            (core / "routing" / "areas.yaml").write_text("areas:\n  - id: core_area_v2\n", encoding="utf-8")
             _commit(core, "core v2")
 
             dry = pull_harness_core(spoke=spoke, ref="main", dry_run=True, fetch=True)
@@ -848,6 +787,8 @@ class PullHarnessCoreTests(unittest.TestCase):
                 (spoke / "routing" / "areas.yaml").read_text(encoding="utf-8"),
                 "areas:\n  - id: domain_area\n",
             )
+
+
 
 
 class OverlayStubTests(unittest.TestCase):

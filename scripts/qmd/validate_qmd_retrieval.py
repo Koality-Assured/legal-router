@@ -8,20 +8,21 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import re
 import shutil
 import statistics
-import subprocess  # nosec B404
+import subprocess
 import sys
 import time
 from dataclasses import dataclass, field
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 _LIB = Path(__file__).resolve().parents[1] / "_lib"
 sys.path.insert(0, str(_LIB))
-from paths import REPO_ROOT as ROOT
-from setup_qmd_collections import resolve_collections
+from paths import REPO_ROOT as ROOT  # noqa: E402
+from setup_qmd_collections import resolve_collections  # noqa: E402
 
 EXPECTED_COLLECTIONS = [c[0] for c in resolve_collections(ROOT)]
 EXCLUDED_DIRS = ("change-history", "scratch")
@@ -123,11 +124,7 @@ FIXTURES: list[Fixture] = [
         need="append change-history provenance script",
         lex="append_change_history.py provenance quarter entries",
         vec="script used to append provenance log entries without loading the chronicle",
-        expect_any=[
-            "scripts/script-index.md",
-            "scripts/AGENTS.md",
-            "routing/AGENTS.md",
-        ],
+        expect_any=["scripts/script-index.md", "scripts/AGENTS.md", "routing/AGENTS.md"],
         must_not=["change-history/"],
         permutations=[
             "append change-history provenance script",
@@ -237,7 +234,7 @@ def gold_score(text: str, facts: list[str]) -> dict:
 def est_tokens(text: str) -> int:
     if not text:
         return 0
-    return max(1, round(len(text) / CHARS_PER_TOKEN))
+    return max(1, int(round(len(text) / CHARS_PER_TOKEN)))
 
 
 def file_stats(path: Path) -> dict:
@@ -257,9 +254,7 @@ def resolve_qmd() -> list[str]:
     else:
         shim = shutil.which("qmd")
     if not shim:
-        raise SystemExit(
-            "error: qmd not found on PATH; install with: npm i -g @tobilu/qmd"
-        )
+        raise SystemExit("error: qmd not found on PATH; install with: npm i -g @tobilu/qmd")
     shim_path = Path(shim)
     node = shim_path.parent / "node.exe"
     cli = shim_path.parent / "node_modules" / "@tobilu" / "qmd" / "bin" / "qmd"
@@ -268,11 +263,9 @@ def resolve_qmd() -> list[str]:
     return [shim]
 
 
-def run_qmd(
-    qmd: list[str], args: list[str], *, timeout: int
-) -> tuple[int, str, str, float]:
+def run_qmd(qmd: list[str], args: list[str], *, timeout: int) -> tuple[int, str, str, float]:
     t0 = time.perf_counter()
-    proc = subprocess.run(  # noqa: PLW1510  # nosec B603
+    proc = subprocess.run(
         [*qmd, *args],
         cwd=ROOT,
         capture_output=True,
@@ -302,7 +295,8 @@ def parse_json_stdout(stdout: str) -> object:
 
 def virt_to_rel(file_uri: str) -> str:
     path = file_uri.strip()
-    path = path.removeprefix("qmd://")
+    if path.startswith("qmd://"):
+        path = path[len("qmd://") :]
     return path.replace("\\", "/")
 
 
@@ -328,13 +322,7 @@ def sum_stats(paths: list[Path]) -> dict:
         chars += s["chars"]
         tokens += s["tokens"]
         nbytes += s["bytes"]
-    return {
-        "file_count": len(paths),
-        "bytes": nbytes,
-        "chars": chars,
-        "tokens": tokens,
-        "files": files,
-    }
+    return {"file_count": len(paths), "bytes": nbytes, "chars": chars, "tokens": tokens, "files": files}
 
 
 def parse_ls(stdout: str) -> list[str]:
@@ -375,35 +363,25 @@ def unique_files(hits: list[dict]) -> list[str]:
     return seen
 
 
-def calculate_retrieval_metrics(
-    hits: list[dict], expect_any: list[str], k_values: list[int] | None = None
-) -> dict:
+def calculate_retrieval_metrics(hits: list[dict], expect_any: list[str], k_values: list[int] = [1, 3, 5]) -> dict:
     """Calculate reciprocal rank and Precision@K for a list of hits."""
-    if k_values is None:
-        k_values = [1, 3, 5]
     rels = [virt_to_rel(h.get("file") or "").lower() for h in hits]
     expected_lower = [exp.lower() for exp in expect_any]
-
+    
     first_rank: int | None = None
     for idx, rel in enumerate(rels, start=1):
         if any(exp in rel or rel in exp for exp in expected_lower):
             first_rank = idx
             break
-
+            
     rr = 1.0 / first_rank if first_rank is not None else 0.0
-
+    
     precisions = {}
     for k in k_values:
         top_k = rels[:k]
-        hit_matches = sum(
-            1
-            for rel in top_k
-            if any(exp in rel or rel in exp for exp in expected_lower)
-        )
-        precisions[f"p@{k}"] = round(
-            hit_matches / max(1, min(k, len(expected_lower))), 3
-        )
-
+        hit_matches = sum(1 for rel in top_k if any(exp in rel or rel in exp for exp in expected_lower))
+        precisions[f"p@{k}"] = round(hit_matches / max(1, min(k, len(expected_lower))), 3)
+        
     return {
         "first_rank": first_rank,
         "reciprocal_rank": round(rr, 4),
@@ -424,16 +402,7 @@ def run_search_mode(
 ) -> dict:
     q = query_text or fixture.need
     if mode == "bm25":
-        args = [
-            "search",
-            "--format",
-            "json",
-            "--min-score",
-            str(min_score),
-            "-n",
-            str(n),
-            q,
-        ]
+        args = ["search", "--format", "json", "--min-score", str(min_score), "-n", str(n), q]
     elif mode == "structured":
         qdoc = f"lex: {fixture.lex}\nvec: {fixture.vec}"
         args = [
@@ -505,11 +474,7 @@ def run_search_mode(
         result["error"] = f"json parse failed: {exc}; stdout_head={stdout[:500]!r}"
         return result
 
-    hits = (
-        payload
-        if isinstance(payload, list)
-        else payload.get("results") or payload.get("hits") or []
-    )
+    hits = payload if isinstance(payload, list) else payload.get("results") or payload.get("hits") or []
     result["hits"] = [
         {
             "docid": h.get("docid"),
@@ -524,13 +489,11 @@ def run_search_mode(
     ]
     result["hit_count"] = len(result["hits"])
     result["below_min_score"] = sum(
-        1
-        for h in result["hits"]
-        if isinstance(h.get("score"), (int, float)) and h["score"] < min_score
+        1 for h in result["hits"] if isinstance(h.get("score"), (int, float)) and h["score"] < min_score
     )
     result["expected_in_top_n"] = hits_expected(hits, fixture.expect_any)
     result["forbidden_hits"] = hits_forbidden(hits, fixture.must_not)
-
+    
     metrics = calculate_retrieval_metrics(hits, fixture.expect_any)
     result["reciprocal_rank"] = metrics["reciprocal_rank"]
     result["p@1"] = metrics["precisions"]["p@1"]
@@ -549,9 +512,7 @@ def run_search_mode(
         if disk.is_file():
             fetched_chars += len(disk.read_text(encoding="utf-8", errors="replace"))
     result["fetched_chars"] = fetched_chars
-    result["fetched_tokens"] = (
-        round(fetched_chars / CHARS_PER_TOKEN) if fetched_chars else 0
-    )
+    result["fetched_tokens"] = int(round(fetched_chars / CHARS_PER_TOKEN)) if fetched_chars else 0
 
     fetched_text = ""
     for rel in rels:
@@ -572,9 +533,7 @@ def run_search_mode(
         col_dir = ROOT / fixture.collection_hint
         col_tokens = sum_stats(walk_markdown(col_dir))["tokens"]
         result["collection_tokens"] = col_tokens
-        result["tokens_saved_vs_collection"] = max(
-            0, col_tokens - result["fetched_tokens"]
-        )
+        result["tokens_saved_vs_collection"] = max(0, col_tokens - result["fetched_tokens"])
         if col_tokens:
             result["pct_saved_vs_collection"] = round(
                 100.0 * (col_tokens - result["fetched_tokens"]) / col_tokens, 1
@@ -589,24 +548,19 @@ def corpus_baselines() -> dict:
     excluded_paths: list[Path] = []
     for name in EXCLUDED_DIRS:
         excluded_paths.extend(walk_markdown(ROOT / name))
-    agents_md = [
-        p
-        for p in ROOT.rglob("AGENTS.md")
-        if not any(part in SKIP_DIR_NAMES for part in p.parts)
-    ]
+    agents_md = [p for p in ROOT.rglob("AGENTS.md") if not any(part in SKIP_DIR_NAMES for part in p.parts)]
     always = [p for p in ALWAYS_ALLOWED if p.is_file()]
-    root_unindexed = [
-        p for p in (ROOT / "AGENTS.md", ROOT / "README.md") if p.is_file()
-    ]
+    root_unindexed = [p for p in (ROOT / "AGENTS.md", ROOT / "README.md") if p.is_file()]
     return {
         "indexed_collections": sum_stats(indexed_paths),
         "excluded_trees": sum_stats(excluded_paths),
         "all_nested_agents_md": sum_stats(agents_md),
         "always_allowed_hop": sum_stats(always),
         "root_unindexed": sum_stats(root_unindexed),
-        "mean_area_agents": round(
-            sum(file_stats(p)["tokens"] for p in agents_md if p.parent != ROOT)
-            / max(1, len([p for p in agents_md if p.parent != ROOT]))
+        "mean_area_agents": int(
+            round(
+                sum(file_stats(p)["tokens"] for p in agents_md if p.parent != ROOT) / max(1, len([p for p in agents_md if p.parent != ROOT]))
+            )
         )
         if agents_md
         else 0,
@@ -614,9 +568,7 @@ def corpus_baselines() -> dict:
 
 
 def health_checks(qmd: list[str], indexed_files: list[str]) -> list[dict]:
-    names_code, names_out, names_err, _ = run_qmd(
-        qmd, ["collection", "list"], timeout=30
-    )
+    names_code, names_out, names_err, _ = run_qmd(qmd, ["collection", "list"], timeout=30)
     names = parse_collection_names(names_out)
     checks = []
 
@@ -629,20 +581,14 @@ def health_checks(qmd: list[str], indexed_files: list[str]) -> list[dict]:
         set(names) == set(EXPECTED_COLLECTIONS),
         f"found={names} expected={EXPECTED_COLLECTIONS}; list_exit={names_code} err={names_err[-200:]}",
     )
-    leaked = [
-        f
-        for f in indexed_files
-        if f.startswith(EXCLUDED_DIRS) or any(f"/{d}/" in f for d in EXCLUDED_DIRS)
-    ]
+    leaked = [f for f in indexed_files if f.startswith(EXCLUDED_DIRS) or any(f"/{d}/" in f for d in EXCLUDED_DIRS)]
     add("exclusions_not_indexed", not leaked, f"leaked={leaked[:10]}")
     add(
         "root_agents_not_indexed",
         "AGENTS.md" not in indexed_files,
         "root AGENTS.md is hop-1 context, not a qmd collection",
     )
-    _, amb_out, _, _ = run_qmd(
-        qmd, ["search", "--format", "json", "-n", "5", "Ambiguity gate"], timeout=30
-    )
+    _, amb_out, _, _ = run_qmd(qmd, ["search", "--format", "json", "-n", "5", "Ambiguity gate"], timeout=30)
     try:
         amb_hits = parse_json_stdout(amb_out)
     except json.JSONDecodeError:
@@ -670,12 +616,8 @@ def health_checks(qmd: list[str], indexed_files: list[str]) -> list[dict]:
         "phrase lives in root AGENTS.md plus intentional cites "
         f"(isolation/skills/docs/memory); unexpected hits={amb_outside!r}",
     )
-    _, amp_out, _, _ = run_qmd(
-        qmd, ["search", "--format", "json", "-n", "5", "MITRE ATT&CK"], timeout=30
-    )
-    _, plain_out, _, _ = run_qmd(
-        qmd, ["search", "--format", "json", "-n", "5", "mitre attack"], timeout=30
-    )
+    _, amp_out, _, _ = run_qmd(qmd, ["search", "--format", "json", "-n", "5", "MITRE ATT&CK"], timeout=30)
+    _, plain_out, _, _ = run_qmd(qmd, ["search", "--format", "json", "-n", "5", "mitre attack"], timeout=30)
     try:
         amp_hits = parse_json_stdout(amp_out)
         plain_hits = parse_json_stdout(plain_out)
@@ -724,9 +666,7 @@ def write_report(out_dir: Path, payload: dict) -> None:
         "| --- | --- | --- |",
     ]
     for c in payload["health"]:
-        lines.append(
-            f"| `{c['id']}` | {'pass' if c['ok'] else 'FAIL'} | {c['detail'][:180].replace('|', '/')} |"
-        )
+        lines.append(f"| `{c['id']}` | {'pass' if c['ok'] else 'FAIL'} | {c['detail'][:180].replace('|', '/')} |")
 
     b = payload["baselines"]
     lines += [
@@ -748,11 +688,7 @@ def write_report(out_dir: Path, payload: dict) -> None:
     ]
     for row in payload["lookups"]:
         s = row.get("summary") or {}
-        vs = (
-            f"{s.get('mean_pct_saved')}%"
-            if s.get("mean_pct_saved") is not None
-            else "—"
-        )
+        vs = f"{s.get('mean_pct_saved')}%" if s.get("mean_pct_saved") is not None else "—"
         lat = f"{s.get('latency_p50_ms', 0)}ms / {s.get('latency_p95_ms', 0)}ms"
         lines.append(
             f"| `{row['id']}` | {s.get('trials_count', 1)} | **{s.get('mrr', 0.0):.2f}** | "
@@ -796,25 +732,13 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument("--min-score", type=float, default=0.5)
     parser.add_argument("-n", type=int, default=5, help="Max hits per query")
-    parser.add_argument(
-        "--trials",
-        type=int,
-        default=5,
-        help="Number of query permutations per fixture (default: 5)",
-    )
-    parser.add_argument(
-        "--hybrid-n",
-        type=int,
-        default=3,
-        help="How many fixtures also run documented hybrid query",
-    )
+    parser.add_argument("--trials", type=int, default=5, help="Number of query permutations per fixture (default: 5)")
+    parser.add_argument("--hybrid-n", type=int, default=3, help="How many fixtures also run documented hybrid query")
     parser.add_argument("--hybrid-timeout", type=int, default=180)
     parser.add_argument("--skip-hybrid", action="store_true", default=True)
     parser.add_argument("--hybrid", action="store_true", help="Run slow hybrid queries")
     parser.add_argument("--skip-structured", action="store_true", default=True)
-    parser.add_argument(
-        "--structured", action="store_true", help="Run slow structured queries"
-    )
+    parser.add_argument("--structured", action="store_true", help="Run slow structured queries")
     args = parser.parse_args(argv)
 
     qmd = resolve_qmd()
@@ -835,17 +759,10 @@ def main(argv: list[str] | None = None) -> int:
     all_latencies_ms: list[float] = []
 
     for fixture in FIXTURES:
-        queries = (
-            fixture.permutations[: args.trials]
-            if fixture.permutations
-            else [fixture.need]
-        )
+        queries = fixture.permutations[: args.trials] if fixture.permutations else [fixture.need]
         runs = []
         for t_idx, q_text in enumerate(queries):
-            print(
-                f"running {fixture.id} (perm {t_idx + 1}/{len(queries)}: {q_text[:35]}...)...",
-                flush=True,
-            )
+            print(f"running {fixture.id} (perm {t_idx+1}/{len(queries)}: {q_text[:35]}...)...", flush=True)
             res = run_search_mode(
                 qmd,
                 mode="bm25",
@@ -894,18 +811,10 @@ def main(argv: list[str] | None = None) -> int:
         lats = sorted([r["elapsed_ms"] for r in bm25_trials])
         p50 = lats[len(lats) // 2] if lats else 0.0
         p95 = lats[min(len(lats) - 1, int(len(lats) * 0.95))] if lats else 0.0
-
+        
         fetched_toks = [r["fetched_tokens"] for r in bm25_trials]
-        saved_toks = [
-            r["tokens_saved_vs_collection"]
-            for r in bm25_trials
-            if r.get("collection_tokens")
-        ]
-        saved_pcts = [
-            r["pct_saved_vs_collection"]
-            for r in bm25_trials
-            if r.get("pct_saved_vs_collection") is not None
-        ]
+        saved_toks = [r["tokens_saved_vs_collection"] for r in bm25_trials if r.get("collection_tokens")]
+        saved_pcts = [r["pct_saved_vs_collection"] for r in bm25_trials if r.get("pct_saved_vs_collection") is not None]
 
         fixture_summary = {
             "trials_count": len(bm25_trials),
@@ -915,15 +824,9 @@ def main(argv: list[str] | None = None) -> int:
             "p@5": round(statistics.mean(p5s), 3) if p5s else 0.0,
             "latency_p50_ms": p50,
             "latency_p95_ms": p95,
-            "mean_fetched_tokens": round(statistics.mean(fetched_toks))
-            if fetched_toks
-            else 0,
-            "mean_tokens_saved": round(statistics.mean(saved_toks))
-            if saved_toks
-            else 0,
-            "mean_pct_saved": round(statistics.mean(saved_pcts), 1)
-            if saved_pcts
-            else None,
+            "mean_fetched_tokens": int(round(statistics.mean(fetched_toks))) if fetched_toks else 0,
+            "mean_tokens_saved": int(round(statistics.mean(saved_toks))) if saved_toks else 0,
+            "mean_pct_saved": round(statistics.mean(saved_pcts), 1) if saved_pcts else None,
         }
 
         lookups.append(
@@ -942,33 +845,15 @@ def main(argv: list[str] | None = None) -> int:
     all_p1s = [r["p@1"] for r in all_bm25_runs]
     all_p3s = [r["p@3"] for r in all_bm25_runs]
     all_p5s = [r["p@5"] for r in all_bm25_runs]
-
+    
     sorted_lats = sorted(all_latencies_ms)
     overall_p50 = sorted_lats[len(sorted_lats) // 2] if sorted_lats else 0.0
-    overall_p95 = (
-        sorted_lats[min(len(sorted_lats) - 1, int(len(sorted_lats) * 0.95))]
-        if sorted_lats
-        else 0.0
-    )
+    overall_p95 = sorted_lats[min(len(sorted_lats) - 1, int(len(sorted_lats) * 0.95))] if sorted_lats else 0.0
 
     hinted_runs = [r for r in all_bm25_runs if r.get("collection_tokens")]
-    mean_fetched = round(
-        sum(r["fetched_tokens"] for r in all_bm25_runs) / max(1, len(all_bm25_runs))
-    )
-    mean_col = (
-        round(
-            sum(r["collection_tokens"] for r in hinted_runs) / max(1, len(hinted_runs))
-        )
-        if hinted_runs
-        else 0
-    )
-    mean_pct = (
-        round(
-            sum(r["pct_saved_vs_collection"] for r in hinted_runs) / len(hinted_runs), 1
-        )
-        if hinted_runs
-        else 0.0
-    )
+    mean_fetched = int(round(sum(r["fetched_tokens"] for r in all_bm25_runs) / max(1, len(all_bm25_runs))))
+    mean_col = int(round(sum(r["collection_tokens"] for r in hinted_runs) / max(1, len(hinted_runs)))) if hinted_runs else 0
+    mean_pct = round(sum(r["pct_saved_vs_collection"] for r in hinted_runs) / len(hinted_runs), 1) if hinted_runs else 0.0
     indexed_tokens = baselines["indexed_collections"]["tokens"]
 
     overall_mrr = round(statistics.mean(all_rrs), 4) if all_rrs else 0.0
@@ -981,12 +866,10 @@ def main(argv: list[str] | None = None) -> int:
     if failed_health:
         findings.append(f"Health failures: {', '.join(failed_health)}.")
     else:
-        findings.append(
-            "Collection set, exclusions, and docs index freshness all passed."
-        )
+        findings.append("Collection set, exclusions, and docs index freshness all passed.")
 
     findings.append(
-        f"Multi-trial query permutation suite achieved Fleet MRR of {overall_mrr:.4f} (P@1={mean_p1 * 100:.1f}%, P@3={mean_p3 * 100:.1f}%)."
+        f"Multi-trial query permutation suite achieved Fleet MRR of {overall_mrr:.4f} (P@1={mean_p1*100:.1f}%, P@3={mean_p3*100:.1f}%)."
     )
     findings.append(
         f"Search latency envelope across all trials: p50 = {overall_p50}ms, p95 = {overall_p95}ms."
@@ -1011,9 +894,7 @@ def main(argv: list[str] | None = None) -> int:
         "mean_collection_tokens": mean_col,
         "mean_pct_vs_collection": mean_pct,
         "indexed_tokens": indexed_tokens,
-        "pct_vs_corpus": round(100.0 * mean_fetched / indexed_tokens, 2)
-        if indexed_tokens
-        else None,
+        "pct_vs_corpus": round(100.0 * mean_fetched / indexed_tokens, 2) if indexed_tokens else None,
         "always_allowed_tokens": baselines["always_allowed_hop"]["tokens"],
         "all_agents_md_tokens": baselines["all_nested_agents_md"]["tokens"],
         "excluded_tokens": baselines["excluded_trees"]["tokens"],
@@ -1029,48 +910,37 @@ def main(argv: list[str] | None = None) -> int:
     }
 
     payload = {
-        "generated_at_utc": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "generated_at_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "qmd": qmd if isinstance(qmd, str) else " ".join(qmd),
         "index": "C:/home/developer/.cache/qmd/index.sqlite",
         "min_score": args.min_score,
         "n": args.n,
         "trials": args.trials,
-        "token_method": "chars/4",  # nosec B105
+        "token_method": "chars/4",
         "indexed_file_count": len(indexed_files),
         "indexed_files": indexed_files,
         "health": health,
         "baselines": {
-            k: (
-                {kk: vv for kk, vv in v.items() if kk != "files"}
-                if isinstance(v, dict)
-                else v
-            )
+            k: ({kk: vv for kk, vv in v.items() if kk != "files"} if isinstance(v, dict) else v)
             for k, v in baselines.items()
         },
         "lookups": lookups,
         "savings_summary": savings_summary,
         "findings": findings,
     }
-    (out_dir / "results.json").write_text(
-        json.dumps(payload, indent=2), encoding="utf-8"
-    )
+    (out_dir / "results.json").write_text(json.dumps(payload, indent=2), encoding="utf-8")
     write_report(out_dir, payload)
-
-    print(
-        json.dumps(
-            {
-                "out": str(out_dir),
-                "health_fail": failed_health,
-                "mrr": overall_mrr,
-                "p@1": mean_p1,
-                "p@3": mean_p3,
-                "context_savings_pct": mean_pct,
-                "findings": findings,
-            },
-            indent=2,
-        )
-    )
-
+    
+    print(json.dumps({
+        "out": str(out_dir),
+        "health_fail": failed_health,
+        "mrr": overall_mrr,
+        "p@1": mean_p1,
+        "p@3": mean_p3,
+        "context_savings_pct": mean_pct,
+        "findings": findings,
+    }, indent=2))
+    
     return 0 if not failed_health and overall_mrr >= 0.75 else 1
 
 

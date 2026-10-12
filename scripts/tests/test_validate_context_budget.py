@@ -17,8 +17,8 @@ _SCRIPTS = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(_SCRIPTS / "docs"))
 sys.path.insert(0, str(_SCRIPTS / "_lib"))
 
-from paths import REPO_ROOT
-from validate_context_budget import (
+from paths import REPO_ROOT  # noqa: E402
+from validate_context_budget import (  # noqa: E402
     BUDGET_CEILINGS,
     NESTED_AGENTS_MAX_CHARS,
     check_context_budgets,
@@ -36,15 +36,13 @@ class ContextBudgetValidatorTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             # Create root AGENTS.md exceeding ceiling
-            (root / "AGENTS.md").write_text(
-                "x" * (BUDGET_CEILINGS["AGENTS.md"] + 500), encoding="utf-8"
-            )
+            (root / "AGENTS.md").write_text("x" * (BUDGET_CEILINGS["AGENTS.md"] + 500), encoding="utf-8")
             (root / "routing").mkdir()
             (root / "routing" / "AGENTS.md").write_text("small", encoding="utf-8")
             (root / "routing" / "by-task.md").write_text("small", encoding="utf-8")
             (root / "routing" / "area-map.md").write_text("small", encoding="utf-8")
 
-            ok, _results, errors = check_context_budgets(root)
+            ok, results, errors = check_context_budgets(root)
             self.assertFalse(ok)
             self.assertTrue(any("AGENTS.md exceeded budget" in e for e in errors))
 
@@ -60,11 +58,9 @@ class ContextBudgetValidatorTests(unittest.TestCase):
             # Create nested AGENTS.md exceeding delta ceiling
             nested_dir = root / "docs"
             nested_dir.mkdir()
-            (nested_dir / "AGENTS.md").write_text(
-                "x" * (NESTED_AGENTS_MAX_CHARS + 200), encoding="utf-8"
-            )
+            (nested_dir / "AGENTS.md").write_text("x" * (NESTED_AGENTS_MAX_CHARS + 200), encoding="utf-8")
 
-            ok, _results, errors = check_context_budgets(root)
+            ok, results, errors = check_context_budgets(root)
             self.assertFalse(ok)
             self.assertTrue(any("exceeded delta budget" in e for e in errors))
 
@@ -79,11 +75,9 @@ class ContextBudgetValidatorTests(unittest.TestCase):
 
             nested_dir = root / "docs"
             nested_dir.mkdir()
-            (nested_dir / "AGENTS.md").write_text(
-                "# Repository AGENTS\n\nduplicate content", encoding="utf-8"
-            )
+            (nested_dir / "AGENTS.md").write_text("# Repository AGENTS\n\nduplicate content", encoding="utf-8")
 
-            ok, _results, errors = check_context_budgets(root)
+            ok, results, errors = check_context_budgets(root)
             self.assertFalse(ok)
             self.assertTrue(any("improperly duplicates root" in e for e in errors))
 

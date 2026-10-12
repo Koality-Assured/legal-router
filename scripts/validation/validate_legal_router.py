@@ -34,7 +34,7 @@ def load_json(path: Path) -> dict[str, Any]:
 def validate_registry(registry_data: dict[str, Any]) -> dict[str, Any]:
     if "representations" not in registry_data:
         raise ValueError("Registry missing 'representations' list")
-
+    
     representations_by_id: dict[str, dict[str, Any]] = {}
     medium_aliases: dict[str, str] = {}
 
@@ -50,22 +50,15 @@ def validate_registry(registry_data: dict[str, Any]) -> dict[str, Any]:
     for rep in registry_data["representations"]:
         for adj in rep.get("adjacent_routes", []):
             if adj not in representations_by_id:
-                raise ValueError(
-                    f"Unknown adjacent route '{adj}' in representation '{rep['id']}'"
-                )
-
+                raise ValueError(f"Unknown adjacent route '{adj}' in representation '{rep['id']}'")
+        
         asset_type_aliases: dict[str, str] = {}
         for asset_type in rep.get("asset_types", []):
             at_id = asset_type["id"]
             for at_name in [at_id, *asset_type.get("aliases", [])]:
                 at_token = route_token(at_name)
-                if (
-                    at_token in asset_type_aliases
-                    and asset_type_aliases[at_token] != at_id
-                ):
-                    raise ValueError(
-                        f"Duplicate asset type alias '{at_name}' in representation '{rep['id']}'"
-                    )
+                if at_token in asset_type_aliases and asset_type_aliases[at_token] != at_id:
+                    raise ValueError(f"Duplicate asset type alias '{at_name}' in representation '{rep['id']}'")
                 asset_type_aliases[at_token] = at_id
 
     return {
@@ -99,9 +92,7 @@ def validate_case(
         if not c.get("text"):
             errors.append(f"[{case_id}] constraint[{idx}] missing text")
         if c.get("hardness") not in ("hard", "soft"):
-            errors.append(
-                f"[{case_id}] constraint[{idx}] invalid hardness: {c.get('hardness')}"
-            )
+            errors.append(f"[{case_id}] constraint[{idx}] invalid hardness: {c.get('hardness')}")
 
     # Representation routing check
     reps = req.get("representations", [])
@@ -126,18 +117,13 @@ def validate_case(
                 for at in rep_def.get("asset_types", [])
                 for alias in at.get("aliases", [])
             }
-            if (
-                asset_type not in valid_asset_ids
-                and asset_type not in valid_asset_aliases
-            ):
+            if asset_type not in valid_asset_ids and asset_type not in valid_asset_aliases:
                 errors.append(
                     f"[{case_id}] Invalid asset type '{asset_type}' for route '{resolved_route}'"
                 )
 
     if primary_count != 1:
-        errors.append(
-            f"[{case_id}] Exactly one primary representation required, got {primary_count}"
-        )
+        errors.append(f"[{case_id}] Exactly one primary representation required, got {primary_count}")
 
     # Review handoff check
     review = req.get("review_handoff", {})
@@ -151,9 +137,7 @@ def validate_case(
     for idx, d in enumerate(deliverables):
         stamp = d.get("advisory_stamp", "")
         if not stamp.startswith(MANDATORY_ADVISORY_PREFIX):
-            errors.append(
-                f"[{case_id}] deliverable[{idx}] missing mandatory advisory stamp"
-            )
+            errors.append(f"[{case_id}] deliverable[{idx}] missing mandatory advisory stamp")
         if not d.get("citations_verified"):
             errors.append(f"[{case_id}] deliverable[{idx}] citations must be verified")
 
@@ -161,9 +145,7 @@ def validate_case(
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(
-        description="Validate legal-router case manifests and registry"
-    )
+    parser = argparse.ArgumentParser(description="Validate legal-router case manifests and registry")
     parser.add_argument(
         "--manifest",
         type=Path,
@@ -176,10 +158,8 @@ def main() -> int:
     try:
         registry_data = load_json(REGISTRY_PATH)
         validated = validate_registry(registry_data)
-        print(
-            f"    Loaded {len(validated['representations_by_id'])} representations successfully."
-        )
-    except Exception as exc:  # noqa: BLE001
+        print(f"    Loaded {len(validated['representations_by_id'])} representations successfully.")
+    except Exception as exc:
         print(f"[!] Registry validation error: {exc}", file=sys.stderr)
         return 1
 
@@ -187,7 +167,7 @@ def main() -> int:
     try:
         load_json(SCHEMA_PATH)
         print("    Request schema parsed successfully.")
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:
         print(f"[!] Request schema error: {exc}", file=sys.stderr)
         return 1
 
@@ -195,7 +175,7 @@ def main() -> int:
     print(f"[*] Validating manifest cases in: {manifest_path}...")
     try:
         manifest_data = load_json(manifest_path)
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:
         print(f"[!] Manifest load error: {exc}", file=sys.stderr)
         return 1
 
@@ -206,15 +186,11 @@ def main() -> int:
 
     total_errors: list[str] = []
     for c in cases:
-        case_errors = validate_case(
-            c, validated["representations_by_id"], validated["medium_aliases"]
-        )
+        case_errors = validate_case(c, validated["representations_by_id"], validated["medium_aliases"])
         total_errors.extend(case_errors)
 
     if total_errors:
-        print(
-            f"[!] Validation failed with {len(total_errors)} errors:", file=sys.stderr
-        )
+        print(f"[!] Validation failed with {len(total_errors)} errors:", file=sys.stderr)
         for err in total_errors:
             print(f"    - {err}", file=sys.stderr)
         return 1

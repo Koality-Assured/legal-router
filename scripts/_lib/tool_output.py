@@ -23,9 +23,7 @@ ALLOWED_LOCAL_HOSTS = {"127.0.0.1", "localhost", "::1"}
 
 ERROR_PATTERNS = [
     re.compile(r"^\s*(?:ERROR|FATAL|EXCEPTION|CRITICAL|Traceback)\b", re.IGNORECASE),
-    re.compile(
-        r"(?i)\b(?:fatal error|unhandled exception|segmentation fault|panic:)\b"
-    ),
+    re.compile(r"(?i)\b(?:fatal error|unhandled exception|segmentation fault|panic:)\b"),
     re.compile(r"^\s*File \".*\", line \d+"),
     re.compile(r"^\s*at .*\(\w+:\d+:\d+\)"),
 ]
@@ -75,9 +73,7 @@ def truncate_output(
     head = lines[:head_lines]
     tail = lines[-tail_lines:] if tail_lines > 0 else []
 
-    middle_lines = (
-        lines[head_lines:-tail_lines] if tail_lines > 0 else lines[head_lines:]
-    )
+    middle_lines = lines[head_lines:-tail_lines] if tail_lines > 0 else lines[head_lines:]
     omitted_count = len(middle_lines)
 
     error_snippet: list[str] = []
@@ -96,9 +92,7 @@ def truncate_output(
 
     # Hard cap if individual lines were unusually long
     if len(result) > max_chars:
-        result = (
-            result[: max_chars - 100] + f"\n[... truncated at {max_chars} chars ...]"
-        )
+        result = result[: max_chars - 100] + f"\n[... truncated at {max_chars} chars ...]"
 
     return result
 
@@ -122,7 +116,7 @@ def compress_via_headroom(
         if hostname not in ALLOWED_LOCAL_HOSTS:
             # Reject non-loopback URLs to eliminate SSRF boundary
             return text, False
-    except Exception:  # noqa: BLE001
+    except Exception:
         return text, False
 
     endpoint = f"{proxy_url.rstrip('/')}/compress"
@@ -136,7 +130,7 @@ def compress_via_headroom(
     )
 
     try:
-        with urllib.request.urlopen(req, timeout=timeout_sec) as resp:  # nosec B310
+        with urllib.request.urlopen(req, timeout=timeout_sec) as resp:
             if resp.status == 200:
                 data: dict[str, Any] = json.loads(resp.read().decode("utf-8"))
                 compressed = data.get("text") or data.get("compressed_text")

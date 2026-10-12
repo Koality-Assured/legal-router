@@ -9,6 +9,7 @@ routing_hints: [harness, schema, adapter, areas, skills, agents]
 
 from __future__ import annotations
 
+import json
 import sys
 from pathlib import Path
 from typing import Any
@@ -29,11 +30,9 @@ except ImportError:
 from cli.registry import get_registry
 
 
-def resolve_harness_root(
-    harness_arg: str | None = None, fallback_cwd: Path | None = None
-) -> Path:
+def resolve_harness_root(harness_arg: str | None = None, fallback_cwd: Path | None = None) -> Path:
     """Resolve the target repository root path for harness commands.
-
+    
     If harness_arg is provided, resolves from the registry by ID or path.
     Otherwise checks if an active harness is recorded in the registry.
     If no active harness is recorded, defaults to fallback_cwd or Path.cwd().
@@ -48,9 +47,7 @@ def resolve_harness_root(
         p = Path(harness_arg).resolve()
         if p.is_dir():
             return p
-        raise ValueError(
-            f"Target harness '{harness_arg}' is not registered and does not exist as a directory."
-        )
+        raise ValueError(f"Target harness '{harness_arg}' is not registered and does not exist as a directory.")
 
     active = reg.get_active_harness()
     if active:
@@ -70,7 +67,7 @@ def load_dynamic_areas(repo_root: Path) -> list[dict[str, str]]:
     if load_area_records:
         try:
             return load_area_records(repo_root)
-        except Exception:  # noqa: S110,BLE001  # nosec B110
+        except Exception:
             pass
 
     # Simple fallback parser if _lib.areas cannot resolve
@@ -89,7 +86,7 @@ def load_dynamic_areas(repo_root: Path) -> list[dict[str, str]]:
                 current[k.strip()] = v.strip()
         if current and "id" in current:
             results.append(current)
-    except Exception:  # noqa: S110,BLE001  # nosec B110
+    except Exception:
         pass
 
     return results
@@ -120,7 +117,7 @@ def load_dynamic_agents(repo_root: Path) -> list[dict[str, Any]]:
                         summary["title"] = line[2:].strip()
                     elif "model_tier:" in line.lower() or "tier:" in line.lower():
                         summary["tier"] = line.split(":", 1)[1].strip()
-            except Exception:  # noqa: S110,BLE001  # nosec B110
+            except Exception:
                 pass
             records.append(summary)
 

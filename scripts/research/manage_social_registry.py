@@ -8,13 +8,13 @@ from __future__ import annotations
 
 import argparse
 import json
-import sys
 from pathlib import Path
+import sys
 from typing import Any
 
 _LIB = Path(__file__).resolve().parents[1] / "_lib"
 sys.path.insert(0, str(_LIB))
-from paths import REPO_ROOT as ROOT
+from paths import REPO_ROOT as ROOT  # noqa: E402
 
 CATALOG_PATH = ROOT / "references" / "socials" / "catalogs" / "ranked-communities.json"
 
@@ -33,17 +33,7 @@ REQUIRED_FIELDS = [
     "query_hints",
 ]
 
-VALID_PLATFORMS = {
-    "reddit",
-    "hacker_news",
-    "github",
-    "stackoverflow",
-    "x",
-    "discourse",
-    "quora",
-    "discord",
-    "matrix",
-}
+VALID_PLATFORMS = {"reddit", "hacker_news", "github", "stackoverflow", "x", "discourse", "quora", "discord", "matrix"}
 VALID_TIERS = {"Tier 0", "Tier 1", "Tier 2", "Tier 3"}
 VALID_MODERATION = {"strict", "moderate", "permissive", "unmoderated"}
 VALID_RISKS = {"low", "medium", "high"}
@@ -108,19 +98,9 @@ def validate_catalog(catalog: dict[str, Any]) -> list[str]:
 
         # Check tier alignment with score
         if score is not None and tier is not None:
-            expected_tier = (
-                "Tier 0"
-                if score >= 85
-                else "Tier 1"
-                if score >= 70
-                else "Tier 2"
-                if score >= 50
-                else "Tier 3"
-            )
+            expected_tier = "Tier 0" if score >= 85 else "Tier 1" if score >= 70 else "Tier 2" if score >= 50 else "Tier 3"
             if tier != expected_tier:
-                errors.append(
-                    f"Community '{cid}' score {score} does not match tier '{tier}' (expected '{expected_tier}')."
-                )
+                errors.append(f"Community '{cid}' score {score} does not match tier '{tier}' (expected '{expected_tier}').")
 
         mod = c.get("moderation_standard")
         if mod not in VALID_MODERATION:
@@ -135,18 +115,9 @@ def validate_catalog(catalog: dict[str, Any]) -> list[str]:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument(
-        "--validate",
-        action="store_true",
-        help="Validate catalog integrity and tier alignment",
-    )
-    parser.add_argument(
-        "--score",
-        nargs=6,
-        type=int,
-        metavar=("DEPTH", "MOD", "CITE", "VENDOR", "SIGNAL", "REPRO"),
-        help="Calculate score & tier for 6 rubric dimensions: depth(0-20) mod(0-20) cite(0-20) vendor(0-15) signal(0-15) repro(0-10)",
-    )
+    parser.add_argument("--validate", action="store_true", help="Validate catalog integrity and tier alignment")
+    parser.add_argument("--score", nargs=6, type=int, metavar=("DEPTH", "MOD", "CITE", "VENDOR", "SIGNAL", "REPRO"),
+                        help="Calculate score & tier for 6 rubric dimensions: depth(0-20) mod(0-20) cite(0-20) vendor(0-15) signal(0-15) repro(0-10)")
     parser.add_argument("--json", action="store_true", help="Emit JSON output")
 
     args = parser.parse_args(argv)
@@ -188,17 +159,12 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps(result, indent=2))
     else:
         if errors:
-            print(
-                f"FAILED: Found {len(errors)} validation errors in catalog:",
-                file=sys.stderr,
-            )
+            print(f"FAILED: Found {len(errors)} validation errors in catalog:", file=sys.stderr)
             for err in errors:
                 print(f"  - {err}", file=sys.stderr)
             return 1
         else:
-            print(
-                f"OK: Community catalog valid ({len(catalog.get('communities', []))} communities checked)."
-            )
+            print(f"OK: Community catalog valid ({len(catalog.get('communities', []))} communities checked).")
 
     return 0
 

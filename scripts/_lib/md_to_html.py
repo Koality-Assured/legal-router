@@ -100,11 +100,7 @@ def format_inline(text: str) -> str:
     def link_sub(m: re.Match[str]) -> str:
         label = html.escape(m.group(1))
         href = neutralize_href(m.group(2).strip())
-        if (
-            href == "#"
-            and not is_safe_href(m.group(2).strip())
-            and not m.group(2).strip().startswith("#")
-        ):
+        if href == "#" and not is_safe_href(m.group(2).strip()) and not m.group(2).strip().startswith("#"):
             # Drop unsafe links entirely (show label only as escaped text)
             return label
         return hold(f'<a href="{html.escape(href, quote=True)}">{label}</a>')
@@ -141,7 +137,9 @@ def format_table_cell(cell: str) -> str:
     if sev:
         token = sev.group(1)
         key = token.lower()
-        if key in {"critical", "c", "fail", "f"} or key in {"high", "h", "open"}:
+        if key in {"critical", "c", "fail", "f"}:
+            tone = "alert"
+        elif key in {"high", "h", "open"}:
             tone = "alert"
         elif key in {"medium", "m", "warn", "warning"}:
             tone = "warning"
@@ -161,8 +159,10 @@ def format_table_cell(cell: str) -> str:
 
 def _split_table_row(line: str) -> list[str]:
     inner = line.strip()
-    inner = inner.removeprefix("|")
-    inner = inner.removesuffix("|")
+    if inner.startswith("|"):
+        inner = inner[1:]
+    if inner.endswith("|"):
+        inner = inner[:-1]
     return [c.strip() for c in inner.split("|")]
 
 
@@ -239,6 +239,7 @@ def convert_markdown(
     in_para = False
     list_type: str | None = None
     section_open = False
+    saw_h2 = False
 
     def close_para() -> None:
         nonlocal in_para
@@ -361,12 +362,11 @@ def convert_markdown(
                 i += 1
                 continue
             if level == 2:
+                saw_h2 = True
                 close_section()
                 nav.append((slug, clean_text, 2))
                 if wrap_h2_sections:
-                    out.append(
-                        f'<section class="report-section" id="{html.escape(slug)}">'
-                    )
+                    out.append(f'<section class="report-section" id="{html.escape(slug)}">')
                     section_open = True
                     out.append(f"<h2>{format_inline(text)}</h2>")
                 else:
@@ -375,7 +375,9 @@ def convert_markdown(
                     )
             elif level == 3:
                 nav.append((slug, clean_text, 3))
-                out.append(f'<h3 id="{html.escape(slug)}">{format_inline(text)}</h3>')
+                out.append(
+                    f'<h3 id="{html.escape(slug)}">{format_inline(text)}</h3>'
+                )
             else:
                 tag = f"h{level}"
                 out.append(
@@ -449,7 +451,7 @@ def wrap_simple_document(
     subtitle_html = (
         f'<p class="subtitle">{html.escape(subtitle)}</p>' if subtitle else ""
     )
-
+    
     meta_chips = []
     if result.frontmatter:
         label_map = {
@@ -496,16 +498,12 @@ def wrap_simple_document(
             if pk in result.frontmatter:
                 lbl = label_map.get(pk, pk.title())
                 preview_tokens.append(f"{lbl}: {result.frontmatter[pk]}")
-        summary_preview = (
-            f' &middot; <span class="meta-preview">{html.escape(" | ".join(preview_tokens))}</span>'
-            if preview_tokens
-            else ""
-        )
+        summary_preview = f' &middot; <span class="meta-preview">{html.escape(" | ".join(preview_tokens))}</span>' if preview_tokens else ""
         metadata_html = (
             '  <details class="hero-meta">\n'
             f'    <summary><span class="meta-summary-label">Document metadata</span>{summary_preview}</summary>\n'
             f'    <div class="meta-chips-wrap">\n      {chips_str}\n    </div>\n'
-            "  </details>\n"
+            '  </details>\n'
         )
 
     nav_html = ""
@@ -518,9 +516,7 @@ def wrap_simple_document(
                 s, lab = nav_item
                 level = 2
             cls = ' class="toc-h3"' if level == 3 else ""
-            items.append(
-                f'<li{cls}><a href="#{html.escape(s)}">{html.escape(lab)}</a></li>'
-            )
+            items.append(f'<li{cls}><a href="#{html.escape(s)}">{html.escape(lab)}</a></li>')
         items_str = "\n".join(items)
         nav_html = (
             '<nav class="toc" aria-label="Contents">\n'

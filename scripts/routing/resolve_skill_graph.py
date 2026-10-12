@@ -10,7 +10,7 @@ import argparse
 import json
 import shutil
 import sys
-from dataclasses import dataclass, field
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any
 
@@ -26,7 +26,7 @@ except ImportError:
     DEFAULT_ROOT = Path(__file__).resolve().parents[2]
     from md import parse_frontmatter
 
-from md import REQUIRED_SKILL_SCHEMA_VERSION, check_required_skill_v2_contracts
+from md import REQUIRED_SKILL_SCHEMA_VERSION, check_required_skill_v2_contracts  # noqa: E402
 
 ALLOWED_RANKS = {"critical", "high", "medium", "low"}
 ALLOWED_ISOLATION = {"mutate", "read-only"}
@@ -118,14 +118,10 @@ class ExecutionPlan:
             "prerequisites_check": self.prerequisites_check,
         }
 
-    def simulate_failure(
-        self, failed_skill: str, adj: dict[str, list[str]] | None = None
-    ) -> dict[str, Any]:
+    def simulate_failure(self, failed_skill: str, adj: dict[str, list[str]] | None = None) -> dict[str, Any]:
         """Simulate the lifecycle behavior when a specific skill fails."""
         if failed_skill not in self.skills:
-            raise SkillNotFoundError(
-                f"Skill '{failed_skill}' is not part of this execution plan."
-            )
+            raise SkillNotFoundError(f"Skill '{failed_skill}' is not part of this execution plan.")
 
         policy = self.on_failure_policies.get(failed_skill, DEFAULT_FAILURE_POLICY)
 
@@ -142,20 +138,16 @@ class ExecutionPlan:
                     queue.extend(adj.get(curr, []))
         else:
             # Fallback based on topological order
-            idx = (
-                self.topological_order.index(failed_skill)
-                if failed_skill in self.topological_order
-                else -1
-            )
+            idx = self.topological_order.index(failed_skill) if failed_skill in self.topological_order else -1
             if idx != -1:
-                downstream = set(self.topological_order[idx + 1 :])
+                downstream = set(self.topological_order[idx + 1:])
 
         if policy == "abort_and_rollback":
             return {
                 "failed_skill": failed_skill,
                 "policy": policy,
                 "action": "abort_and_rollback",
-                "aborted_skills": sorted(downstream),
+                "aborted_skills": sorted(list(downstream)),
                 "status": "failed_aborted",
                 "description": "Execution halted; downstream dependent tasks aborted and state rollback triggered.",
             }
@@ -164,7 +156,7 @@ class ExecutionPlan:
                 "failed_skill": failed_skill,
                 "policy": policy,
                 "action": "fallback_degrade",
-                "degraded_skills": [failed_skill] + sorted(downstream),
+                "degraded_skills": [failed_skill] + sorted(list(downstream)),
                 "status": "degraded_continue",
                 "description": "Skill marked degraded; downstream stages proceed with fallback degradation.",
             }
@@ -187,9 +179,7 @@ class ExecutionPlan:
             }
 
 
-def parse_skill_frontmatter(
-    text: str, source_path: Path | None = None
-) -> tuple[dict[str, Any], str]:
+def parse_skill_frontmatter(text: str, source_path: Path | None = None) -> tuple[dict[str, Any], str]:
     """Extract YAML frontmatter and markdown body from a SKILL.md file."""
     if not text.startswith("---"):
         return {}, text
@@ -273,9 +263,7 @@ def load_skill_from_file(path: Path) -> SkillDefinition:
         if not isinstance(data.get("owner_agent"), str) or not owner_agent:
             schema_errors.append("Schema V2 requires a non-empty owner_agent")
         if rank not in ALLOWED_RANKS:
-            schema_errors.append(
-                f"Schema V2 rank must be one of {sorted(ALLOWED_RANKS)}"
-            )
+            schema_errors.append(f"Schema V2 rank must be one of {sorted(ALLOWED_RANKS)}")
         if isolation not in ALLOWED_ISOLATION:
             schema_errors.append("Schema V2 isolation must be mutate or read-only")
         for contract_key in ("inputs", "outputs"):
@@ -283,9 +271,7 @@ def load_skill_from_file(path: Path) -> SkillDefinition:
             # Schema V2 permits concise list contracts and JSON-Schema-style
             # mappings; both are used by the existing catalog.
             if not isinstance(value, (str, list, dict)) or not value:
-                schema_errors.append(
-                    f"Schema V2 contracts.{contract_key} must be non-empty"
-                )
+                schema_errors.append(f"Schema V2 contracts.{contract_key} must be non-empty")
 
     return SkillDefinition(
         name=name,
@@ -326,15 +312,9 @@ class SkillGraph:
             graph.add_skill(skill)
         return graph
 
-    def check_prerequisites(
-        self, skill_names: list[str] | None = None
-    ) -> dict[str, dict[str, Any]]:
+    def check_prerequisites(self, skill_names: list[str] | None = None) -> dict[str, dict[str, Any]]:
         """Pre-flight check for binary prerequisites using shutil.which."""
-        targets = [
-            self.skills[name]
-            for name in (skill_names or self.skills.keys())
-            if name in self.skills
-        ]
+        targets = [self.skills[name] for name in (skill_names or self.skills.keys()) if name in self.skills]
         tool_requirements: dict[str, set[str]] = {}
         for skill in targets:
             for tool in skill.prerequisites:
@@ -350,13 +330,11 @@ class SkillGraph:
                 "tool": tool,
                 "available": binary_path is not None,
                 "path": binary_path,
-                "required_by": sorted(tool_requirements[tool]),
+                "required_by": sorted(list(tool_requirements[tool])),
             }
         return results
 
-    def build_adjacency(
-        self, node_names: set[str]
-    ) -> tuple[dict[str, list[str]], dict[str, list[str]]]:
+    def build_adjacency(self, node_names: set[str]) -> tuple[dict[str, list[str]], dict[str, list[str]]]:
         """Build forward (u executes before v: u -> v) and reverse adjacency maps.
 
         Relationships:
@@ -385,20 +363,16 @@ class SkillGraph:
                         reverse_adj[delg].append(v_name)
 
         # Sort adjacency lists for deterministic results
-        for k in forward_adj:  # noqa: PLC0206
+        for k in forward_adj:
             forward_adj[k].sort()
-        for k in reverse_adj:  # noqa: PLC0206
+        for k in reverse_adj:
             reverse_adj[k].sort()
 
         return forward_adj, reverse_adj
 
-    def find_cycle(
-        self, nodes: list[str], adj: dict[str, list[str]]
-    ) -> list[str] | None:
+    def find_cycle(self, nodes: list[str], adj: dict[str, list[str]]) -> list[str] | None:
         """Find and return an exact cycle path if one exists in the graph."""
-        state: dict[str, int] = {
-            node: 0 for node in nodes
-        }  # 0=unvisited, 1=visiting, 2=visited
+        state: dict[str, int] = {node: 0 for node in nodes}  # 0=unvisited, 1=visiting, 2=visited
         path: list[str] = []
 
         def dfs(u: str) -> list[str] | None:
@@ -459,9 +433,7 @@ class SkillGraph:
 
         return needed
 
-    def resolve_plan(
-        self, target: str | None = None, check_prereqs: bool = False
-    ) -> ExecutionPlan:
+    def resolve_plan(self, target: str | None = None, check_prereqs: bool = False) -> ExecutionPlan:
         """Resolve DAG execution plan for a single target skill or all skills."""
         if target is not None and target != "all":
             node_set = self.resolve_subgraph_nodes(target)
@@ -483,7 +455,7 @@ class SkillGraph:
             target_name = "all"
 
         forward_adj, reverse_adj = self.build_adjacency(node_set)
-        nodes_list = sorted(node_set)
+        nodes_list = sorted(list(node_set))
 
         # Check for cycles
         cycle = self.find_cycle(nodes_list, forward_adj)
@@ -546,46 +518,38 @@ class SkillGraph:
                 skill.contracts,
                 skill_label=name,
             ):
-                errors.append(schema_err)  # noqa: PERF402
+                errors.append(schema_err)
             for schema_error in skill.schema_errors:
                 errors.append(f"Skill '{name}': {schema_error}")
             for req in skill.required_skills:
                 if req not in self.skills:
                     msg = f"Skill '{name}' requires unknown skill '{req}'"
                     errors.append(msg)
-                    missing_dependencies.append(
-                        {"source": name, "type": "required", "target": req}
-                    )
+                    missing_dependencies.append({"source": name, "type": "required", "target": req})
             for delg in skill.delegated_skills:
                 if delg not in self.skills:
                     msg = f"Skill '{name}' delegates to unknown skill '{delg}'"
                     errors.append(msg)
-                    missing_dependencies.append(
-                        {"source": name, "type": "delegated", "target": delg}
-                    )
+                    missing_dependencies.append({"source": name, "type": "delegated", "target": delg})
 
         # Check global cycles
         cycles: list[list[str]] = []
         try:
             forward_adj, _ = self.build_adjacency(set(self.skills.keys()))
-            cycle = self.find_cycle(sorted(self.skills.keys()), forward_adj)
+            cycle = self.find_cycle(sorted(list(self.skills.keys())), forward_adj)
             if cycle is not None:
                 cycles.append(cycle)
                 errors.append(f"Cyclic dependency detected: {' -> '.join(cycle)}")
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             errors.append(f"Cycle detection error: {exc}")
 
         # Check prerequisites
         prereqs_summary: dict[str, dict[str, Any]] = {}
         if check_prereqs:
             prereqs_summary = self.check_prerequisites()
-            missing_tools = [
-                tool for tool, data in prereqs_summary.items() if not data["available"]
-            ]
+            missing_tools = [tool for tool, data in prereqs_summary.items() if not data["available"]]
             if missing_tools:
-                warnings.append(
-                    f"Missing binary tools on PATH: {', '.join(missing_tools)}"
-                )
+                warnings.append(f"Missing binary tools on PATH: {', '.join(missing_tools)}")
 
         ok = len(errors) == 0
         return {
@@ -608,9 +572,7 @@ def format_plan_text(plan: ExecutionPlan) -> str:
 
     lines.append("--- Parallel Execution Stages ---")
     for idx, stage in enumerate(plan.stages):
-        lines.append(
-            f"Stage {idx} ({len(stage)} parallelizable skill{'s' if len(stage) != 1 else ''}):"
-        )
+        lines.append(f"Stage {idx} ({len(stage)} parallelizable skill{'s' if len(stage) != 1 else ''}):")
         for skill_name in stage:
             meta = plan.skills.get(skill_name, {})
             owner = meta.get("owner_agent", "unknown")
@@ -632,9 +594,7 @@ def format_plan_text(plan: ExecutionPlan) -> str:
             status = "FOUND" if data["available"] else "MISSING"
             path_str = f" ({data['path']})" if data["path"] else ""
             required_by = ", ".join(data.get("required_by", []))
-            lines.append(
-                f"  [{status:<7}] {tool:<12}{path_str} (needed by: {required_by})"
-            )
+            lines.append(f"  [{status:<7}] {tool:<12}{path_str} (needed by: {required_by})")
         lines.append("")
 
     return "\n".join(lines)
@@ -751,7 +711,7 @@ def main(argv: list[str] | None = None) -> int:
         else:
             print(f"Error: {exc}", file=sys.stderr)
         return 1
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:
         if args.json:
             print(
                 json.dumps(

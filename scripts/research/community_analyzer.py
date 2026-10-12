@@ -8,13 +8,13 @@ from __future__ import annotations
 
 import argparse
 import json
-import sys
 from pathlib import Path
+import sys
 from typing import Any
 
 _LIB = Path(__file__).resolve().parents[1] / "_lib"
 sys.path.insert(0, str(_LIB))
-from paths import REPO_ROOT as ROOT
+from paths import REPO_ROOT as ROOT  # noqa: E402
 
 CATALOG_PATH = ROOT / "references" / "socials" / "catalogs" / "ranked-communities.json"
 
@@ -34,7 +34,7 @@ def filter_communities(
 ) -> list[dict[str, Any]]:
     tier_ranks = {"Tier 0": 0, "Tier 1": 1, "Tier 2": 2, "Tier 3": 3}
     filtered = []
-
+    
     target_tier_max = tier_ranks.get(min_tier, 3) if min_tier else 3
 
     for c in communities:
@@ -56,23 +56,15 @@ def filter_communities(
     return filtered
 
 
-def get_community_by_slug_or_id(
-    communities: list[dict[str, Any]], query: str
-) -> dict[str, Any] | None:
+def get_community_by_slug_or_id(communities: list[dict[str, Any]], query: str) -> dict[str, Any] | None:
     q = query.strip().lower()
     for c in communities:
-        if (
-            c.get("id", "").lower() == q
-            or c.get("slug", "").lower() == q
-            or c.get("name", "").lower() == q
-        ):
+        if c.get("id", "").lower() == q or c.get("slug", "").lower() == q or c.get("name", "").lower() == q:
             return c
     return None
 
 
-def format_communities_table(
-    communities: list[dict[str, Any]], title: str = "Ranked Communities"
-) -> str:
+def format_communities_table(communities: list[dict[str, Any]], title: str = "Ranked Communities") -> str:
     lines = [
         f"### {title} ({len(communities)})",
         "",
@@ -88,13 +80,9 @@ def format_communities_table(
         receipts = "Yes" if c.get("receipts_required") else "No"
         risk = c.get("astroturfing_risk", "low")
         hints = ", ".join(c.get("query_hints", [])[:2])
-        lines.append(
-            f"| **{score}** | `{tier}` | `{plat}` | {name_link} | {topics} | {receipts} | `{risk}` | {hints} |"
-        )
+        lines.append(f"| **{score}** | `{tier}` | `{plat}` | {name_link} | {topics} | {receipts} | `{risk}` | {hints} |")
     lines.append("")
-    lines.append(
-        "*Evaluated per [Community Reliability Rubric](file:///[REPO_ROOT]/references/socials/community-reliability-rubric.md).*"
-    )
+    lines.append("*Evaluated per [Community Reliability Rubric](file:///[REPO_ROOT]/references/socials/community-reliability-rubric.md).*")
     return "\n".join(lines)
 
 
@@ -114,22 +102,16 @@ def format_community_dossier(c: dict[str, Any]) -> str:
         "",
     ]
     for hint in c.get("query_hints", []):
-        lines.append(f'- `"{hint}"`')
+        lines.append(f"- `\"{hint}\"`")
     lines.append("")
     lines.append("## Triage & Verification Rules")
     lines.append("")
     if c.get("reliability_score", 0) >= 85:
-        lines.append(
-            "- High-signal primary source. Technical assertions can be rapidly prototyped or tested."
-        )
+        lines.append("- High-signal primary source. Technical assertions can be rapidly prototyped or tested.")
     elif c.get("reliability_score", 0) >= 70:
-        lines.append(
-            "- Practitioner community. Verify reproduction steps against official documentation before implementation."
-        )
+        lines.append("- Practitioner community. Verify reproduction steps against official documentation before implementation.")
     else:
-        lines.append(
-            "- Filter for technical tags/flairs only. Discard general commentary and hype without code receipts."
-        )
+        lines.append("- Filter for technical tags/flairs only. Discard general commentary and hype without code receipts.")
     return "\n".join(lines)
 
 
@@ -139,15 +121,7 @@ def main(argv: list[str] | None = None) -> int:
         "--platform",
         type=str,
         default=None,
-        choices=[
-            "reddit",
-            "hacker_news",
-            "github",
-            "stackoverflow",
-            "x",
-            "discourse",
-            "quora",
-        ],
+        choices=["reddit", "hacker_news", "github", "stackoverflow", "x", "discourse", "quora"],
         help="Filter by platform",
     )
     parser.add_argument(
@@ -194,10 +168,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.check_reliability:
         c = get_community_by_slug_or_id(all_communities, args.check_reliability)
         if not c:
-            print(
-                f"Error: Community '{args.check_reliability}' not found in catalog.",
-                file=sys.stderr,
-            )
+            print(f"Error: Community '{args.check_reliability}' not found in catalog.", file=sys.stderr)
             return 1
         if args.json:
             print(json.dumps(c, indent=2))

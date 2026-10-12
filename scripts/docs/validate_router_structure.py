@@ -14,13 +14,13 @@ from pathlib import Path
 
 _LIB = Path(__file__).resolve().parents[1] / "_lib"
 sys.path.insert(0, str(_LIB))
-from areas import (
+from areas import (  # noqa: E402
     AreasYamlError,
     check_areas_consistency,
     load_area_ids,
 )
-from md import agent_ids, parse_frontmatter, skill_paths
-from paths import REPO_ROOT as ROOT
+from md import agent_ids, parse_frontmatter, skill_paths  # noqa: E402
+from paths import REPO_ROOT as ROOT  # noqa: E402
 
 QMD_EXCLUDED = ("change-history", "scratch")
 DOC_SKIP_NAMES = {"README.md"}
@@ -69,9 +69,7 @@ def check_areas(errors: list[str]) -> None:
     for msg in check_areas_consistency(ROOT):
         err(errors, msg)
     area_map_path = ROOT / "routing" / "area-map.md"
-    area_map = (
-        area_map_path.read_text(encoding="utf-8") if area_map_path.is_file() else ""
-    )
+    area_map = area_map_path.read_text(encoding="utf-8") if area_map_path.is_file() else ""
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
     for area in sorted(yaml_ids):
         if f"`{area}/`" not in area_map:
@@ -122,7 +120,7 @@ def check_ops_docs_split(errors: list[str]) -> None:
 
 
 def check_scripts(errors: list[str]) -> None:
-    tag_re = re.compile(r"tags:\s*\[", re.IGNORECASE)
+    tag_re = re.compile(r"tags:\s*\[", re.I)
     scripts_root = ROOT / "scripts"
     for path in sorted(scripts_root.rglob("*.py")):
         rel_parts = path.relative_to(scripts_root).parts
@@ -130,10 +128,7 @@ def check_scripts(errors: list[str]) -> None:
             continue
         doc = path.read_text(encoding="utf-8")[:2000]
         if "tags:" not in doc and not tag_re.search(doc):
-            err(
-                errors,
-                f"{path.relative_to(ROOT).as_posix()}: missing tags: in docstring",
-            )
+            err(errors, f"{path.relative_to(ROOT).as_posix()}: missing tags: in docstring")
 
 
 def check_skills_agents(errors: list[str], *, warnings: list[str]) -> None:
@@ -152,14 +147,10 @@ def check_skills_agents(errors: list[str], *, warnings: list[str]) -> None:
     skills_readme_path = ROOT / "ai-tooling" / "skills" / "README.md"
     agents_readme_path = ROOT / "ai-tooling" / "agents" / "README.md"
     skills_readme = (
-        skills_readme_path.read_text(encoding="utf-8")
-        if skills_readme_path.is_file()
-        else ""
+        skills_readme_path.read_text(encoding="utf-8") if skills_readme_path.is_file() else ""
     )
     agents_readme = (
-        agents_readme_path.read_text(encoding="utf-8")
-        if agents_readme_path.is_file()
-        else ""
+        agents_readme_path.read_text(encoding="utf-8") if agents_readme_path.is_file() else ""
     )
 
     for path in skills:
@@ -200,15 +191,11 @@ def check_qmd_exclusions(errors: list[str], *, warnings: list[str]) -> None:
                     f"supporting/qmd/query-pattern.md should mention exclusion {name}/",
                 )
 
-    setup = (ROOT / "scripts" / "qmd" / "setup_qmd_collections.py").read_text(
-        encoding="utf-8"
-    )
+    setup = (ROOT / "scripts" / "qmd" / "setup_qmd_collections.py").read_text(encoding="utf-8")
     for name in QMD_EXCLUDED:
         # Only fail if listed as a collection entry, not mere docstring mentions.
         if f'("{name}", "{name}"' in setup or f"('{name}', '{name}'" in setup:
-            err(
-                errors, f"setup_qmd_collections.py must not add {name}/ as a collection"
-            )
+            err(errors, f"setup_qmd_collections.py must not add {name}/ as a collection")
 
 
 def check_dispatch(errors: list[str]) -> None:
@@ -246,7 +233,7 @@ def check_memory(errors: list[str]) -> None:
         if path.name in {"README.md", "AGENTS.md"}:
             continue
         rel = path.relative_to(mem).as_posix()
-        if not (rel.startswith(("user/", "agent/", "model/"))):
+        if not (rel.startswith("user/") or rel.startswith("agent/") or rel.startswith("model/")):
             continue
         text = path.read_text(encoding="utf-8")
         if "**Status:**" not in text:
@@ -257,15 +244,7 @@ def check_memory(errors: list[str]) -> None:
 
 ALLOWED_RESULTS_FILES = frozenset({"AGENTS.md", "README.md", "results-conventions.md"})
 ALLOWED_RESULTS_FAMILIES = frozenset(
-    {
-        "reports",
-        "research",
-        "diagrams",
-        "threat-model",
-        "as-code",
-        "cost-layers",
-        "benchmarks",
-    }
+    {"reports", "research", "diagrams", "threat-model", "as-code", "cost-layers", "benchmarks"}
 )
 RETIRED_REVIEWS_DIR = "reviews"
 GITKEEP_NAME = ".gitkeep"
@@ -334,20 +313,17 @@ def _check_retired_reviews(errors: list[str], reviews: Path) -> None:
 def check_context_budget_limits(errors: list[str]) -> None:
     try:
         from validate_context_budget import check_context_budgets
-
         ok, _, budget_errors = check_context_budgets(ROOT)
         if not ok:
             errors.extend(budget_errors)
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:
         err(errors, f"context budget validation failed: {exc}")
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--json", action="store_true")
-    parser.add_argument(
-        "--dry-run", action="store_true", help="Alias: validation never mutates"
-    )
+    parser.add_argument("--dry-run", action="store_true", help="Alias: validation never mutates")
     args = parser.parse_args(argv)
     errors: list[str] = []
     warnings: list[str] = []

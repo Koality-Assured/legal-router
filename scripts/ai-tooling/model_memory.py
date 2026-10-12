@@ -15,9 +15,9 @@ from typing import Any
 
 _LIB = Path(__file__).resolve().parents[1] / "_lib"
 sys.path.insert(0, str(_LIB))
-from areas import AreasYamlError, load_area_records
-from md import parse_frontmatter
-from paths import resolve_repo_root
+from areas import AreasYamlError, load_area_records  # noqa: E402
+from md import parse_frontmatter  # noqa: E402
+from paths import resolve_repo_root  # noqa: E402
 
 MODEL_FAMILIES = ("cursor", "gpt", "claude", "gemini")
 MODEL_MEMORY_REL = Path("ai-tooling") / "memory" / "model"
@@ -184,14 +184,10 @@ def resolve_category(
 ) -> tuple[str | None, list[str]]:
     errors: list[str] = []
     from_fm = canonicalize_category(
-        str(fields["category"])
-        if "category" in fields and fields["category"] is not None
-        else None
+        str(fields["category"]) if "category" in fields and fields["category"] is not None else None
     )
     if "category" in fields and fields["category"] is not None and from_fm is None:
-        errors.append(
-            f"unknown category {fields['category']!r} (want success or unavailable)"
-        )
+        errors.append(f"unknown category {fields['category']!r} (want success or unavailable)")
     from_path = _path_category(path, family_dir)
     from_headings = _heading_categories(body)
     if len(from_headings) > 1:
@@ -347,10 +343,7 @@ def validate_tree(repo_root: Path, family: str | None = None) -> dict[str, Any]:
         for path in sorted(child.rglob("*")):
             if not path.is_file():
                 continue
-            if any(
-                part.startswith(".") and part != path.name
-                for part in path.relative_to(child).parts
-            ):
+            if any(part.startswith(".") and part != path.name for part in path.relative_to(child).parts):
                 continue
             if path.name in ALLOWED_NON_RECORD_FILES:
                 continue
@@ -405,9 +398,7 @@ def _snippet(rec: dict[str, Any], terms: list[str]) -> str:
 
 def search_records(repo_root: Path, family: str, query: str) -> dict[str, Any]:
     if family not in MODEL_FAMILIES:
-        raise UsageError(
-            f"unknown model family {family!r}; want {', '.join(MODEL_FAMILIES)}"
-        )
+        raise UsageError(f"unknown model family {family!r}; want {', '.join(MODEL_FAMILIES)}")
     terms = _query_terms(query)
     if not terms:
         raise UsageError("query must contain at least one term")
@@ -436,9 +427,7 @@ def search_records(repo_root: Path, family: str, query: str) -> dict[str, Any]:
     }
 
 
-def owning_area_for_target(
-    target: Path, repo_root: Path
-) -> tuple[str | None, str | None, list[str]]:
+def owning_area_for_target(target: Path, repo_root: Path) -> tuple[str | None, str | None, list[str]]:
     """Return (area_id, owner_agent, errors) for a promotion target."""
     errors: list[str] = []
     if not _is_under(target, repo_root):
@@ -470,13 +459,9 @@ def owning_area_for_target(
     memory_agent = repo_root / "ai-tooling" / "memory" / "agent"
     memory_model = model_memory_root(repo_root)
     if _is_under(target, memory_user) or _is_under(target, memory_agent):
-        errors.append(
-            "do not copy user or agent memory; target must be an owning source area"
-        )
+        errors.append("do not copy user or agent memory; target must be an owning source area")
     if _is_under(target, memory_model):
-        errors.append(
-            "promotion target must be an owning source area, not model memory"
-        )
+        errors.append("promotion target must be an owning source area, not model memory")
     return area, owner_agent, errors
 
 
@@ -602,9 +587,7 @@ def cmd_validate(args: argparse.Namespace, repo_root: Path) -> int:
 
 def build_parser() -> argparse.ArgumentParser:
     shared = argparse.ArgumentParser(add_help=False)
-    shared.add_argument(
-        "--json", action="store_true", help="Machine-readable JSON output"
-    )
+    shared.add_argument("--json", action="store_true", help="Machine-readable JSON output")
     shared.add_argument(
         "--repo-root",
         metavar="DIR",
@@ -627,21 +610,15 @@ def build_parser() -> argparse.ArgumentParser:
         choices=MODEL_FAMILIES,
         help="Model family (cursor, gpt, claude, gemini)",
     )
-    p_search.add_argument(
-        "--query", required=True, help="Search terms (AND, case-insensitive)"
-    )
+    p_search.add_argument("--query", required=True, help="Search terms (AND, case-insensitive)")
 
     p_promote = sub.add_parser(
         "promote",
         help="Validate a record and emit a source-area promotion proposal (never writes)",
         parents=[shared],
     )
-    p_promote.add_argument(
-        "--record", required=True, help="Path to a model-memory markdown record"
-    )
-    p_promote.add_argument(
-        "--target", required=True, help="Owning source-area destination path"
-    )
+    p_promote.add_argument("--record", required=True, help="Path to a model-memory markdown record")
+    p_promote.add_argument("--target", required=True, help="Owning source-area destination path")
     p_promote.add_argument(
         "--dry-run",
         action="store_true",

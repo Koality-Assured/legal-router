@@ -9,21 +9,21 @@ from __future__ import annotations
 import argparse
 import json
 import shutil
-import subprocess  # nosec B404
+import subprocess
 import sys
 import time
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
 _LIB = Path(__file__).resolve().parents[1] / "_lib"
 sys.path.insert(0, str(_LIB))
-from paths import REPO_ROOT as ROOT
+from paths import REPO_ROOT as ROOT  # noqa: E402
 
 if sys.stdout.encoding and sys.stdout.encoding.lower() != "utf-8":
     try:
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
-    except Exception:  # noqa: S110,BLE001  # nosec B110
+    except Exception:
         pass
 
 # Ground-truth test query suite for repository corpus retrieval
@@ -98,27 +98,17 @@ def run_qmd_search(query: str, limit: int = 5) -> list[str]:
 
     cmd = [qmd_bin, "search", query, "--json", "-n", str(limit)]
     try:
-        proc = subprocess.run(  # noqa: PLW1510  # nosec B603
-            cmd,
-            cwd=ROOT,
-            capture_output=True,
-            text=True,
-            encoding="utf-8",
-            errors="replace",
-            timeout=10,
-        )
+        proc = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=10)
         if proc.returncode == 0 and proc.stdout.strip():
             try:
                 data = json.loads(proc.stdout)
                 if isinstance(data, list):
-                    results = [
-                        item.get("path", "") for item in data if isinstance(item, dict)
-                    ]
+                    results = [item.get("path", "") for item in data if isinstance(item, dict)]
                     if results:
                         return results
             except json.JSONDecodeError:
                 pass
-    except Exception:  # noqa: S110,BLE001  # nosec B110
+    except Exception:
         pass
     return fallback_search(query, limit=limit)
 
@@ -149,12 +139,8 @@ def fallback_search(query: str, limit: int = 5) -> list[str]:
     return [p for _, p in scores[:limit]]
 
 
-def evaluate_retrieval(
-    query_items: list[dict[str, Any]], k_values: list[int] | None = None
-) -> dict[str, Any]:
+def evaluate_retrieval(query_items: list[dict[str, Any]], k_values: list[int] = [1, 3, 5]) -> dict[str, Any]:
     """Calculate Precision@K, Recall@K, and Mean Reciprocal Rank (MRR)."""
-    if k_values is None:
-        k_values = [1, 3, 5]
     precisions: dict[int, list[float]] = {k: [] for k in k_values}
     recip_ranks: list[float] = []
     latencies_ms: list[float] = []
@@ -182,32 +168,25 @@ def evaluate_retrieval(
         # Calculate Precision@K
         for k in k_values:
             top_k = retrieved_normalized[:k]
-            hits = sum(
-                1 for p in top_k if any(exp in p or p in exp for exp in expected)
-            )
+            hits = sum(1 for p in top_k if any(exp in p or p in exp for exp in expected))
             precisions[k].append(round(hits / k, 4))
 
         top_match_path = retrieved[0] if retrieved else "—"
-        query_evaluations.append(
-            {
-                "query": query,
-                "category": item["category"],
-                "expected": item["expected_paths"],
-                "retrieved": retrieved[: max(k_values)],
-                "mrr": round(rr, 4),
-                "p@1": precisions[1][-1],
-                "p@3": precisions[3][-1],
-                "p@5": precisions[5][-1],
-                "top_match": top_match_path,
-                "latency_ms": elapsed_ms,
-            }
-        )
+        query_evaluations.append({
+            "query": query,
+            "category": item["category"],
+            "expected": item["expected_paths"],
+            "retrieved": retrieved[:max(k_values)],
+            "mrr": round(rr, 4),
+            "p@1": precisions[1][-1],
+            "p@3": precisions[3][-1],
+            "p@5": precisions[5][-1],
+            "top_match": top_match_path,
+            "latency_ms": elapsed_ms,
+        })
 
     mrr = round(sum(recip_ranks) / max(1, len(recip_ranks)), 4)
-    avg_precisions = {
-        f"p@{k}": round(sum(precisions[k]) / max(1, len(precisions[k])), 4)
-        for k in k_values
-    }
+    avg_precisions = {f"p@{k}": round(sum(precisions[k]) / max(1, len(precisions[k])), 4) for k in k_values}
     avg_latency = round(sum(latencies_ms) / max(1, len(latencies_ms)), 2)
 
     return {
@@ -221,7 +200,7 @@ def evaluate_retrieval(
 
 def render_retrieval_report(eval_data: dict[str, Any]) -> str:
     """Render structured Markdown retrieval benchmark report."""
-    now_utc = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
+    now_utc = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     lines = [
         "---",
         "doc_kind: result",
@@ -251,13 +230,9 @@ def render_retrieval_report(eval_data: dict[str, Any]) -> str:
     ]
 
     for q in eval_data["queries"]:
-        top_match = (
-            f"`{q['top_match']}`"
-            if q.get("top_match") and q["top_match"] != "—"
-            else "—"
-        )
+        top_match = f"`{q['top_match']}`" if q.get("top_match") and q["top_match"] != "—" else "—"
         lines.append(
-            f'| "{q["query"]}" | `{q["category"]}` | {q["mrr"]:.2f} | '
+            f"| \"{q['query']}\" | `{q['category']}` | {q['mrr']:.2f} | "
             f"{q['p@1']:.1f} | {q['p@3']:.1f} | {q['p@5']:.1f} | {q['latency_ms']}ms | {top_match} |"
         )
 
@@ -267,31 +242,23 @@ def render_retrieval_report(eval_data: dict[str, Any]) -> str:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument(
-        "--hybrid", action="store_true", help="Enable hybrid query testing"
-    )
-    parser.add_argument(
-        "--json", action="store_true", help="Print machine-readable JSON"
-    )
+    parser.add_argument("--hybrid", action="store_true", help="Enable hybrid query testing")
+    parser.add_argument("--json", action="store_true", help="Print machine-readable JSON")
     parser.add_argument("--out", help="Output directory under repo root")
-    parser.add_argument(
-        "--dry-run", action="store_true", help="Run without writing files"
-    )
+    parser.add_argument("--dry-run", action="store_true", help="Run without writing files")
     args = parser.parse_args(argv)
 
     eval_data = evaluate_retrieval(BENCHMARK_QUERIES)
     report_md = render_retrieval_report(eval_data)
 
-    today = datetime.now(UTC).strftime("%Y-%m-%d")
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     out_rel = args.out or f"results/benchmarks/retrieval/{today}"
     out_dir = ROOT / out_rel
 
     if not args.dry_run:
         out_dir.mkdir(parents=True, exist_ok=True)
         (out_dir / "report.md").write_text(report_md, encoding="utf-8")
-        (out_dir / "summary.json").write_text(
-            json.dumps(eval_data, indent=2), encoding="utf-8"
-        )
+        (out_dir / "summary.json").write_text(json.dumps(eval_data, indent=2), encoding="utf-8")
 
     if args.json:
         print(json.dumps(eval_data, indent=2))

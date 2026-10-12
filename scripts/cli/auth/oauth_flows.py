@@ -10,9 +10,11 @@ import base64
 import getpass
 import hashlib
 import http.server
+import json
 import re
 import secrets
 import sys
+import threading
 import time
 import urllib.parse
 import webbrowser
@@ -22,14 +24,12 @@ from .keyring_vault import get_vault, mask_token
 
 DEFAULT_LOOPBACK_HOST = "127.0.0.1"
 DEFAULT_LOOPBACK_PORT = 8085
-DEFAULT_REDIRECT_URI = (
-    f"http://{DEFAULT_LOOPBACK_HOST}:{DEFAULT_LOOPBACK_PORT}/callback"
-)
+DEFAULT_REDIRECT_URI = f"http://{DEFAULT_LOOPBACK_HOST}:{DEFAULT_LOOPBACK_PORT}/callback"
 
 
 def generate_pkce_pair() -> tuple[str, str]:
     """Generate RFC 7636 compliant PKCE code_verifier and code_challenge.
-
+    
     code_verifier: High-entropy cryptographic random string (43-128 chars).
     code_challenge: Base64URL-encoded SHA-256 hash of code_verifier without padding.
     """
@@ -65,7 +65,9 @@ class LoopbackAuthHandler(http.server.BaseHTTPRequestHandler):
         # Antagonistic CSRF Defense: Validate state against expected state
         if self.server.expected_state and state != self.server.expected_state:
             self.server.captured_error = "state_mismatch"
-            self.server.captured_error_description = f"State mismatch: expected '{self.server.expected_state}', got '{state}'. Possible CSRF attack."
+            self.server.captured_error_description = (
+                f"State mismatch: expected '{self.server.expected_state}', got '{state}'. Possible CSRF attack."
+            )
             self.send_response(400)
             self.send_header("Content-Type", "text/html; charset=utf-8")
             self.end_headers()
@@ -167,21 +169,13 @@ class LoopbackAuthServer(http.server.HTTPServer):
 
         if self.captured_error:
             if self.captured_error == "state_mismatch":
-                raise RuntimeError(
-                    f"OAuth state mismatch: potential CSRF attack detected. ({self.captured_error_description})"
-                )
-            raise RuntimeError(
-                f"OAuth authorization error: {self.captured_error} ({self.captured_error_description})"
-            )
+                raise RuntimeError(f"OAuth state mismatch: potential CSRF attack detected. ({self.captured_error_description})")
+            raise RuntimeError(f"OAuth authorization error: {self.captured_error} ({self.captured_error_description})")
         if not self.captured_code:
-            raise TimeoutError(
-                f"OAuth loopback callback timed out after {timeout_sec:.0f} seconds."
-            )
+            raise TimeoutError(f"OAuth loopback callback timed out after {timeout_sec:.0f} seconds.")
 
         if self.expected_state and self.captured_state != self.expected_state:
-            raise RuntimeError(
-                f"OAuth state mismatch: expected '{self.expected_state}', got '{self.captured_state}'. Potential CSRF attack detected."
-            )
+            raise RuntimeError(f"OAuth state mismatch: expected '{self.expected_state}', got '{self.captured_state}'. Potential CSRF attack detected.")
 
         return {
             "code": self.captured_code,
@@ -195,7 +189,7 @@ def extract_code_from_input(user_input: str) -> str:
     if "code=" in clean:
         parsed = urllib.parse.urlparse(clean)
         qs = urllib.parse.parse_qs(parsed.query)
-        if qs.get("code"):
+        if "code" in qs and qs["code"]:
             return qs["code"][0]
     return clean
 
@@ -205,7 +199,7 @@ class AnthropicOAuthFlow:
 
     PROVIDER_NAME = "anthropic"
     AUTH_ENDPOINT = "https://claude.ai/oauth/authorize"
-    TOKEN_ENDPOINT = "https://claude.ai/oauth/token"  # nosec B105
+    TOKEN_ENDPOINT = "https://claude.ai/oauth/token"
     DEFAULT_CLIENT_ID = "harness-cli-anthropic"
 
     @classmethod
@@ -243,13 +237,9 @@ class AnthropicOAuthFlow:
             print(f"1. Open this URL in your browser:\n   {auth_url}\n")
             print("2. Authorize the application and copy the code or the redirect URL.")
             try:
-                user_code_raw = input(
-                    "Enter authorization code (or full redirect URL, or 'key' for API key): "
-                ).strip()
+                user_code_raw = input("Enter authorization code (or full redirect URL, or 'key' for API key): ").strip()
             except (EOFError, KeyboardInterrupt):
-                raise RuntimeError(
-                    "Authentication canceled: input stream closed or interrupted."
-                )
+                raise RuntimeError("Authentication canceled: input stream closed or interrupted.")
 
             if user_code_raw.lower() == "key":
                 return cls._prompt_api_key(vault)
@@ -258,36 +248,28 @@ class AnthropicOAuthFlow:
             if not code:
                 raise ValueError("No authorization code provided.")
         else:
-            server = LoopbackAuthServer(
-                DEFAULT_LOOPBACK_HOST, DEFAULT_LOOPBACK_PORT, expected_state=state
-            )
+            server = LoopbackAuthServer(DEFAULT_LOOPBACK_HOST, DEFAULT_LOOPBACK_PORT, expected_state=state)
             params["redirect_uri"] = server.redirect_uri
             auth_url = f"{cls.AUTH_ENDPOINT}?{urllib.parse.urlencode(params)}"
             print(f"\nOpening browser for Anthropic Claude OAuth...\nURL: {auth_url}")
             try:
                 try:
                     webbrowser.open(auth_url)
-                except Exception:  # noqa: BLE001
-                    print(
-                        "Could not open browser automatically. Please open the URL manually."
-                    )
+                except Exception:
+                    print("Could not open browser automatically. Please open the URL manually.")
 
-                print(
-                    f"Waiting for browser callback on localhost:{server.server_port}..."
-                )
+                print(f"Waiting for browser callback on localhost:{server.server_port}...")
                 cb_data = server.wait_for_callback(timeout_sec=timeout_sec)
                 code = cb_data["code"]
                 if cb_data.get("state") != state:
-                    raise RuntimeError(
-                        "OAuth state parameter mismatch: potential CSRF attack."
-                    )
+                    raise RuntimeError("OAuth state parameter mismatch: potential CSRF attack.")
             finally:
                 server.server_close()
 
         # Assemble token record
         token_data = {
             "provider": cls.PROVIDER_NAME,
-            "token_type": "Bearer",  # nosec B105
+            "token_type": "Bearer",
             "access_token": f"anthropic_oauth_{code[:16]}_{secrets.token_hex(16)}",
             "refresh_token": f"anthropic_refresh_{secrets.token_hex(24)}",
             "code_verifier": verifier,
@@ -296,34 +278,25 @@ class AnthropicOAuthFlow:
             "scopes": ["claude.user"],
         }
         vault.set_credential(cls.PROVIDER_NAME, token_data)
-        print(
-            f"Anthropic Claude successfully authenticated (Token: {mask_token(token_data['access_token'])})."
-        )
+        print(f"Anthropic Claude successfully authenticated (Token: {mask_token(token_data['access_token'])}).")
         return token_data
 
     @classmethod
     def _prompt_api_key(cls, vault: Any) -> dict[str, Any]:
         try:
-            key = getpass.getpass(
-                "Enter Anthropic API Key (starts with sk-ant-): "
-            ).strip()
+            key = getpass.getpass("Enter Anthropic API Key (starts with sk-ant-): ").strip()
         except (EOFError, KeyboardInterrupt):
-            raise RuntimeError(
-                "Authentication canceled: input stream closed or interrupted."
-            )
+            raise RuntimeError("Authentication canceled: input stream closed or interrupted.")
         return cls._save_api_key(key, vault)
 
     @classmethod
     def _save_api_key(cls, key: str, vault: Any) -> dict[str, Any]:
         clean_key = key.strip()
         if not clean_key.startswith("sk-ant-") and not clean_key.startswith("sk-"):
-            print(
-                "warning: Anthropic API keys typically begin with 'sk-ant-'. Storing anyway.",
-                file=sys.stderr,
-            )
+            print("warning: Anthropic API keys typically begin with 'sk-ant-'. Storing anyway.", file=sys.stderr)
         token_data = {
             "provider": cls.PROVIDER_NAME,
-            "token_type": "ApiKey",  # nosec B105
+            "token_type": "ApiKey",
             "access_token": clean_key,
             "expires_at": None,
             "profile": "api-key",
@@ -367,13 +340,9 @@ class CursorAuthFlow:
             print("\n=== Cursor Agent Authentication ===")
             print(f"1. Open Cursor SSO in your browser:\n   {sso_url}\n")
             try:
-                raw_input = input(
-                    "Enter session token, callback URL, or 'key' for CURSOR_API_KEY: "
-                ).strip()
+                raw_input = input("Enter session token, callback URL, or 'key' for CURSOR_API_KEY: ").strip()
             except (EOFError, KeyboardInterrupt):
-                raise RuntimeError(
-                    "Authentication canceled: input stream closed or interrupted."
-                )
+                raise RuntimeError("Authentication canceled: input stream closed or interrupted.")
 
             if raw_input.lower() == "key":
                 return cls._prompt_api_key(vault)
@@ -382,35 +351,27 @@ class CursorAuthFlow:
             if not token:
                 raise ValueError("No session token provided.")
         else:
-            server = LoopbackAuthServer(
-                DEFAULT_LOOPBACK_HOST, DEFAULT_LOOPBACK_PORT, expected_state=state
-            )
+            server = LoopbackAuthServer(DEFAULT_LOOPBACK_HOST, DEFAULT_LOOPBACK_PORT, expected_state=state)
             params["redirect_uri"] = server.redirect_uri
             sso_url = f"{cls.SSO_ENDPOINT}?{urllib.parse.urlencode(params)}"
             print(f"\nOpening browser for Cursor SSO...\nURL: {sso_url}")
             try:
                 try:
                     webbrowser.open(sso_url)
-                except Exception:  # noqa: BLE001
-                    print(
-                        "Could not open browser automatically. Please open the URL manually."
-                    )
+                except Exception:
+                    print("Could not open browser automatically. Please open the URL manually.")
 
-                print(
-                    f"Waiting for Cursor SSO callback on localhost:{server.server_port}..."
-                )
+                print(f"Waiting for Cursor SSO callback on localhost:{server.server_port}...")
                 cb_data = server.wait_for_callback(timeout_sec=timeout_sec)
                 token = cb_data["code"]
                 if cb_data.get("state") != state:
-                    raise RuntimeError(
-                        "OAuth state parameter mismatch: potential CSRF attack."
-                    )
+                    raise RuntimeError("OAuth state parameter mismatch: potential CSRF attack.")
             finally:
                 server.server_close()
 
         token_data = {
             "provider": cls.PROVIDER_NAME,
-            "token_type": "Bearer",  # nosec B105
+            "token_type": "Bearer",
             "access_token": token,
             "expires_at": time.time() + 86400 * 14,
             "profile": "cursor-user",
@@ -425,9 +386,7 @@ class CursorAuthFlow:
         try:
             key = getpass.getpass("Enter CURSOR_API_KEY: ").strip()
         except (EOFError, KeyboardInterrupt):
-            raise RuntimeError(
-                "Authentication canceled: input stream closed or interrupted."
-            )
+            raise RuntimeError("Authentication canceled: input stream closed or interrupted.")
         return cls._save_api_key(key, vault)
 
     @classmethod
@@ -437,7 +396,7 @@ class CursorAuthFlow:
             raise ValueError("API key cannot be empty.")
         token_data = {
             "provider": cls.PROVIDER_NAME,
-            "token_type": "ApiKey",  # nosec B105
+            "token_type": "ApiKey",
             "access_token": clean_key,
             "expires_at": None,
             "profile": "api-key",
@@ -454,7 +413,7 @@ class GeminiOAuthFlow:
     PROVIDER_NAME = "gemini"
     AUTH_ENDPOINT = "https://accounts.google.com/o/oauth2/v2/auth"
     DEVICE_AUTH_ENDPOINT = "https://oauth2.googleapis.com/device/code"
-    TOKEN_ENDPOINT = "https://oauth2.googleapis.com/token"  # nosec B105
+    TOKEN_ENDPOINT = "https://oauth2.googleapis.com/token"
     DEFAULT_CLIENT_ID = "harness-gemini-client.apps.googleusercontent.com"
 
     @classmethod
@@ -478,9 +437,7 @@ class GeminiOAuthFlow:
 
         # Installed Application loopback flow
         state = secrets.token_urlsafe(16)
-        server = LoopbackAuthServer(
-            DEFAULT_LOOPBACK_HOST, DEFAULT_LOOPBACK_PORT, expected_state=state
-        )
+        server = LoopbackAuthServer(DEFAULT_LOOPBACK_HOST, DEFAULT_LOOPBACK_PORT, expected_state=state)
         params = {
             "client_id": cls.DEFAULT_CLIENT_ID,
             "response_type": "code",
@@ -494,26 +451,20 @@ class GeminiOAuthFlow:
         try:
             try:
                 webbrowser.open(auth_url)
-            except Exception:  # noqa: BLE001
-                print(
-                    "Could not open browser automatically. Please open the URL manually."
-                )
+            except Exception:
+                print("Could not open browser automatically. Please open the URL manually.")
 
-            print(
-                f"Waiting for Google OAuth callback on localhost:{server.server_port}..."
-            )
+            print(f"Waiting for Google OAuth callback on localhost:{server.server_port}...")
             cb_data = server.wait_for_callback(timeout_sec=timeout_sec)
             code = cb_data["code"]
             if cb_data.get("state") != state:
-                raise RuntimeError(
-                    "OAuth state parameter mismatch: potential CSRF attack."
-                )
+                raise RuntimeError("OAuth state parameter mismatch: potential CSRF attack.")
         finally:
             server.server_close()
 
         token_data = {
             "provider": cls.PROVIDER_NAME,
-            "token_type": "Bearer",  # nosec B105
+            "token_type": "Bearer",
             "access_token": f"ya29.gemini_{code[:12]}_{secrets.token_hex(16)}",
             "refresh_token": f"1//gemini_refresh_{secrets.token_hex(20)}",
             "expires_at": time.time() + 3600,
@@ -521,15 +472,11 @@ class GeminiOAuthFlow:
             "scopes": ["generative-language"],
         }
         vault.set_credential(cls.PROVIDER_NAME, token_data)
-        print(
-            f"Google Gemini authenticated successfully ({mask_token(token_data['access_token'])})."
-        )
+        print(f"Google Gemini authenticated successfully ({mask_token(token_data['access_token'])}).")
         return token_data
 
     @classmethod
-    def _device_code_flow(
-        cls, vault: Any, timeout_sec: float = 120.0
-    ) -> dict[str, Any]:
+    def _device_code_flow(cls, vault: Any, timeout_sec: float = 120.0) -> dict[str, Any]:
         """RFC 8628 Device Authorization Grant."""
         # Deterministic simulation/flow
         user_code = f"{secrets.token_hex(2).upper()}-{secrets.token_hex(2).upper()}"
@@ -556,7 +503,7 @@ class GeminiOAuthFlow:
 
         token_data = {
             "provider": cls.PROVIDER_NAME,
-            "token_type": "Bearer",  # nosec B105
+            "token_type": "Bearer",
             "access_token": f"ya29.device_{device_code[:12]}",
             "refresh_token": f"1//device_refresh_{secrets.token_hex(16)}",
             "expires_at": time.time() + 3600,
@@ -564,9 +511,7 @@ class GeminiOAuthFlow:
             "scopes": ["generative-language"],
         }
         vault.set_credential(cls.PROVIDER_NAME, token_data)
-        print(
-            f"Google Gemini Device Authorization successful ({mask_token(token_data['access_token'])})."
-        )
+        print(f"Google Gemini Device Authorization successful ({mask_token(token_data['access_token'])}).")
         return token_data
 
     @classmethod
@@ -581,13 +526,9 @@ class GeminiOAuthFlow:
         print("\n=== Google Gemini Manual OAuth ===")
         print(f"1. Open URL in browser:\n   {auth_url}\n")
         try:
-            raw_input = input(
-                "Enter authorization code (or 'key' for GEMINI_API_KEY): "
-            ).strip()
+            raw_input = input("Enter authorization code (or 'key' for GEMINI_API_KEY): ").strip()
         except (EOFError, KeyboardInterrupt):
-            raise RuntimeError(
-                "Authentication canceled: input stream closed or interrupted."
-            )
+            raise RuntimeError("Authentication canceled: input stream closed or interrupted.")
 
         if raw_input.lower() == "key":
             return cls._prompt_api_key(vault)
@@ -598,7 +539,7 @@ class GeminiOAuthFlow:
 
         token_data = {
             "provider": cls.PROVIDER_NAME,
-            "token_type": "Bearer",  # nosec B105
+            "token_type": "Bearer",
             "access_token": f"ya29.manual_{code[:12]}",
             "refresh_token": f"1//refresh_{secrets.token_hex(16)}",
             "expires_at": time.time() + 3600,
@@ -606,9 +547,7 @@ class GeminiOAuthFlow:
             "scopes": ["generative-language"],
         }
         vault.set_credential(cls.PROVIDER_NAME, token_data)
-        print(
-            f"Google Gemini authenticated successfully ({mask_token(token_data['access_token'])})."
-        )
+        print(f"Google Gemini authenticated successfully ({mask_token(token_data['access_token'])}).")
         return token_data
 
     @classmethod
@@ -616,9 +555,7 @@ class GeminiOAuthFlow:
         try:
             key = getpass.getpass("Enter GEMINI_API_KEY (AI Studio): ").strip()
         except (EOFError, KeyboardInterrupt):
-            raise RuntimeError(
-                "Authentication canceled: input stream closed or interrupted."
-            )
+            raise RuntimeError("Authentication canceled: input stream closed or interrupted.")
         return cls._save_api_key(key, vault)
 
     @classmethod
@@ -628,7 +565,7 @@ class GeminiOAuthFlow:
             raise ValueError("API key cannot be empty.")
         token_data = {
             "provider": cls.PROVIDER_NAME,
-            "token_type": "ApiKey",  # nosec B105
+            "token_type": "ApiKey",
             "access_token": clean_key,
             "expires_at": None,
             "profile": "ai-studio-api-key",
@@ -659,37 +596,26 @@ class OpenAIAuthFlow:
             clean_key = api_key.strip()
         else:
             print("\n=== OpenAI GPT Secure Authentication ===")
-            print(
-                "OpenAI Platform credentials use secure API keys stored directly into the OS Vault."
-            )
+            print("OpenAI Platform credentials use secure API keys stored directly into the OS Vault.")
             try:
-                clean_key = getpass.getpass(
-                    "Enter OpenAI API Key (starts with sk-): "
-                ).strip()
+                clean_key = getpass.getpass("Enter OpenAI API Key (starts with sk-): ").strip()
             except (EOFError, KeyboardInterrupt):
-                raise RuntimeError(
-                    "Authentication canceled: input stream closed or interrupted."
-                )
+                raise RuntimeError("Authentication canceled: input stream closed or interrupted.")
 
         if not clean_key:
             raise ValueError("OpenAI API key cannot be empty.")
 
         if not cls.KEY_REGEX.match(clean_key):
-            print(
-                "warning: Key does not strictly match expected OpenAI key format ('sk-...'). Storing anyway.",
-                file=sys.stderr,
-            )
+            print("warning: Key does not strictly match expected OpenAI key format ('sk-...'). Storing anyway.", file=sys.stderr)
 
         token_data = {
             "provider": cls.PROVIDER_NAME,
-            "token_type": "ApiKey",  # nosec B105
+            "token_type": "ApiKey",
             "access_token": clean_key,
             "expires_at": None,
             "profile": "openai-default",
             "scopes": ["api.openai.com"],
         }
         vault.set_credential(cls.PROVIDER_NAME, token_data)
-        print(
-            f"OpenAI GPT credential stored successfully in vault ({mask_token(clean_key)})."
-        )
+        print(f"OpenAI GPT credential stored successfully in vault ({mask_token(clean_key)}).")
         return token_data

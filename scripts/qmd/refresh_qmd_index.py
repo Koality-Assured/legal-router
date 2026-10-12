@@ -8,14 +8,14 @@ from __future__ import annotations
 
 import argparse
 import shutil
-import subprocess  # nosec B404
+import subprocess
 import sys
 from pathlib import Path
 
 _LIB = Path(__file__).resolve().parents[1] / "_lib"
 sys.path.insert(0, str(_LIB))
-from paths import REPO_ROOT as ROOT
-from qmd_preflight import build_report
+from paths import REPO_ROOT as ROOT  # noqa: E402
+from qmd_preflight import build_report  # noqa: E402
 
 
 def resolve_qmd() -> str | None:
@@ -29,7 +29,7 @@ def run(qmd: str, args: list[str], *, dry_run: bool) -> None:
     print("+", " ".join(cmd))
     if dry_run:
         return
-    subprocess.run(cmd, check=True, cwd=ROOT)  # nosec B603
+    subprocess.run(cmd, check=True, cwd=ROOT)
 
 
 def main(argv: list[str] | None = None) -> int:

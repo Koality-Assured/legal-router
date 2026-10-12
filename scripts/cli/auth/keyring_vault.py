@@ -10,15 +10,14 @@ import datetime as dt
 import json
 import os
 import secrets
+import sys
 import threading
 import time
 from pathlib import Path
 from typing import Any
 
 # Service name for OS-native keyring storage
-HARNESS_KEYRING_SERVICE = os.environ.get(
-    "HARNESS_KEYRING_SERVICE", "harness-control-plane"
-)
+HARNESS_KEYRING_SERVICE = os.environ.get("HARNESS_KEYRING_SERVICE", "harness-control-plane")
 HARNESS_PROVIDERS_KEY = "__harness_providers__"
 MAGIC_HEADER = b"HNC1"  # Harness Encrypted Credentials v1
 
@@ -43,25 +42,19 @@ def _enforce_private_permissions(path: Path) -> None:
         user = os.environ.get("USERNAME")
         if user:
             try:
-                import subprocess  # nosec B404
+                import subprocess
 
-                subprocess.run(  # nosec B607, B603
-                    [
-                        "icacls",
-                        str(path),
-                        "/inheritance:r",
-                        "/grant:r",
-                        f"{user}:(R,W)",
-                    ],
+                subprocess.run(
+                    ["icacls", str(path), "/inheritance:r", "/grant:r", f"{user}:(R,W)"],
                     capture_output=True,
                     check=False,
                 )
-            except Exception:  # noqa: S110,BLE001  # nosec B110
+            except Exception:
                 pass
     else:
         try:
             os.chmod(path, 0o600)
-        except Exception:  # noqa: S110,BLE001  # nosec B110
+        except Exception:
             pass
 
 
@@ -72,7 +65,7 @@ def _enforce_private_dir_permissions(path: Path) -> None:
     if os.name != "nt":
         try:
             os.chmod(path, 0o700)
-        except Exception:  # noqa: S110,BLE001  # nosec B110
+        except Exception:
             pass
 
 
@@ -89,25 +82,23 @@ def is_token_expired(token_data: dict[str, Any], buffer_seconds: int = 60) -> bo
             try:
                 exp_ts = float(exp)
             except ValueError:
-                exp_dt = dt.datetime.fromisoformat(exp)
+                exp_dt = dt.datetime.fromisoformat(exp.replace("Z", "+00:00"))
                 exp_ts = exp_dt.timestamp()
         else:
             return False
         return (time.time() + buffer_seconds) >= exp_ts
-    except Exception:  # noqa: BLE001
+    except Exception:
         return False
 
 
 class EncryptedFileVault:
     """Headless fallback vault using AES-256-GCM and PBKDF2 encryption.
-
+    
     Stores credentials in ~/.harness/credentials.enc (or path from HARNESS_VAULT_PATH).
     Protected by a master passphrase (HARNESS_VAULT_PASSPHRASE) or machine-bound salt.
     """
 
-    def __init__(
-        self, vault_path: Path | str | None = None, passphrase: str | None = None
-    ) -> None:
+    def __init__(self, vault_path: Path | str | None = None, passphrase: str | None = None) -> None:
         if vault_path:
             self.path = Path(vault_path).resolve()
         elif os.environ.get("HARNESS_VAULT_PATH"):
@@ -130,16 +121,16 @@ class EncryptedFileVault:
         # Machine-bound fallback for headless / automated agent runs
         try:
             user = os.getlogin()
-        except Exception:  # noqa: BLE001
+        except Exception:
             user = os.environ.get("USERNAME") or os.environ.get("USER")
             if not user:
                 try:
                     user = Path.home().name or "agent"
-                except Exception:  # noqa: BLE001
+                except Exception:
                     user = "agent"
         try:
             home_str = str(Path.home().resolve())
-        except Exception:  # noqa: BLE001
+        except Exception:
             home_str = "/root"
         return f"harness-vault:{user}:{home_str}"
 
@@ -191,9 +182,7 @@ class EncryptedFileVault:
             key = self._derive_key(salt)
             aesgcm = AESGCM(key)
             try:
-                plaintext = aesgcm.decrypt(
-                    nonce, ciphertext, associated_data=MAGIC_HEADER
-                )
+                plaintext = aesgcm.decrypt(nonce, ciphertext, associated_data=MAGIC_HEADER)
             except InvalidTag as it_exc:
                 raise ValueError(
                     f"Authentication tag verification failed for vault at {self.path}: "
@@ -239,7 +228,7 @@ class EncryptedFileVault:
                 if temp_path.exists():
                     try:
                         temp_path.unlink()
-                    except Exception:  # noqa: S110,BLE001  # nosec B110
+                    except Exception:
                         pass
 
     def get_credential(self, provider: str) -> dict[str, Any] | None:
@@ -256,7 +245,7 @@ class EncryptedFileVault:
                 self.recover_corrupted(backup=True)
                 data = {}
             rec = dict(token_data)
-            rec["updated_at"] = dt.datetime.now(dt.UTC).isoformat()
+            rec["updated_at"] = dt.datetime.now(dt.timezone.utc).isoformat()
             data[norm_provider] = rec
             self._save_all(data)
 
@@ -288,13 +277,11 @@ class EncryptedFileVault:
                 return None
             backup_path = None
             if backup:
-                timestamp = dt.datetime.now(dt.UTC).strftime("%Y%m%d_%H%M%S")
-                backup_path = self.path.with_name(
-                    f"{self.path.name}.corrupted.{timestamp}"
-                )
+                timestamp = dt.datetime.now(dt.timezone.utc).strftime("%Y%m%d_%H%M%S")
+                backup_path = self.path.with_name(f"{self.path.name}.corrupted.{timestamp}")
                 try:
                     self.path.replace(backup_path)
-                except Exception:  # noqa: BLE001
+                except Exception:
                     self.path.unlink(missing_ok=True)
             else:
                 self.path.unlink(missing_ok=True)
@@ -334,8 +321,10 @@ class KeyringVault:
                 return False
             name = backend.__class__.__name__
             # Reject fail/null backends
-            return not ("fail" in name.lower() or "null" in name.lower())
-        except Exception:  # noqa: BLE001
+            if "fail" in name.lower() or "null" in name.lower():
+                return False
+            return True
+        except Exception:
             return False
 
     def _get_providers_index(self) -> list[str]:
@@ -345,7 +334,7 @@ class KeyringVault:
             raw = self._keyring.get_password(self.service_name, HARNESS_PROVIDERS_KEY)
             if raw:
                 return json.loads(raw)
-        except Exception:  # noqa: S110,BLE001  # nosec B110
+        except Exception:
             pass
         return []
 
@@ -353,11 +342,9 @@ class KeyringVault:
         if not self.is_available:
             return
         try:
-            clean = sorted(set(providers))
-            self._keyring.set_password(
-                self.service_name, HARNESS_PROVIDERS_KEY, json.dumps(clean)
-            )
-        except Exception:  # noqa: S110,BLE001  # nosec B110
+            clean = sorted(list(set(providers)))
+            self._keyring.set_password(self.service_name, HARNESS_PROVIDERS_KEY, json.dumps(clean))
+        except Exception:
             pass
 
     def get_credential(self, provider: str) -> dict[str, Any] | None:
@@ -370,9 +357,7 @@ class KeyringVault:
                 if raw:
                     return json.loads(raw)
             except Exception as exc:
-                raise RuntimeError(
-                    f"Keyring read error for provider '{provider}': {exc}"
-                ) from exc
+                raise RuntimeError(f"Keyring read error for provider '{provider}': {exc}") from exc
         return None
 
     def set_credential(self, provider: str, token_data: dict[str, Any]) -> None:
@@ -380,21 +365,17 @@ class KeyringVault:
             raise RuntimeError("Keyring is not available on this platform")
         norm_provider = provider.lower().strip()
         rec = dict(token_data)
-        rec["updated_at"] = dt.datetime.now(dt.UTC).isoformat()
+        rec["updated_at"] = dt.datetime.now(dt.timezone.utc).isoformat()
         with self._lock:
             try:
-                self._keyring.set_password(
-                    self.service_name, norm_provider, json.dumps(rec)
-                )
+                self._keyring.set_password(self.service_name, norm_provider, json.dumps(rec))
                 # Update index
                 providers = self._get_providers_index()
                 if norm_provider not in providers:
                     providers.append(norm_provider)
                     self._set_providers_index(providers)
             except Exception as exc:
-                raise RuntimeError(
-                    f"Keyring write error for provider '{provider}': {exc}"
-                ) from exc
+                raise RuntimeError(f"Keyring write error for provider '{provider}': {exc}") from exc
 
     def delete_credential(self, provider: str) -> bool:
         if not self.is_available:
@@ -408,7 +389,7 @@ class KeyringVault:
                     providers.remove(norm_provider)
                     self._set_providers_index(providers)
                 return True
-            except Exception:  # noqa: BLE001
+            except Exception:
                 # Keyring raises PasswordDeleteError if not found
                 return False
 
@@ -428,12 +409,8 @@ class UniversalVault:
         force_file_vault: bool = False,
     ) -> None:
         self.keyring_vault = KeyringVault(service_name=service_name)
-        self.file_vault = EncryptedFileVault(
-            vault_path=vault_path, passphrase=passphrase
-        )
-        self.force_file_vault = force_file_vault or (
-            os.environ.get("HARNESS_FORCE_FILE_VAULT", "").lower() in ("1", "true")
-        )
+        self.file_vault = EncryptedFileVault(vault_path=vault_path, passphrase=passphrase)
+        self.force_file_vault = force_file_vault or (os.environ.get("HARNESS_FORCE_FILE_VAULT", "").lower() in ("1", "true"))
 
     def __repr__(self) -> str:
         return f"<UniversalVault backend={self.active_backend_name}>"
@@ -449,7 +426,7 @@ class UniversalVault:
             if self.keyring_vault.is_available:
                 backend = self.keyring_vault._keyring.get_keyring()
                 return f"keyring:{backend.__class__.__name__}"
-        except Exception:  # noqa: S110,BLE001  # nosec B110
+        except Exception:
             pass
         return "encrypted_file"
 
@@ -460,7 +437,7 @@ class UniversalVault:
                     cred = self.keyring_vault.get_credential(provider)
                     if cred is not None:
                         return cred
-            except Exception:  # noqa: S110,BLE001  # nosec B110
+            except Exception:
                 pass
         return self.file_vault.get_credential(provider)
 
@@ -470,7 +447,7 @@ class UniversalVault:
                 if self.keyring_vault.is_available:
                     self.keyring_vault.set_credential(provider, token_data)
                     return
-            except Exception:  # noqa: S110,BLE001  # nosec B110
+            except Exception:
                 pass
         self.file_vault.set_credential(provider, token_data)
 
@@ -480,7 +457,7 @@ class UniversalVault:
             try:
                 if self.keyring_vault.is_available:
                     deleted_kr = self.keyring_vault.delete_credential(provider)
-            except Exception:  # noqa: S110,BLE001  # nosec B110
+            except Exception:
                 pass
         deleted_file = self.file_vault.delete_credential(provider)
         return deleted_kr or deleted_file
@@ -491,13 +468,13 @@ class UniversalVault:
             try:
                 if self.keyring_vault.is_available:
                     providers.update(self.keyring_vault.list_providers())
-            except Exception:  # noqa: S110,BLE001  # nosec B110
+            except Exception:
                 pass
         try:
             providers.update(self.file_vault.list_providers())
-        except Exception:  # noqa: S110,BLE001  # nosec B110
+        except Exception:
             pass
-        return sorted(providers)
+        return sorted(list(providers))
 
 
 _GLOBAL_VAULT: UniversalVault | None = None

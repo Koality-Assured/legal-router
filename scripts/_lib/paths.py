@@ -13,7 +13,7 @@ to force a specific root.
 
 from __future__ import annotations
 
-import subprocess  # nosec B404
+import subprocess
 from pathlib import Path
 
 SCRIPTS_ROOT = Path(__file__).resolve().parents[1]
@@ -29,7 +29,7 @@ def resolve_repo_root(override: str | Path | None = None) -> Path:
     if override is not None:
         return Path(override).expanduser().resolve()
     try:
-        proc = subprocess.run(  # nosec B607, B603
+        proc = subprocess.run(
             ["git", "rev-parse", "--show-toplevel"],
             cwd=Path.cwd(),
             capture_output=True,
