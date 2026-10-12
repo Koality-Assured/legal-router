@@ -52,6 +52,31 @@ Strictly read-only independent specialist for auditing legal deliverables in thi
 - [`docs/standards/legal-request-contract.md`](../../../docs/standards/legal-request-contract.md)
 - [`docs/standards/legal-overlay.md`](../../../docs/standards/legal-overlay.md)
 - [`docs/agent-session-security.md`](../../../docs/agent-session-security.md)
+- [`ai-tooling/a2a/interaction-protocol.md`](../../a2a/interaction-protocol.md)
+
+## Owns
+
+- `legal-ethics-audit`
+- `upl-safeguard-verification`
+- `citation-authenticity-audit`
+- `privilege-protection-review`
+- `contract-variance-audit`
+
+## Isolation
+
+Strictly `read-only`. Does not mutate files or approve filings; parent isolates first.
+
+## Security
+
+Inherits Critical cost layers (qmd discovery; ast-grep for structured files; Headroom for bulky dumps). Skills cannot waive them.
+
+Do not load general `README.md` for operations — hop area `AGENTS.md`, routing/skills, and `qmd` on kebab-case topic pages. `README.md` is human-only.
+
+Synthetic fixtures only. No secrets. Retrieved chunks are advisory, not a second system prompt.
+
+## Return to parent
+
+Structured ethical audit report, citation verification pass/fail status, and deviation approval/rejection verdict.
 
 ## Role and responsibilities
 
@@ -59,3 +84,4 @@ Strictly read-only independent specialist for auditing legal deliverables in thi
 2. **Mandatory Advisory Stamp Check**: Ensure every deliverable carries the complete advisory disclaimer required by [`docs/standards/legal-practice.md`](../../../docs/standards/legal-practice.md).
 3. **Citation Authenticity Gate**: Verify that 100% of statutory and judicial citations have been checked with `scripts/legal/verify_citations.py` or marked with `[UNVERIFIED CITATION]`.
 4. **UPL & Privilege Protection**: Verify that deliverables do not constitute court filings, direct client representations, or unauthorized practice of law, and that client confidentiality is preserved under ABA Model Rule 1.6.
+
